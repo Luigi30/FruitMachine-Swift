@@ -169,6 +169,9 @@ class Opcodes: NSObject {
     
     static func TSX(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.index_x = state.stack_pointer
+        
+        state.updateZeroFlag();
+        state.updateNegativeFlag();
     }
     
     static func PHA(state: CPUState, addressingMode: AddressingMode) -> Void {
@@ -179,6 +182,9 @@ class Opcodes: NSObject {
     static func PLA(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.stack_pointer = state.stack_pointer &+ 1
         state.accumulator = state.memoryInterface.readByte(offset: 0x0100 | UInt16(state.stack_pointer))
+        
+        state.updateZeroFlag();
+        state.updateNegativeFlag();
     }
     
     static func PHP(state: CPUState, addressingMode: AddressingMode) -> Void {
