@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2A22EBFB1F21A7A700A36A61 /* IntegerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */; };
 		2AD458CE1F205EB700F05121 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458CD1F205EB700F05121 /* AppDelegate.swift */; };
 		2AD458D01F205EB700F05121 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458CF1F205EB700F05121 /* ViewController.swift */; };
 		2AD458D21F205EB700F05121 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2AD458D11F205EB700F05121 /* Assets.xcassets */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerExtensions.swift; sourceTree = "<group>"; };
 		2AD458CA1F205EB700F05121 /* FruitMachine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FruitMachine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2AD458CD1F205EB700F05121 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2AD458CF1F205EB700F05121 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 				2AD458E21F20661300F05121 /* CPUInstructions.swift */,
 				2AD458E41F2070DF00F05121 /* Opcodes.swift */,
 				2AD458E01F2064CB00F05121 /* MemoryInterface.swift */,
+				2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */,
 			);
 			path = M6502;
 			sourceTree = "<group>";
@@ -156,6 +159,7 @@
 				2AD458E31F20661300F05121 /* CPUInstructions.swift in Sources */,
 				2AD458D01F205EB700F05121 /* ViewController.swift in Sources */,
 				2AD458CE1F205EB700F05121 /* AppDelegate.swift in Sources */,
+				2A22EBFB1F21A7A700A36A61 /* IntegerExtensions.swift in Sources */,
 				2AD458E51F2070DF00F05121 /* Opcodes.swift in Sources */,
 				2AD458E11F2064CB00F05121 /* MemoryInterface.swift in Sources */,
 				2AD458DF1F205F4500F05121 /* CPUState.swift in Sources */,
@@ -329,6 +333,7 @@
 				2AD458DC1F205EB700F05121 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

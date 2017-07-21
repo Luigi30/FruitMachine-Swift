@@ -31,6 +31,34 @@ struct StatusRegister {
         zero        = (state & 0x02 == 0x02)
         carry       = (state & 0x01 == 0x01)
     }
+    
+    func asByte() -> UInt8 {
+        var val: UInt8 = 0x00
+        
+        if(negative) {
+            val |= 0x80
+        }
+        if(overflow) {
+            val |= 0x40
+        }
+        if(brk) {
+            val |= 0x10
+        }
+        if(decimal) {
+            val |= 0x08
+        }
+        if(irq_disable) {
+            val |= 0x04
+        }
+        if(zero) {
+            val |= 0x02
+        }
+        if(carry) {
+            val |= 0x01
+        }
+        
+        return val
+    }
 }
 
 class CPUState: NSObject {
@@ -67,6 +95,23 @@ class CPUState: NSObject {
         page_boundary_crossed = false
     }
     
+    func getOperandByte() -> UInt8 {
+        //Returns the operand byte after the current instruction byte.
+        return memoryInterface.readByte(offset: program_counter + 1)
+    }
+    
+    func getOperandWord() -> UInt16 {
+        var word: UInt16
+        let low = memoryInterface.readByte(offset: program_counter + 1)
+        let high = memoryInterface.readByte(offset: program_counter + 2)
+        
+        word = UInt16(high)
+        word = word << 8
+        word |= UInt16(low)
+        
+        return word
+    }
+        
     func executeNextInstruction() throws {
         instruction_register = memoryInterface.memory[Int(program_counter)]
         let operation = InstructionTable[instruction_register]
@@ -81,13 +126,16 @@ class CPUState: NSObject {
             self.cycles += 1
             self.page_boundary_crossed = false
         }
+        
+        self.program_counter = UInt16(Int(self.program_counter) + operation!.bytes)
     }
     
-    func setNegativeFlag() {
+    func updateNegativeFlag() {
         status_register.negative = (accumulator & 0x80 == 0x80)
     }
     
-    func setZeroFlag() {
+    func updateZeroFlag() {
         status_register.zero = (accumulator == 0)
     }
+    
 }

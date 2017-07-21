@@ -15,10 +15,14 @@ class ViewController: NSViewController {
         super.viewDidLoad()
 
         CPU.memoryInterface.memory[0] = 0xAD
-        CPU.memoryInterface.memory[1] = 0x00
-        CPU.memoryInterface.memory[2] = 0x00
-
+        
+        CPU.memoryInterface.memory[1] = 0x34
+        CPU.memoryInterface.memory[2] = 0x12
+        
+        CPU.memoryInterface.memory[0x1234] = 0xAA
+        
         do {
+            try CPU.executeNextInstruction()
             try CPU.executeNextInstruction()
         } catch CPUExceptions.invalidInstruction {
             print("*** 6502 Exception: Invalid instruction 0xXX at 0xXXXX")

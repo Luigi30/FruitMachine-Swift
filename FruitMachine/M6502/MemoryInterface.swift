@@ -14,4 +14,16 @@ class MemoryInterface: NSObject {
     override init() {
         memory = [UInt8](repeating: 0x00, count: 65536)
     }
+    
+    func readByte(offset: UInt16) -> UInt8 {
+        return memory[Int(offset)]
+    }
+    
+    func writeByte(offset: UInt16, value: UInt8) {
+        memory[Int(offset)] = value
+    }
+    
+    func readWord(offset: UInt16) -> UInt16 {
+        return UInt16(memory[Int(offset)] | (memory[Int(offset+1)] << 8))
+    }
 }
