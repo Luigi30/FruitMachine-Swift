@@ -83,6 +83,15 @@ let InstructionTable: [UInt8:CPUInstruction] = [
     0xAC: CPUInstruction(mnemonic: "LDY", cycles: 4, bytes: 3, addressingMode: .absolute,              action: Opcodes.LDY),
     0xBC: CPUInstruction(mnemonic: "LDY", cycles: 4, bytes: 3, addressingMode: .absolute_indexed_x,    action: Opcodes.LDY),
     
+    //ST functions
+    0x85: CPUInstruction(mnemonic: "STA", cycles: 3, bytes: 2, addressingMode: .zeropage,              action: Opcodes.STA),
+    0x95: CPUInstruction(mnemonic: "STA", cycles: 4, bytes: 2, addressingMode: .zeropage_indexed_x,    action: Opcodes.STA),
+    0x8D: CPUInstruction(mnemonic: "STA", cycles: 4, bytes: 3, addressingMode: .absolute,              action: Opcodes.STA),
+    0x9D: CPUInstruction(mnemonic: "STA", cycles: 5, bytes: 3, addressingMode: .absolute_indexed_x,    action: Opcodes.STA),
+    0x99: CPUInstruction(mnemonic: "STA", cycles: 5, bytes: 3, addressingMode: .absolute_indexed_y,    action: Opcodes.STA),
+    0x81: CPUInstruction(mnemonic: "STA", cycles: 6, bytes: 2, addressingMode: .indexed_indirect,      action: Opcodes.STA),
+    0x91: CPUInstruction(mnemonic: "STA", cycles: 6, bytes: 2, addressingMode: .indirect_indexed,      action: Opcodes.STA),
+    
     //Register functions
     0x88: CPUInstruction(mnemonic: "DEY", cycles: 2, bytes: 1, addressingMode: .implied,               action: Opcodes.DEY),
     0x8A: CPUInstruction(mnemonic: "TXA", cycles: 2, bytes: 1, addressingMode: .implied,               action: Opcodes.TXA),

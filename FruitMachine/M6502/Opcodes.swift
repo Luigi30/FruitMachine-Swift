@@ -65,6 +65,15 @@ func getOperandWordForAddressingMode(state: CPUState, mode: AddressingMode) -> U
         return state.getOperandWord() + state.index_y
     case .indirect:
         return state.memoryInterface.readWord(offset: state.getOperandWord())
+    case .indexed_indirect:
+        let zp: UInt8 = state.memoryInterface.readByte(offset: UInt16(state.getOperandByte() + state.index_x))
+        //read from (ZP)
+        let pointer: UInt16 = state.memoryInterface.readWord(offset: UInt16(zp))
+        return state.memoryInterface.readWord(offset: pointer)
+    case .indirect_indexed:
+        let zp: UInt8 = state.memoryInterface.readByte(offset: UInt16(state.getOperandByte()))
+        let pointer: UInt16 = state.memoryInterface.readWord(offset: UInt16(zp)) + UInt16(state.index_y)
+        return state.memoryInterface.readWord(offset: pointer)
     default:
         print("Called getOperand: UInt16 on an instruction that expects a UInt8")
         return 0
@@ -95,6 +104,24 @@ class Opcodes: NSObject {
         
         state.updateZeroFlag(value: state.index_y)
         state.updateNegativeFlag(value: state.index_y)
+    }
+    
+    static func STA(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let address: UInt16
+        
+        if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x) {
+            address = zpAsUInt16(address: state.getOperandByte())
+            state.memoryInterface.writeByte(offset: address, value: state.accumulator)
+            
+        }
+        else if (addressingMode == .absolute || addressingMode == .absolute_indexed_x || addressingMode == .absolute_indexed_y || addressingMode == .indexed_indirect || addressingMode == .indirect_indexed) {
+            address = state.getOperandWord()
+            state.memoryInterface.writeByte(offset: address, value: state.accumulator)
+        }
+        else {
+            print("Illegal addressing mode for STA")
+            return
+        }
     }
     
     //Register instructions

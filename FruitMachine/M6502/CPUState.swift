@@ -95,6 +95,32 @@ class CPUState: NSObject {
         page_boundary_crossed = false
     }
     
+    func disassemble(fromAddress: UInt16, length: UInt16) -> [Disassembly] {
+        var disassembly: [Disassembly] = [Disassembly]()
+        
+        var currentAddress: UInt16 = fromAddress
+        let endAddress: UInt16 = fromAddress + length
+        
+        while(currentAddress < endAddress) {
+            let instruction = memoryInterface.readByte(offset: currentAddress)
+            let operation = InstructionTable[instruction]
+            var data = [UInt8]()
+            
+            if(operation != nil) {
+                for index in 1...operation!.bytes {
+                    data.append(memoryInterface.readByte(offset:currentAddress + UInt16(index)))
+                }
+                
+                disassembly.append(Disassembly(instruction: operation, address: currentAddress, data: data))
+                currentAddress = currentAddress + UInt16(operation!.bytes)
+            } else {
+                currentAddress = currentAddress + 1
+            }
+        }
+        
+        return disassembly
+    }
+    
     func getOperandByte() -> UInt8 {
         //Returns the operand byte after the current instruction byte.
         return memoryInterface.readByte(offset: program_counter + 1)
@@ -110,6 +136,22 @@ class CPUState: NSObject {
         word |= UInt16(low)
         
         return word
+    }
+    
+    func getInstructionBytes(atAddress: UInt16) -> [UInt8] {
+        var bytes = [UInt8]()
+        
+        let instruction = memoryInterface.readByte(offset: atAddress)
+        let operation = InstructionTable[instruction]
+        
+        if(operation != nil){
+            for offset in 0...operation!.bytes {
+                bytes.append(memoryInterface.readByte(offset: atAddress + UInt16(offset)))
+            }
+        }
+        
+        return bytes
+        
     }
         
     func executeNextInstruction() throws {
