@@ -14,12 +14,7 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        CPU.memoryInterface.memory[0] = 0xAD
-        
-        CPU.memoryInterface.memory[1] = 0x34
-        CPU.memoryInterface.memory[2] = 0x12
-        
-        CPU.memoryInterface.memory[0x1234] = 0xAA
+        CPU.memoryInterface.loadBinary(path: "/Users/luigi/6502/test.bin")
         
         do {
             try CPU.executeNextInstruction()

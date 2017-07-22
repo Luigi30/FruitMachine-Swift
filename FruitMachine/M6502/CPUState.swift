@@ -22,7 +22,7 @@ struct StatusRegister {
     var zero: Bool          //Z - 0x02
     var carry: Bool         //C - 0x01
     
-    mutating func setState(state: UInt8) {
+    mutating func fromByte(state: UInt8) {
         negative    = (state & 0x80 == 0x80)
         overflow    = (state & 0x40 == 0x40)
         brk         = (state & 0x10 == 0x10)
@@ -113,7 +113,7 @@ class CPUState: NSObject {
     }
         
     func executeNextInstruction() throws {
-        instruction_register = memoryInterface.memory[Int(program_counter)]
+        instruction_register = memoryInterface.readByte(offset: program_counter)
         let operation = InstructionTable[instruction_register]
         if(operation == nil) {
             throw CPUExceptions.invalidInstruction
@@ -127,15 +127,17 @@ class CPUState: NSObject {
             self.page_boundary_crossed = false
         }
         
-        self.program_counter = UInt16(Int(self.program_counter) + operation!.bytes)
+        if(operation!.mnemonic != "JMP") {
+            self.program_counter = UInt16(Int(self.program_counter) + operation!.bytes)
+        }
     }
     
-    func updateNegativeFlag() {
-        status_register.negative = (accumulator & 0x80 == 0x80)
+    func updateNegativeFlag(value: UInt8) {
+        status_register.negative = (value & 0x80 == 0x80)
     }
     
-    func updateZeroFlag() {
-        status_register.zero = (accumulator == 0)
+    func updateZeroFlag(value: UInt8) {
+        status_register.zero = (value == 0)
     }
     
 }

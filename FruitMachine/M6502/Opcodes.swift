@@ -8,6 +8,10 @@
 
 import Cocoa
 
+func stackPointerAsUInt16(state: CPUState) -> UInt16 {
+    return 0x0100 | UInt16(state.stack_pointer);
+}
+
 func getOperand(state: CPUState, mode: AddressingMode) -> UInt8 {
     switch (mode) {
         
@@ -33,22 +37,35 @@ func getOperand(state: CPUState, mode: AddressingMode) -> UInt8 {
         let zp: UInt8 = state.memoryInterface.readByte(offset: UInt16(state.getOperandByte() + state.index_x))
         //read from (ZP)
         let pointer: UInt16 = state.memoryInterface.readWord(offset: UInt16(zp))
-        state.accumulator = state.memoryInterface.readByte(offset: pointer)
+        return state.memoryInterface.readByte(offset: pointer)
     case .indirect_indexed:
         let zp: UInt8 = state.memoryInterface.readByte(offset: UInt16(state.getOperandByte()))
         let pointer: UInt16 = state.memoryInterface.readWord(offset: UInt16(zp)) + UInt16(state.index_y)
-        state.accumulator = state.memoryInterface.readByte(offset: pointer)
-        
-    case .indirect:
-        //JMP is the only instruction that does this - handle it specially since it's a UInt16
-        break
-    
+        return state.memoryInterface.readByte(offset: pointer)
     default:
-        print("Called getOperand on an instruction in addressing mode \(mode)")
+        print("Called getOperand: UInt8 on an instruction that expects a UInt16.")
+        return 0
+    }
+}
+
+func getOperand(state: CPUState, mode: AddressingMode) -> UInt16 {
+    //Function that will provide a 16-bit operand to instructions.
+    //All instructions have 2 data bytes, little-endian.
+    
+    switch(mode) {
+    case .absolute:
+        return state.getOperandWord()
+    case .absolute_indexed_x:
+        return state.getOperandWord() + state.index_x
+    case .absolute_indexed_y:
+        return state.getOperandWord() + state.index_y
+    case .indirect:
+        return state.memoryInterface.readWord(offset: state.getOperandWord())
+    default:
+        print("Called getOperand: UInt16 on an instruction that expects a UInt8")
         return 0
     }
     
-    return 0 //never gets here
 }
 
 /* */
@@ -58,79 +75,79 @@ class Opcodes: NSObject {
     static func LDA(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.accumulator = getOperand(state: state, mode: addressingMode)
  
-        state.updateZeroFlag()
-        state.updateNegativeFlag()
+        state.updateZeroFlag(value: state.accumulator)
+        state.updateNegativeFlag(value: state.accumulator)
     }
     
     static func LDX(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.index_x = getOperand(state: state, mode: addressingMode)
         
-        state.updateZeroFlag()
-        state.updateNegativeFlag()
+        state.updateZeroFlag(value: state.index_x)
+        state.updateNegativeFlag(value: state.index_x)
     }
     
     static func LDY(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.index_y = getOperand(state: state, mode: addressingMode)
         
-        state.updateZeroFlag()
-        state.updateNegativeFlag()
+        state.updateZeroFlag(value: state.index_y)
+        state.updateNegativeFlag(value: state.index_y)
     }
     
     //Register instructions
     static func TAX(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.index_x = state.accumulator
         
-        state.updateZeroFlag();
-        state.updateNegativeFlag();
+        state.updateZeroFlag(value: state.index_x);
+        state.updateNegativeFlag(value: state.index_x);
     }
     
     static func TXA(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.accumulator = state.index_x
         
-        state.updateZeroFlag();
-        state.updateNegativeFlag();
+        state.updateZeroFlag(value: state.accumulator);
+        state.updateNegativeFlag(value: state.accumulator);
     }
     
     static func DEX(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.index_x = state.index_x &- 1
         
-        state.updateZeroFlag();
-        state.updateNegativeFlag();
+        state.updateZeroFlag(value: state.index_x);
+        state.updateNegativeFlag(value: state.index_x);
     }
     
     static func INX(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.index_x = state.index_x &+ 1
         
-        state.updateZeroFlag();
-        state.updateNegativeFlag();
+        state.updateZeroFlag(value: state.index_x);
+        state.updateNegativeFlag(value: state.index_x);
     }
     
     static func TAY(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.index_y = state.accumulator
         
-        state.updateZeroFlag();
-        state.updateNegativeFlag();
+        state.updateZeroFlag(value: state.index_y);
+        state.updateNegativeFlag(value: state.index_y);
     }
     
     static func TYA(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.accumulator = state.index_y
         
-        state.updateZeroFlag();
-        state.updateNegativeFlag();
+        state.updateZeroFlag(value: state.accumulator);
+        state.updateNegativeFlag(value: state.accumulator);
     }
     
     static func DEY(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.index_y = state.index_x &- 1
         
-        state.updateZeroFlag();
-        state.updateNegativeFlag();
+        state.updateZeroFlag(value: state.index_y);
+        state.updateNegativeFlag(value: state.index_y);
     }
     
     static func INY(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.index_y = state.index_x &+ 1
         
-        state.updateZeroFlag();
-        state.updateNegativeFlag();
+        state.updateZeroFlag(value: state.index_y);
+        state.updateNegativeFlag(value: state.index_y);
     }
     
     //Processor flag instructions
@@ -170,31 +187,35 @@ class Opcodes: NSObject {
     static func TSX(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.index_x = state.stack_pointer
         
-        state.updateZeroFlag();
-        state.updateNegativeFlag();
+        state.updateZeroFlag(value: state.index_x);
+        state.updateNegativeFlag(value: state.index_x);
     }
     
     static func PHA(state: CPUState, addressingMode: AddressingMode) -> Void {
-        state.memoryInterface.writeByte(offset: 0x0100 | UInt16(state.stack_pointer), value: state.accumulator)
+        state.memoryInterface.writeByte(offset: stackPointerAsUInt16(state: state), value: state.accumulator)
         state.stack_pointer = state.stack_pointer &- 1
     }
     
     static func PLA(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.stack_pointer = state.stack_pointer &+ 1
-        state.accumulator = state.memoryInterface.readByte(offset: 0x0100 | UInt16(state.stack_pointer))
+        state.accumulator = state.memoryInterface.readByte(offset: stackPointerAsUInt16(state: state))
         
-        state.updateZeroFlag();
-        state.updateNegativeFlag();
+        state.updateZeroFlag(value: state.accumulator);
+        state.updateNegativeFlag(value: state.accumulator);
     }
     
     static func PHP(state: CPUState, addressingMode: AddressingMode) -> Void {
-        state.memoryInterface.writeByte(offset: 0x0100 | UInt16(state.stack_pointer), value: state.status_register.asByte())
+        state.memoryInterface.writeByte(offset: stackPointerAsUInt16(state: state), value: state.status_register.asByte())
         state.stack_pointer = state.stack_pointer &- 1
     }
     
     static func PLP(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.stack_pointer = state.stack_pointer &+ 1
-        state.status_register.setState(state: state.memoryInterface.readByte(offset: 0x0100 | UInt16(state.stack_pointer)))
+        state.status_register.fromByte(state: state.memoryInterface.readByte(offset: stackPointerAsUInt16(state: state)))
+    }
+    
+    static func JMP(state: CPUState, addressingMode: AddressingMode) -> Void {
+        state.program_counter = getOperand(state: state, mode: addressingMode)
     }
     
     static func NOP(state: CPUState, addressingMode: AddressingMode) -> Void {}

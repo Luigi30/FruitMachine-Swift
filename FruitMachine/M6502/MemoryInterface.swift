@@ -9,7 +9,8 @@
 import Cocoa
 
 class MemoryInterface: NSObject {
-    var memory: [UInt8]
+    
+    fileprivate var memory: [UInt8]
     
     override init() {
         memory = [UInt8](repeating: 0x00, count: 65536)
@@ -25,5 +26,14 @@ class MemoryInterface: NSObject {
     
     func readWord(offset: UInt16) -> UInt16 {
         return UInt16(memory[Int(offset)] | (memory[Int(offset+1)] << 8))
+    }
+    
+    func loadBinary(path: String) {
+        do {
+            let fileContent: NSData = try NSData(contentsOfFile: path)
+            fileContent.getBytes(&memory, range: NSRange(location: 0, length: 65536))
+        } catch {
+            print(error)
+        }
     }
 }
