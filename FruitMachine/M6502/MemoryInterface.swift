@@ -25,7 +25,9 @@ class MemoryInterface: NSObject {
     }
     
     func readWord(offset: UInt16) -> UInt16 {
-        return UInt16(memory[Int(offset)] | (memory[Int(offset+1)] << 8))
+        let low: UInt8 = memory[Int(offset)]
+        let high: UInt8 = memory[Int(offset+1)]
+        return (UInt16(high) << 8) | UInt16(low)
     }
     
     func loadBinary(path: String) {

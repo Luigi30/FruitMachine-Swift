@@ -9,21 +9,28 @@
 import Cocoa
 
 class ViewController: NSViewController {
+    @IBOutlet weak var text_CPU_A: NSTextField!
+    @IBOutlet weak var text_CPU_X: NSTextField!
+    @IBOutlet weak var text_CPU_Y: NSTextField!
+    @IBOutlet weak var text_CPU_IP: NSTextField!
+    @IBOutlet weak var text_CPU_SR: NSTextField!
+    
     let CPU = CPUState.sharedInstance
+    
+    func updateCPUStatusFields() {
+        text_CPU_A.stringValue = String(format:"%02X", CPU.accumulator)
+        text_CPU_X.stringValue = String(format:"%02X", CPU.index_x)
+        text_CPU_Y.stringValue = String(format:"%02X", CPU.index_y)
+        text_CPU_IP.stringValue = String(format:"%04X", CPU.instruction_register)
+        text_CPU_SR.stringValue = String(format:"%02X", CPU.instruction_register)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         CPU.memoryInterface.loadBinary(path: "/Users/luigi/6502/test.bin")
+        updateCPUStatusFields()
         
-        do {
-            try CPU.executeNextInstruction()
-            try CPU.executeNextInstruction()
-        } catch CPUExceptions.invalidInstruction {
-            print("*** 6502 Exception: Invalid instruction 0xXX at 0xXXXX")
-        } catch {
-            print(error)
-        }
         // Do any additional setup after loading the view.
     }
 
@@ -33,6 +40,20 @@ class ViewController: NSViewController {
         }
     }
 
+    func cpuStep() {
+        do {
+            try CPU.executeNextInstruction()
+            updateCPUStatusFields()
+        } catch CPUExceptions.invalidInstruction {
+            print("*** 6502 Exception: Invalid instruction 0xXX at 0xXXXX")
+        } catch {
+            print(error)
+        }
+    }
+    
+    @IBAction func btn_CPUStep(_ sender: Any) {
+        cpuStep()
+    }
 
 }
 

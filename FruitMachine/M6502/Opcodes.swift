@@ -12,7 +12,11 @@ func stackPointerAsUInt16(state: CPUState) -> UInt16 {
     return 0x0100 | UInt16(state.stack_pointer);
 }
 
-func getOperand(state: CPUState, mode: AddressingMode) -> UInt8 {
+func zpAsUInt16(address: UInt8) -> UInt16 {
+    return 0x0000 | UInt16(address)
+}
+
+func getOperandByteForAddressingMode(state: CPUState, mode: AddressingMode) -> UInt8 {
     switch (mode) {
         
     case .immediate:
@@ -48,7 +52,7 @@ func getOperand(state: CPUState, mode: AddressingMode) -> UInt8 {
     }
 }
 
-func getOperand(state: CPUState, mode: AddressingMode) -> UInt16 {
+func getOperandWordForAddressingMode(state: CPUState, mode: AddressingMode) -> UInt16 {
     //Function that will provide a 16-bit operand to instructions.
     //All instructions have 2 data bytes, little-endian.
     
@@ -73,21 +77,21 @@ func getOperand(state: CPUState, mode: AddressingMode) -> UInt16 {
 class Opcodes: NSObject {
     
     static func LDA(state: CPUState, addressingMode: AddressingMode) -> Void {
-        state.accumulator = getOperand(state: state, mode: addressingMode)
+        state.accumulator = getOperandByteForAddressingMode(state: state, mode: addressingMode)
  
         state.updateZeroFlag(value: state.accumulator)
         state.updateNegativeFlag(value: state.accumulator)
     }
     
     static func LDX(state: CPUState, addressingMode: AddressingMode) -> Void {
-        state.index_x = getOperand(state: state, mode: addressingMode)
+        state.index_x = getOperandByteForAddressingMode(state: state, mode: addressingMode)
         
         state.updateZeroFlag(value: state.index_x)
         state.updateNegativeFlag(value: state.index_x)
     }
     
     static func LDY(state: CPUState, addressingMode: AddressingMode) -> Void {
-        state.index_y = getOperand(state: state, mode: addressingMode)
+        state.index_y = getOperandByteForAddressingMode(state: state, mode: addressingMode)
         
         state.updateZeroFlag(value: state.index_y)
         state.updateNegativeFlag(value: state.index_y)
@@ -148,6 +152,56 @@ class Opcodes: NSObject {
         
         state.updateZeroFlag(value: state.index_y);
         state.updateNegativeFlag(value: state.index_y);
+    }
+    
+    static func INC(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let address: UInt16
+        var val: UInt8
+        
+        if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x) {
+            address = zpAsUInt16(address: state.getOperandByte())
+            val = state.memoryInterface.readByte(offset: address)
+
+        }
+        else if (addressingMode == .absolute || addressingMode == .absolute_indexed_x) {
+            address = state.getOperandWord()
+            val = state.memoryInterface.readByte(offset: address)
+        }
+        else {
+            print("Illegal addressing mode for INC")
+            return
+        }
+        
+        val = val &+ 1
+        state.memoryInterface.writeByte(offset: address, value: val)
+            
+        state.updateZeroFlag(value: val);
+        state.updateNegativeFlag(value: val);
+    }
+    
+    static func DEC(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let address: UInt16
+        var val: UInt8
+        
+        if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x) {
+            address = zpAsUInt16(address: state.getOperandByte())
+            val = state.memoryInterface.readByte(offset: address)
+            
+        }
+        else if (addressingMode == .absolute || addressingMode == .absolute_indexed_x) {
+            address = state.getOperandWord()
+            val = state.memoryInterface.readByte(offset: address)
+        }
+        else {
+            print("Illegal addressing mode for INC")
+            return
+        }
+        
+        val = val &- 1
+        state.memoryInterface.writeByte(offset: address, value: val)
+        
+        state.updateZeroFlag(value: val);
+        state.updateNegativeFlag(value: val);
     }
     
     //Processor flag instructions
@@ -214,9 +268,11 @@ class Opcodes: NSObject {
         state.status_register.fromByte(state: state.memoryInterface.readByte(offset: stackPointerAsUInt16(state: state)))
     }
     
+    //Misc
     static func JMP(state: CPUState, addressingMode: AddressingMode) -> Void {
-        state.program_counter = getOperand(state: state, mode: addressingMode)
+        state.program_counter = getOperandWordForAddressingMode(state: state, mode: addressingMode)
     }
+    
     
     static func NOP(state: CPUState, addressingMode: AddressingMode) -> Void {}
 }

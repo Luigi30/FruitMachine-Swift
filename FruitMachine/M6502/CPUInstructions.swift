@@ -46,6 +46,17 @@ class CPUInstruction: NSObject {
 
 let InstructionTable: [UInt8:CPUInstruction] = [
     
+    //INC/DEC
+    0xC6: CPUInstruction(mnemonic: "DEC", cycles: 5, bytes: 2, addressingMode: .zeropage,              action: Opcodes.DEC),
+    0xD6: CPUInstruction(mnemonic: "DEC", cycles: 6, bytes: 2, addressingMode: .zeropage_indexed_x,    action: Opcodes.DEC),
+    0xCE: CPUInstruction(mnemonic: "DEC", cycles: 6, bytes: 3, addressingMode: .absolute,              action: Opcodes.DEC),
+    0xDE: CPUInstruction(mnemonic: "DEC", cycles: 7, bytes: 3, addressingMode: .absolute_indexed_x,    action: Opcodes.DEC),
+    
+    0xE6: CPUInstruction(mnemonic: "INC", cycles: 5, bytes: 2, addressingMode: .zeropage,              action: Opcodes.INC),
+    0xF6: CPUInstruction(mnemonic: "INC", cycles: 6, bytes: 2, addressingMode: .zeropage_indexed_x,    action: Opcodes.INC),
+    0xEE: CPUInstruction(mnemonic: "INC", cycles: 6, bytes: 3, addressingMode: .absolute,              action: Opcodes.INC),
+    0xFE: CPUInstruction(mnemonic: "INC", cycles: 7, bytes: 3, addressingMode: .absolute_indexed_x,    action: Opcodes.INC),
+    
     //JMP
     0x4C: CPUInstruction(mnemonic: "JMP", cycles: 3, bytes: 3, addressingMode: .absolute,              action: Opcodes.JMP),
     0x6C: CPUInstruction(mnemonic: "JMP", cycles: 5, bytes: 3, addressingMode: .indirect,              action: Opcodes.JMP),
