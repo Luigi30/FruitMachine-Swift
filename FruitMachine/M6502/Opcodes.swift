@@ -8,12 +8,25 @@
 
 import Cocoa
 
-func stackPointerAsUInt16(state: CPUState) -> UInt16 {
-    return 0x0100 | UInt16(state.stack_pointer);
-}
+extension CPUState {
 
-func zpAsUInt16(address: UInt8) -> UInt16 {
-    return 0x0000 | UInt16(address)
+    func pushByte(data: UInt8) -> Void {
+        memoryInterface.writeByte(offset: stackPointerAsUInt16(), value: data)
+        stack_pointer = stack_pointer &- 1
+    }
+
+    func pushWord(data: UInt16) -> Void {
+        let low = UInt8(data & 0x00FF)
+        let high = UInt8(data & 0xFF00)
+        
+        pushByte(data: low)
+        pushByte(data: high)
+    }
+ 
+    func stackPointerAsUInt16() -> UInt16 {
+        return 0x0100 | UInt16(stack_pointer);
+    }
+    
 }
 
 func getOperandByteForAddressingMode(state: CPUState, mode: AddressingMode) -> UInt8 {
@@ -110,7 +123,7 @@ class Opcodes: NSObject {
         let address: UInt16
         
         if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x) {
-            address = zpAsUInt16(address: state.getOperandByte())
+            address = AddressConversions.zeroPageAsUInt16(address: state.getOperandByte())
             state.memoryInterface.writeByte(offset: address, value: state.accumulator)
             
         }
@@ -128,7 +141,7 @@ class Opcodes: NSObject {
         let address: UInt16
         
         if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_y) {
-            address = zpAsUInt16(address: state.getOperandByte())
+            address = AddressConversions.zeroPageAsUInt16(address: state.getOperandByte())
             state.memoryInterface.writeByte(offset: address, value: state.index_x)
             
         }
@@ -146,7 +159,7 @@ class Opcodes: NSObject {
         let address: UInt16
         
         if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x) {
-            address = zpAsUInt16(address: state.getOperandByte())
+            address = AddressConversions.zeroPageAsUInt16(address: state.getOperandByte())
             state.memoryInterface.writeByte(offset: address, value: state.index_y)
             
         }
@@ -222,7 +235,7 @@ class Opcodes: NSObject {
         var val: UInt8
         
         if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x) {
-            address = zpAsUInt16(address: state.getOperandByte())
+            address = AddressConversions.zeroPageAsUInt16(address: state.getOperandByte())
             val = state.memoryInterface.readByte(offset: address)
 
         }
@@ -247,7 +260,7 @@ class Opcodes: NSObject {
         var val: UInt8
         
         if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x) {
-            address = zpAsUInt16(address: state.getOperandByte())
+            address = AddressConversions.zeroPageAsUInt16(address: state.getOperandByte())
             val = state.memoryInterface.readByte(offset: address)
             
         }
@@ -273,7 +286,7 @@ class Opcodes: NSObject {
         
         state.updateZeroFlag(value: data)
         state.updateNegativeFlag(value: data)
-        state.status_register.carry = !state.status_register.negative //? check this
+        state.status_register.carry = (data >= 0)
     }
     
     static func CPX(state: CPUState, addressingMode: AddressingMode) -> Void {
@@ -281,7 +294,7 @@ class Opcodes: NSObject {
         
         state.updateZeroFlag(value: data)
         state.updateNegativeFlag(value: data)
-        state.status_register.carry = !state.status_register.negative //? check this
+        state.status_register.carry = (data >= 0)
     }
     
     static func CPY(state: CPUState, addressingMode: AddressingMode) -> Void {
@@ -289,7 +302,29 @@ class Opcodes: NSObject {
         
         state.updateZeroFlag(value: data)
         state.updateNegativeFlag(value: data)
-        state.status_register.carry = !state.status_register.negative //? check this
+       state.status_register.carry = (data >= 0)
+    }
+    
+    //Boolean operators
+    static func EOR(state: CPUState, addressingMode: AddressingMode) -> Void {
+        state.accumulator = state.accumulator ^ getOperandByteForAddressingMode(state: state, mode: addressingMode)
+        
+        state.updateZeroFlag(value: state.accumulator)
+        state.updateNegativeFlag(value: state.accumulator)
+    }
+    
+    static func AND(state: CPUState, addressingMode: AddressingMode) -> Void {
+        state.accumulator = state.accumulator & getOperandByteForAddressingMode(state: state, mode: addressingMode)
+        
+        state.updateZeroFlag(value: state.accumulator)
+        state.updateNegativeFlag(value: state.accumulator)
+    }
+    
+    static func ORA(state: CPUState, addressingMode: AddressingMode) -> Void {
+        state.accumulator = state.accumulator | getOperandByteForAddressingMode(state: state, mode: addressingMode)
+        
+        state.updateZeroFlag(value: state.accumulator)
+        state.updateNegativeFlag(value: state.accumulator)
     }
     
     //Processor flag instructions
@@ -334,26 +369,26 @@ class Opcodes: NSObject {
     }
     
     static func PHA(state: CPUState, addressingMode: AddressingMode) -> Void {
-        state.memoryInterface.writeByte(offset: stackPointerAsUInt16(state: state), value: state.accumulator)
+        state.memoryInterface.writeByte(offset: state.stackPointerAsUInt16(), value: state.accumulator)
         state.stack_pointer = state.stack_pointer &- 1
     }
     
     static func PLA(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.stack_pointer = state.stack_pointer &+ 1
-        state.accumulator = state.memoryInterface.readByte(offset: stackPointerAsUInt16(state: state))
+        state.accumulator = state.memoryInterface.readByte(offset: state.stackPointerAsUInt16())
         
         state.updateZeroFlag(value: state.accumulator);
         state.updateNegativeFlag(value: state.accumulator);
     }
     
     static func PHP(state: CPUState, addressingMode: AddressingMode) -> Void {
-        state.memoryInterface.writeByte(offset: stackPointerAsUInt16(state: state), value: state.status_register.asByte())
+        state.memoryInterface.writeByte(offset: state.stackPointerAsUInt16(), value: state.status_register.asByte())
         state.stack_pointer = state.stack_pointer &- 1
     }
     
     static func PLP(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.stack_pointer = state.stack_pointer &+ 1
-        state.status_register.fromByte(state: state.memoryInterface.readByte(offset: stackPointerAsUInt16(state: state)))
+        state.status_register.fromByte(state: state.memoryInterface.readByte(offset: state.stackPointerAsUInt16()))
     }
     
     //Misc
@@ -361,6 +396,11 @@ class Opcodes: NSObject {
         state.program_counter = getOperandWordForAddressingMode(state: state, mode: addressingMode)
     }
     
+    static func JSR(state: CPUState, addressingMode: AddressingMode) -> Void {
+        //JSR pushes the address-1 of the next operation on to the stack before transferring program control to the following address
+        state.pushWord(data: state.program_counter + 3)
+        state.program_counter = state.getOperandWord()
+    }
     
     static func NOP(state: CPUState, addressingMode: AddressingMode) -> Void {}
 }

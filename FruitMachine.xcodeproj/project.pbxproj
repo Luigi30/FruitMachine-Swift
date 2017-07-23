@@ -17,6 +17,7 @@
 		2AD458E31F20661300F05121 /* CPUInstructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458E21F20661300F05121 /* CPUInstructions.swift */; };
 		2AD458E51F2070DF00F05121 /* Opcodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458E41F2070DF00F05121 /* Opcodes.swift */; };
 		2AE5BA041F23DE4400FAA343 /* Disassembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE5BA031F23DE4400FAA343 /* Disassembly.swift */; };
+		2AE5BA061F2469EB00FAA343 /* AddressConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE5BA051F2469EB00FAA343 /* AddressConversions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		2AD458E21F20661300F05121 /* CPUInstructions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUInstructions.swift; sourceTree = "<group>"; };
 		2AD458E41F2070DF00F05121 /* Opcodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Opcodes.swift; sourceTree = "<group>"; };
 		2AE5BA031F23DE4400FAA343 /* Disassembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Disassembly.swift; sourceTree = "<group>"; };
+		2AE5BA051F2469EB00FAA343 /* AddressConversions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressConversions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +85,7 @@
 				2AD458E21F20661300F05121 /* CPUInstructions.swift */,
 				2AE5BA031F23DE4400FAA343 /* Disassembly.swift */,
 				2AD458E41F2070DF00F05121 /* Opcodes.swift */,
+				2AE5BA051F2469EB00FAA343 /* AddressConversions.swift */,
 				2AD458E01F2064CB00F05121 /* MemoryInterface.swift */,
 				2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */,
 			);
@@ -165,6 +168,7 @@
 				2A22EBFB1F21A7A700A36A61 /* IntegerExtensions.swift in Sources */,
 				2AE5BA041F23DE4400FAA343 /* Disassembly.swift in Sources */,
 				2AD458E51F2070DF00F05121 /* Opcodes.swift in Sources */,
+				2AE5BA061F2469EB00FAA343 /* AddressConversions.swift in Sources */,
 				2AD458E11F2064CB00F05121 /* MemoryInterface.swift in Sources */,
 				2AD458DF1F205F4500F05121 /* CPUState.swift in Sources */,
 			);
