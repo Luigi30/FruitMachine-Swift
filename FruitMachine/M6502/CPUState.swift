@@ -123,6 +123,8 @@ class CPUState: NSObject {
     
     var memoryInterface: MemoryInterface
     
+    var branch_was_taken: Bool
+    
     override init() {
         cycles = 0
         
@@ -136,7 +138,11 @@ class CPUState: NSObject {
         status_register = StatusRegister(negative: false, overflow: false, brk: false, decimal: false, irq_disable: false, zero: false, carry: false)
         memoryInterface = MemoryInterface()
         
+        //Some instructions incur a 1-cycle penalty if crossing a page boundary.
         page_boundary_crossed = false
+        //Branches incur a 1-cycle penalty if taken plus the page boundary penalty if necessary.
+        branch_was_taken = false
+        
     }
     
     func disassemble(fromAddress: UInt16, length: UInt16) -> [Disassembly] {
@@ -211,6 +217,10 @@ class CPUState: NSObject {
         if(self.page_boundary_crossed) {
             self.cycles += 1
             self.page_boundary_crossed = false
+        }
+        if(self.branch_was_taken) {
+            self.cycles += 1
+            self.branch_was_taken = false
         }
         
         if(operation!.mnemonic != "JMP") {

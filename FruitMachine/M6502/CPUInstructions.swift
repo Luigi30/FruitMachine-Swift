@@ -155,7 +155,20 @@ let InstructionTable: [UInt8:CPUInstruction] = [
     0x08: CPUInstruction(mnemonic: "PHP", cycles: 3, bytes: 1, addressingMode: .implied,                action: Opcodes.PHP),
     0x28: CPUInstruction(mnemonic: "PLP", cycles: 4, bytes: 1, addressingMode: .implied,                action: Opcodes.PLP),
     
+    //Branch instructions
+    0x10: CPUInstruction(mnemonic: "BPL", cycles: 2, bytes: 2, addressingMode: .relative,               action: Opcodes.BPL),
+    0x30: CPUInstruction(mnemonic: "BMI", cycles: 2, bytes: 2, addressingMode: .relative,               action: Opcodes.BMI),
+    0x50: CPUInstruction(mnemonic: "BVC", cycles: 2, bytes: 2, addressingMode: .relative,               action: Opcodes.BVC),
+    0x70: CPUInstruction(mnemonic: "BVS", cycles: 2, bytes: 2, addressingMode: .relative,               action: Opcodes.BVS),
+    0x90: CPUInstruction(mnemonic: "BCC", cycles: 2, bytes: 2, addressingMode: .relative,               action: Opcodes.BCC),
+    0xB0: CPUInstruction(mnemonic: "BCS", cycles: 2, bytes: 2, addressingMode: .relative,               action: Opcodes.BCS),
+    0xD0: CPUInstruction(mnemonic: "BNE", cycles: 2, bytes: 2, addressingMode: .relative,               action: Opcodes.BNE),
+    0xF0: CPUInstruction(mnemonic: "BEQ", cycles: 2, bytes: 2, addressingMode: .relative,               action: Opcodes.BEQ),
+    
     0x20: CPUInstruction(mnemonic: "JSR", cycles: 6, bytes: 3, addressingMode: .absolute,               action: Opcodes.JSR),
+    0x60: CPUInstruction(mnemonic: "RTS", cycles: 6, bytes: 1, addressingMode: .implied,                action: Opcodes.RTS),
+    
+    0x00: CPUInstruction(mnemonic: "BRK", cycles: 7, bytes: 1, addressingMode: .implied,                action: Opcodes.BRK),
     
     0xEA: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 1, addressingMode: .implied,                action: Opcodes.NOP),
 ]

@@ -10,6 +10,18 @@ import Cocoa
 
 extension CPUState {
 
+    func popByte() -> UInt8 {
+        stack_pointer = stack_pointer &+ 1
+        return memoryInterface.readByte(offset: stackPointerAsUInt16())
+    }
+    
+    func popWord() -> UInt16 {
+        let low = popByte()
+        let high = popByte()
+        
+        return (UInt16(high) << 8) | UInt16(low)
+    }
+    
     func pushByte(data: UInt8) -> Void {
         memoryInterface.writeByte(offset: stackPointerAsUInt16(), value: data)
         stack_pointer = stack_pointer &- 1
@@ -27,6 +39,15 @@ extension CPUState {
         return 0x0100 | UInt16(stack_pointer);
     }
     
+    func doBranch() {
+        let distance = getOperandByte()
+        
+        if(((program_counter & 0x00FF) + distance) > 0x0100) {
+            page_boundary_crossed = true
+        }
+        program_counter = program_counter + distance
+        branch_was_taken = true
+    }
 }
 
 func getOperandByteForAddressingMode(state: CPUState, mode: AddressingMode) -> UInt8 {
@@ -391,15 +412,73 @@ class Opcodes: NSObject {
         state.status_register.fromByte(state: state.memoryInterface.readByte(offset: state.stackPointerAsUInt16()))
     }
     
+    static func BPL(state: CPUState, addressingMode: AddressingMode) -> Void {
+        if(!state.status_register.negative) {
+            state.doBranch()
+        }
+    }
+    
+    static func BMI(state: CPUState, addressingMode: AddressingMode) -> Void {
+        if(state.status_register.negative) {
+            state.doBranch()
+        }
+    }
+    
+    static func BVC(state: CPUState, addressingMode: AddressingMode) -> Void {
+        if(!state.status_register.overflow) {
+            state.doBranch()
+        }
+    }
+    
+    static func BVS(state: CPUState, addressingMode: AddressingMode) -> Void {
+        if(state.status_register.overflow) {
+            state.doBranch()
+        }
+    }
+    
+    static func BCC(state: CPUState, addressingMode: AddressingMode) -> Void {
+        if(!state.status_register.carry) {
+            state.doBranch()
+        }
+    }
+    
+    static func BCS(state: CPUState, addressingMode: AddressingMode) -> Void {
+        if(state.status_register.carry) {
+            state.doBranch()
+        }
+    }
+    
+    static func BNE(state: CPUState, addressingMode: AddressingMode) -> Void {
+        if(!state.status_register.zero) {
+            state.doBranch()
+        }
+    }
+    
+    static func BEQ(state: CPUState, addressingMode: AddressingMode) -> Void {
+        if(state.status_register.zero) {
+            state.doBranch()
+        }
+    }
+    
     //Misc
     static func JMP(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.program_counter = getOperandWordForAddressingMode(state: state, mode: addressingMode)
     }
     
     static func JSR(state: CPUState, addressingMode: AddressingMode) -> Void {
-        //JSR pushes the address-1 of the next operation on to the stack before transferring program control to the following address
-        state.pushWord(data: state.program_counter + 3)
+        state.pushWord(data: state.program_counter - 1)
         state.program_counter = state.getOperandWord()
+    }
+    
+    static func RTS(state: CPUState, addressingMode: AddressingMode) -> Void {
+        state.program_counter = state.popWord() + 1
+    }
+    
+    static func BRK(state: CPUState, addressingMode: AddressingMode) -> Void {
+        state.status_register.brk = true
+        state.pushWord(data: state.program_counter)
+        state.pushByte(data: state.status_register.asByte())
+        state.program_counter = state.memoryInterface.readWord(offset: 0xFFFE)
     }
     
     static func NOP(state: CPUState, addressingMode: AddressingMode) -> Void {}
