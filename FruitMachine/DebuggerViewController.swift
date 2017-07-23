@@ -14,6 +14,7 @@ class DebuggerViewController: NSViewController {
     @IBOutlet weak var text_CPU_Y: NSTextField!
     @IBOutlet weak var text_CPU_IP: NSTextField!
     @IBOutlet weak var text_CPU_SR: NSTextField!
+    @IBOutlet weak var text_CPU_Flags: NSTextField!
     
     @IBOutlet weak var debuggerTableView: NSTableView!
     
@@ -26,6 +27,7 @@ class DebuggerViewController: NSViewController {
         text_CPU_Y.stringValue = String(format:"%02X", CPU.index_y)
         text_CPU_IP.stringValue = String(format:"%04X", CPU.program_counter)
         text_CPU_SR.stringValue = String(format:"%02X", CPU.stack_pointer)
+        text_CPU_Flags.stringValue = String(CPU.status_register.asString())
     }
     
     override func viewDidLoad() {
@@ -63,6 +65,9 @@ class DebuggerViewController: NSViewController {
         cpuStep()
     }
 
+    @IBAction func btn_Break(_ sender: Any) {
+        _ = 0
+    }
 }
 
 extension DebuggerViewController: NSTableViewDelegate {
@@ -90,21 +95,21 @@ extension DebuggerViewController: NSTableViewDelegate {
                 case .accumulator:
                     cellText = String(format: "%@ A", operation.instruction!.mnemonic)
                 case .immediate:
-                    cellText = String(format: "%@ #%02X", operation.instruction!.mnemonic, operation.data[0])
+                    cellText = String(format: "%@ #$%02X", operation.instruction!.mnemonic, operation.data[0])
                 case .implied:
                     cellText = String(format: "%@", operation.instruction!.mnemonic)
                 case .relative:
-                    cellText = String(format: "%@ #%04X", operation.instruction!.mnemonic, UInt16(operation.data[0]) + operation.address)
+                    cellText = String(format: "%@ #$%04X", operation.instruction!.mnemonic, UInt16(operation.data[0]) + operation.address)
                 case .absolute:
-                    cellText = String(format: "%@ #%02X%02X", operation.instruction!.mnemonic, operation.data[1], operation.data[0])
+                    cellText = String(format: "%@ $%02X%02X", operation.instruction!.mnemonic, operation.data[1], operation.data[0])
                 case .zeropage:
                     cellText = String(format: "%@ $%02X", operation.instruction!.mnemonic, operation.data[0])
                 case .indirect:
                     cellText = String(format: "%@ ($%02X%02X)", operation.instruction!.mnemonic, operation.data[1], operation.data[0])
                 case .absolute_indexed_x:
-                    cellText = String(format: "%@ #%02X%02X,X", operation.instruction!.mnemonic, operation.data[1], operation.data[0])
+                    cellText = String(format: "%@ $%02X%02X,X", operation.instruction!.mnemonic, operation.data[1], operation.data[0])
                 case .absolute_indexed_y:
-                    cellText = String(format: "%@ #%02X%02X,Y", operation.instruction!.mnemonic, operation.data[1], operation.data[0])
+                    cellText = String(format: "%@ $%02X%02X,Y", operation.instruction!.mnemonic, operation.data[1], operation.data[0])
                 case .zeropage_indexed_x:
                     cellText = String(format: "%@ $%02X,X", operation.instruction!.mnemonic, operation.data[0])
                 case .zeropage_indexed_y:

@@ -124,6 +124,42 @@ class Opcodes: NSObject {
         }
     }
     
+    static func STX(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let address: UInt16
+        
+        if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_y) {
+            address = zpAsUInt16(address: state.getOperandByte())
+            state.memoryInterface.writeByte(offset: address, value: state.index_x)
+            
+        }
+        else if (addressingMode == .absolute) {
+            address = state.getOperandWord()
+            state.memoryInterface.writeByte(offset: address, value: state.index_x)
+        }
+        else {
+            print("Illegal addressing mode for STX")
+            return
+        }
+    }
+    
+    static func STY(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let address: UInt16
+        
+        if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x) {
+            address = zpAsUInt16(address: state.getOperandByte())
+            state.memoryInterface.writeByte(offset: address, value: state.index_y)
+            
+        }
+        else if (addressingMode == .absolute) {
+            address = state.getOperandWord()
+            state.memoryInterface.writeByte(offset: address, value: state.index_y)
+        }
+        else {
+            print("Illegal addressing mode for STY")
+            return
+        }
+    }
+    
     //Register instructions
     static func TAX(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.index_x = state.accumulator
@@ -229,6 +265,31 @@ class Opcodes: NSObject {
         
         state.updateZeroFlag(value: val);
         state.updateNegativeFlag(value: val);
+    }
+    
+    //CMP
+    static func CMP(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let data = state.accumulator - state.getOperandByte() //CMP is a subtract that doesn't affect memory
+        
+        state.updateZeroFlag(value: data)
+        state.updateNegativeFlag(value: data)
+        state.status_register.carry = !state.status_register.negative //? check this
+    }
+    
+    static func CPX(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let data = state.index_x - state.getOperandByte() //CMP is a subtract that doesn't affect memory
+        
+        state.updateZeroFlag(value: data)
+        state.updateNegativeFlag(value: data)
+        state.status_register.carry = !state.status_register.negative //? check this
+    }
+    
+    static func CPY(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let data = state.index_y - state.getOperandByte() //CMP is a subtract that doesn't affect memory
+        
+        state.updateZeroFlag(value: data)
+        state.updateNegativeFlag(value: data)
+        state.status_register.carry = !state.status_register.negative //? check this
     }
     
     //Processor flag instructions

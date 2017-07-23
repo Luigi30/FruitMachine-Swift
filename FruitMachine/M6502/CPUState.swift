@@ -22,6 +22,50 @@ struct StatusRegister {
     var zero: Bool          //Z - 0x02
     var carry: Bool         //C - 0x01
     
+    func asString() -> String {
+        var str = ""
+        
+        if(negative) {
+            str += "N"
+        } else {
+            str += "-"
+        }
+        
+        if(overflow) {
+            str += "V"
+        } else {
+            str += "-"
+        }
+        
+        str += "-" //0x20 is unassigned
+        
+        if(brk) {
+            str += "B"
+        } else {
+            str += "-"
+        }
+        
+        if(decimal) {
+            str += "D"
+        } else {
+            str += "-"
+        }
+        
+        if(irq_disable) {
+            str += "I"
+        } else {
+            str += "-"
+        }
+        
+        if(zero) {
+            str += "Z"
+        } else {
+            str += "-"
+        }
+        
+        return str
+    }
+    
     mutating func fromByte(state: UInt8) {
         negative    = (state & 0x80 == 0x80)
         overflow    = (state & 0x40 == 0x40)
