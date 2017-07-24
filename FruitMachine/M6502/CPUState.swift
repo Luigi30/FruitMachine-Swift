@@ -77,7 +77,7 @@ struct StatusRegister {
     }
     
     func asByte() -> UInt8 {
-        var val: UInt8 = 0x00
+        var val: UInt8 = 0x20 //unused bit is hardwired to 1
         
         if(negative) {
             val |= 0x80
@@ -106,6 +106,10 @@ struct StatusRegister {
 }
 
 class CPUState: NSObject {
+    let NMI_VECTOR: UInt16      = 0xFFFA
+    let RESET_VECTOR: UInt16    = 0xFFFC
+    let IRQ_VECTOR: UInt16      = 0xFFFE
+    
     static var sharedInstance = CPUState()
     
     var cycles: Int
@@ -226,6 +230,12 @@ class CPUState: NSObject {
         if(operation!.mnemonic != "JMP") {
             self.program_counter = UInt16(Int(self.program_counter) + operation!.bytes)
         }
+    }
+    
+    func performReset() {
+        program_counter = memoryInterface.readWord(offset: RESET_VECTOR)
+        stack_pointer = 0xFF
+        status_register.irq_disable = true
     }
     
     func updateNegativeFlag(value: UInt8) {

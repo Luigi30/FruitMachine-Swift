@@ -40,12 +40,19 @@ extension CPUState {
     }
     
     func doBranch() {
-        let distance = getOperandByte()
+        let distance = Int8(bitPattern: getOperandByte())
         
-        if(((program_counter & 0x00FF) + distance) > 0x0100) {
-            page_boundary_crossed = true
+        if(distance < 0) {
+            if((program_counter & 0x00FF) - UInt16(abs(Int16(distance))) > 0x8000) {
+                page_boundary_crossed = true
+            }
+        } else {
+            if((program_counter & 0x00FF) + UInt16(abs(Int16(distance)))ß > 0x0100) {
+                page_boundary_crossed = true
+            }
         }
-        program_counter = program_counter + distance
+
+        program_counter = UInt16(Int(program_counter) + Int(distance))
         branch_was_taken = true
     }
 }
@@ -115,9 +122,34 @@ func getOperandWordForAddressingMode(state: CPUState, mode: AddressingMode) -> U
     
 }
 
+func hex2bcd(hex: UInt8) -> UInt8 {
+    var y: UInt8 = (hex / 10) << 4
+    y = y | (hex % 10)
+    return y
+}
+
 /* */
 
 class Opcodes: NSObject {
+    
+    static func ADC(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let operand = UInt8(getOperandByteForAddressingMode(state: state, mode: addressingMode))
+        
+        var t16: UInt16 = UInt16(state.accumulator &+ operand) + UInt16((state.status_register.carry ? UInt8(1) : UInt8(0)))
+        let t8: UInt8 = UInt8(t16 & 0xFF)
+        
+        state.status_register.overflow = (~(state.accumulator ^ operand) & (state.accumulator ^ t8) & 0x80) == 0x80
+        state.status_register.zero = (t8 == 0)
+        state.status_register.negative = (t8 & 0x80) == 0x80
+        
+        if(state.status_register.decimal) {
+            t16 = UInt16(hex2bcd(hex: state.accumulator) + hex2bcd(hex: operand) + (state.status_register.carry ? UInt8(1) : UInt8(0)))
+        } else {
+            state.status_register.carry = (t16 > 255)
+        }
+        
+        state.accumulator = (UInt8(t16 & 0xFF))
+    }
     
     static func LDA(state: CPUState, addressingMode: AddressingMode) -> Void {
         state.accumulator = getOperandByteForAddressingMode(state: state, mode: addressingMode)
@@ -323,7 +355,7 @@ class Opcodes: NSObject {
         
         state.updateZeroFlag(value: data)
         state.updateNegativeFlag(value: data)
-       state.status_register.carry = (data >= 0)
+        state.status_register.carry = (data >= 0)
     }
     
     //Boolean operators
@@ -346,6 +378,106 @@ class Opcodes: NSObject {
         
         state.updateZeroFlag(value: state.accumulator)
         state.updateNegativeFlag(value: state.accumulator)
+    }
+    
+    //Bitwise operators
+    static func BIT(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let operand = getOperandByteForAddressingMode(state: state, mode: addressingMode)
+        let data = state.accumulator & operand
+        
+        state.updateZeroFlag(value: data)
+        state.updateNegativeFlag(value: operand)
+        state.status_register.overflow = (state.accumulator & UInt8(0x40)) == 0x40
+    }
+    
+    static func ASL(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let operand: UInt8
+        
+        if(addressingMode == .implied) {
+            operand = state.accumulator
+            state.status_register.carry = ((operand & 0x80) == 0x80)
+            state.accumulator = (state.accumulator &<< 1) & 0xFE
+            state.updateZeroFlag(value: state.accumulator)
+            state.updateNegativeFlag(value: state.accumulator)
+        } else {
+            let address = getOperandWordForAddressingMode(state: state, mode: addressingMode)
+            var data = state.memoryInterface.readByte(offset: address)
+            state.status_register.carry = (data & 0x80) == 0x80
+            data = (data &<< 1) & 0xFE
+            state.memoryInterface.writeByte(offset: address, value: data)
+            state.updateZeroFlag(value: data)
+            state.updateNegativeFlag(value: data)
+        }
+    }
+    
+    static func LSR(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let operand: UInt8
+        
+        if(addressingMode == .implied) {
+            operand = state.accumulator
+            state.status_register.carry = ((operand & 0x01) == 0x01)
+            state.accumulator = (state.accumulator &>> 1) & 0x7F
+            state.updateZeroFlag(value: state.accumulator)
+            state.status_register.negative = false
+        } else {
+            let address = getOperandWordForAddressingMode(state: state, mode: addressingMode)
+            var data = state.memoryInterface.readByte(offset: address)
+            state.status_register.carry = (data & 0x01) == 0x01
+            data = (data &>> 1) & 0x7F
+            state.memoryInterface.writeByte(offset: address, value: data)
+            state.updateZeroFlag(value: data)
+            state.updateNegativeFlag(value: data)
+        }
+    }
+    
+    static func ROL(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let operand: UInt8
+        
+        if(addressingMode == .implied) {
+            operand = state.accumulator
+            
+            state.accumulator = (state.accumulator &<< 1) & 0xFE
+            state.accumulator = state.accumulator | (state.status_register.carry ? 0x01 : 0x00)
+            
+            state.status_register.carry = ((operand & 0x80) == 0x80)
+            state.updateZeroFlag(value: state.accumulator)
+            state.status_register.negative = (state.accumulator & 0x80) == 0x80
+        } else {
+            let address = getOperandWordForAddressingMode(state: state, mode: addressingMode)
+            var data = state.memoryInterface.readByte(offset: address)
+            
+            data = (data &<< 1) & 0xFE
+            data = data | (state.status_register.carry ? 0x01 : 0x00)
+            state.memoryInterface.writeByte(offset: address, value: data)
+            
+            state.status_register.carry = (data & 0x80) == 0x80
+            state.updateZeroFlag(value: data)
+            state.status_register.negative = (data & 0x80) == 0x80
+        }
+    }
+    
+    static func ROR(state: CPUState, addressingMode: AddressingMode) -> Void {
+        let operand: UInt8
+        
+        if(addressingMode == .implied) {
+            operand = state.accumulator
+            
+            state.status_register.carry = ((operand & 0x01) == 0x01)
+            state.accumulator = (state.accumulator &>> 1) & 0x7F
+            state.accumulator = state.accumulator | (state.status_register.carry ? 0x80 : 0x00)
+            state.updateZeroFlag(value: state.accumulator)
+            state.status_register.negative = (state.accumulator & 0x80) == 0x80
+        } else {
+            let address = getOperandWordForAddressingMode(state: state, mode: addressingMode)
+            var data = state.memoryInterface.readByte(offset: address)
+            
+            state.status_register.carry = (data & 0x01) == 0x01
+            data = (data &>> 1) & 0x7F
+            data = data | (state.status_register.carry ? 0x80 : 0x00)
+            state.memoryInterface.writeByte(offset: address, value: data)
+            state.updateZeroFlag(value: data)
+            state.status_register.negative = (data & 0x80) == 0x80
+        }
     }
     
     //Processor flag instructions

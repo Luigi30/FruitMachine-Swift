@@ -10,6 +10,6 @@ import Cocoa
 
 extension UInt16 {
     static func + (left: UInt16, right: UInt8) -> UInt16 {
-        return left + right
+        return left + UInt16(right)
     }
 }

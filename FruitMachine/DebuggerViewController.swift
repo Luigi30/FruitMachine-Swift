@@ -21,6 +21,16 @@ class DebuggerViewController: NSViewController {
     let CPU = CPUState.sharedInstance
     var disassembly: [Disassembly] = [Disassembly]()
     
+    func highlightCurrentInstruction() -> Bool {
+        for (index, instruction) in disassembly.enumerated() {
+            if(instruction.address == CPU.program_counter) {
+                debuggerTableView.selectRowIndexes(NSIndexSet(index: index) as IndexSet, byExtendingSelection: false)
+                return true //instruction found
+            }
+        }
+        return false //instruction not found
+    }
+    
     func updateCPUStatusFields() {
         text_CPU_A.stringValue = String(format:"%02X", CPU.accumulator)
         text_CPU_X.stringValue = String(format:"%02X", CPU.index_x)
@@ -28,6 +38,11 @@ class DebuggerViewController: NSViewController {
         text_CPU_IP.stringValue = String(format:"%04X", CPU.program_counter)
         text_CPU_SR.stringValue = String(format:"%02X", CPU.stack_pointer)
         text_CPU_Flags.stringValue = String(CPU.status_register.asString())
+        
+        if(!highlightCurrentInstruction()) {
+            disassembly = CPU.disassemble(fromAddress: CPU.program_counter, length: 256)
+            highlightCurrentInstruction()
+        }
     }
     
     override func viewDidLoad() {
@@ -37,8 +52,10 @@ class DebuggerViewController: NSViewController {
         debuggerTableView.dataSource = self
 
         CPU.memoryInterface.loadBinary(path: "/Users/luigi/6502/test.bin")
+        CPU.performReset()
+        CPU.program_counter = 0x400 //entry point for the test program
         updateCPUStatusFields()
-        disassembly = CPU.disassemble(fromAddress: 0x0000, length: 16)
+        disassembly = CPU.disassemble(fromAddress: CPU.program_counter, length: 10000)
         debuggerTableView.reloadData()
         
         // Do any additional setup after loading the view.

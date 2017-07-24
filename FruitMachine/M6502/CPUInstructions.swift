@@ -46,6 +46,16 @@ class CPUInstruction: NSObject {
 
 let InstructionTable: [UInt8:CPUInstruction] = [
     
+    //ADC/SBC
+    0x69: CPUInstruction(mnemonic: "ADC", cycles: 2, bytes: 2, addressingMode: .immediate,              action: Opcodes.ADC),
+    0x65: CPUInstruction(mnemonic: "ADC", cycles: 3, bytes: 2, addressingMode: .zeropage,               action: Opcodes.ADC),
+    0x75: CPUInstruction(mnemonic: "ADC", cycles: 4, bytes: 2, addressingMode: .zeropage_indexed_x,     action: Opcodes.ADC),
+    0x6D: CPUInstruction(mnemonic: "ADC", cycles: 4, bytes: 3, addressingMode: .absolute,               action: Opcodes.ADC),
+    0x7D: CPUInstruction(mnemonic: "ADC", cycles: 4, bytes: 3, addressingMode: .absolute_indexed_x,     action: Opcodes.ADC),
+    0x79: CPUInstruction(mnemonic: "ADC", cycles: 4, bytes: 3, addressingMode: .absolute_indexed_y,     action: Opcodes.ADC),
+    0x61: CPUInstruction(mnemonic: "ADC", cycles: 6, bytes: 2, addressingMode: .indexed_indirect,       action: Opcodes.ADC),
+    0x71: CPUInstruction(mnemonic: "ADC", cycles: 5, bytes: 2, addressingMode: .indirect_indexed,       action: Opcodes.ADC),
+    
     //Boolean operators
     0x09: CPUInstruction(mnemonic: "ORA", cycles: 2, bytes: 2, addressingMode: .immediate,              action: Opcodes.ORA),
     0x05: CPUInstruction(mnemonic: "ORA", cycles: 3, bytes: 2, addressingMode: .zeropage,               action: Opcodes.ORA),
@@ -73,6 +83,34 @@ let InstructionTable: [UInt8:CPUInstruction] = [
     0x39: CPUInstruction(mnemonic: "AND", cycles: 4, bytes: 3, addressingMode: .absolute_indexed_y,     action: Opcodes.AND),
     0x21: CPUInstruction(mnemonic: "AND", cycles: 6, bytes: 2, addressingMode: .indexed_indirect,       action: Opcodes.AND),
     0x31: CPUInstruction(mnemonic: "AND", cycles: 5, bytes: 2, addressingMode: .indirect_indexed,       action: Opcodes.AND),
+    
+    //Bitwise operations
+    0x24: CPUInstruction(mnemonic: "BIT", cycles: 3, bytes: 2, addressingMode: .zeropage,               action: Opcodes.BIT),
+    0x2C: CPUInstruction(mnemonic: "BIT", cycles: 4, bytes: 3, addressingMode: .absolute,               action: Opcodes.BIT),
+    
+    0x0A: CPUInstruction(mnemonic: "ASL", cycles: 2, bytes: 1, addressingMode: .accumulator,            action: Opcodes.ASL),
+    0x06: CPUInstruction(mnemonic: "ASL", cycles: 5, bytes: 2, addressingMode: .zeropage,               action: Opcodes.ASL),
+    0x16: CPUInstruction(mnemonic: "ASL", cycles: 6, bytes: 2, addressingMode: .zeropage_indexed_x,     action: Opcodes.ASL),
+    0x0E: CPUInstruction(mnemonic: "ASL", cycles: 6, bytes: 3, addressingMode: .absolute,               action: Opcodes.ASL),
+    0x1E: CPUInstruction(mnemonic: "ASL", cycles: 7, bytes: 3, addressingMode: .absolute_indexed_x,     action: Opcodes.ASL),
+    
+    0x4A: CPUInstruction(mnemonic: "LSR", cycles: 2, bytes: 1, addressingMode: .accumulator,            action: Opcodes.LSR),
+    0x46: CPUInstruction(mnemonic: "LSR", cycles: 5, bytes: 2, addressingMode: .zeropage,               action: Opcodes.LSR),
+    0x56: CPUInstruction(mnemonic: "LSR", cycles: 6, bytes: 2, addressingMode: .zeropage_indexed_x,     action: Opcodes.LSR),
+    0x4E: CPUInstruction(mnemonic: "LSR", cycles: 6, bytes: 3, addressingMode: .absolute,               action: Opcodes.LSR),
+    0x5E: CPUInstruction(mnemonic: "LSR", cycles: 7, bytes: 3, addressingMode: .absolute_indexed_x,     action: Opcodes.LSR),
+    
+    0x2A: CPUInstruction(mnemonic: "ROL", cycles: 2, bytes: 1, addressingMode: .accumulator,            action: Opcodes.ROL),
+    0x26: CPUInstruction(mnemonic: "ROL", cycles: 5, bytes: 2, addressingMode: .zeropage,               action: Opcodes.ROL),
+    0x36: CPUInstruction(mnemonic: "ROL", cycles: 6, bytes: 2, addressingMode: .zeropage_indexed_x,     action: Opcodes.ROL),
+    0x2E: CPUInstruction(mnemonic: "ROL", cycles: 6, bytes: 3, addressingMode: .absolute,               action: Opcodes.ROL),
+    0x3E: CPUInstruction(mnemonic: "ROL", cycles: 7, bytes: 3, addressingMode: .absolute_indexed_x,     action: Opcodes.ROL),
+    
+    0x6A: CPUInstruction(mnemonic: "ROL", cycles: 2, bytes: 1, addressingMode: .accumulator,            action: Opcodes.ROR),
+    0x66: CPUInstruction(mnemonic: "ROL", cycles: 5, bytes: 2, addressingMode: .zeropage,               action: Opcodes.ROR),
+    0x76: CPUInstruction(mnemonic: "ROL", cycles: 6, bytes: 2, addressingMode: .zeropage_indexed_x,     action: Opcodes.ROR),
+    0x6E: CPUInstruction(mnemonic: "ROL", cycles: 6, bytes: 3, addressingMode: .absolute,               action: Opcodes.ROR),
+    0x7E: CPUInstruction(mnemonic: "ROL", cycles: 7, bytes: 3, addressingMode: .absolute_indexed_x,     action: Opcodes.ROR),
     
     //INC/DEC
     0xC6: CPUInstruction(mnemonic: "DEC", cycles: 5, bytes: 2, addressingMode: .zeropage,               action: Opcodes.DEC),
@@ -127,6 +165,24 @@ let InstructionTable: [UInt8:CPUInstruction] = [
     0x84: CPUInstruction(mnemonic: "STY", cycles: 3, bytes: 2, addressingMode: .zeropage,               action: Opcodes.STY),
     0x94: CPUInstruction(mnemonic: "STY", cycles: 4, bytes: 2, addressingMode: .zeropage_indexed_x,     action: Opcodes.STY),
     0x8C: CPUInstruction(mnemonic: "STY", cycles: 4, bytes: 3, addressingMode: .absolute,               action: Opcodes.STY),
+    
+    //Compare functions
+    0xC9: CPUInstruction(mnemonic: "CMP", cycles: 2, bytes: 2, addressingMode: .immediate,              action: Opcodes.CMP),
+    0xC5: CPUInstruction(mnemonic: "CMP", cycles: 3, bytes: 2, addressingMode: .zeropage,               action: Opcodes.CMP),
+    0xD5: CPUInstruction(mnemonic: "CMP", cycles: 4, bytes: 2, addressingMode: .zeropage_indexed_x,     action: Opcodes.CMP),
+    0xCD: CPUInstruction(mnemonic: "CMP", cycles: 4, bytes: 3, addressingMode: .absolute,               action: Opcodes.CMP),
+    0xDD: CPUInstruction(mnemonic: "CMP", cycles: 4, bytes: 3, addressingMode: .absolute_indexed_x,     action: Opcodes.CMP),
+    0xD9: CPUInstruction(mnemonic: "CMP", cycles: 4, bytes: 3, addressingMode: .absolute_indexed_y,     action: Opcodes.CMP),
+    0xC1: CPUInstruction(mnemonic: "CMP", cycles: 6, bytes: 2, addressingMode: .indexed_indirect,       action: Opcodes.CMP),
+    0xD1: CPUInstruction(mnemonic: "CMP", cycles: 5, bytes: 2, addressingMode: .indirect_indexed,       action: Opcodes.CMP),
+    
+    0xE0: CPUInstruction(mnemonic: "CPX", cycles: 2, bytes: 2, addressingMode: .immediate,              action: Opcodes.CPX),
+    0xE4: CPUInstruction(mnemonic: "CPX", cycles: 3, bytes: 2, addressingMode: .zeropage,               action: Opcodes.CPX),
+    0xEC: CPUInstruction(mnemonic: "CPX", cycles: 4, bytes: 3, addressingMode: .absolute,               action: Opcodes.CPX),
+    
+    0xC0: CPUInstruction(mnemonic: "CPY", cycles: 2, bytes: 2, addressingMode: .immediate,              action: Opcodes.CPY),
+    0xC4: CPUInstruction(mnemonic: "CPY", cycles: 3, bytes: 2, addressingMode: .zeropage,               action: Opcodes.CPY),
+    0xCC: CPUInstruction(mnemonic: "CPY", cycles: 4, bytes: 3, addressingMode: .absolute,               action: Opcodes.CPY),
     
     //Register functions
     0x88: CPUInstruction(mnemonic: "DEY", cycles: 2, bytes: 1, addressingMode: .implied,                action: Opcodes.DEY),
