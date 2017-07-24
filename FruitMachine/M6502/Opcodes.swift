@@ -47,7 +47,7 @@ extension CPUState {
                 page_boundary_crossed = true
             }
         } else {
-            if((program_counter & 0x00FF) + UInt16(abs(Int16(distance)))ß > 0x0100) {
+            if((program_counter & 0x00FF) + UInt16(abs(Int16(distance))) > 0x0100) {
                 page_boundary_crossed = true
             }
         }
