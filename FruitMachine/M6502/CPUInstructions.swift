@@ -30,9 +30,9 @@ class CPUInstruction: NSObject {
     let bytes: Int          //How many bytes long is this instruction?
     let addressingMode: AddressingMode //The addressing mode of this instruction.
     
-    let action: (CPUState, AddressingMode) -> Void //A closure that describes this function's action.
+    let action: (CPU, AddressingMode) -> Void //A closure that describes this function's action.
     
-    init(mnemonic: String, cycles: Int, bytes: Int, addressingMode: AddressingMode, action: @escaping (CPUState, AddressingMode) -> Void) {
+    init(mnemonic: String, cycles: Int, bytes: Int, addressingMode: AddressingMode, action: @escaping (CPU, AddressingMode) -> Void) {
         self.mnemonic = mnemonic
         self.cycles = cycles
         self.bytes = bytes
@@ -222,6 +222,7 @@ let InstructionTable: [UInt8:CPUInstruction] = [
     0xF0: CPUInstruction(mnemonic: "BEQ", cycles: 2, bytes: 2, addressingMode: .relative,               action: Opcodes.BEQ),
     
     0x20: CPUInstruction(mnemonic: "JSR", cycles: 6, bytes: 3, addressingMode: .absolute,               action: Opcodes.JSR),
+    0x40: CPUInstruction(mnemonic: "RTI", cycles: 6, bytes: 1, addressingMode: .implied,                action: Opcodes.RTI),
     0x60: CPUInstruction(mnemonic: "RTS", cycles: 6, bytes: 1, addressingMode: .implied,                action: Opcodes.RTS),
     
     0x00: CPUInstruction(mnemonic: "BRK", cycles: 7, bytes: 1, addressingMode: .implied,                action: Opcodes.BRK),

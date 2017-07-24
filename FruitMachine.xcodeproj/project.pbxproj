@@ -12,7 +12,7 @@
 		2AD458D01F205EB700F05121 /* DebuggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458CF1F205EB700F05121 /* DebuggerViewController.swift */; };
 		2AD458D21F205EB700F05121 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2AD458D11F205EB700F05121 /* Assets.xcassets */; };
 		2AD458D51F205EB700F05121 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AD458D31F205EB700F05121 /* Main.storyboard */; };
-		2AD458DF1F205F4500F05121 /* CPUState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458DE1F205F4500F05121 /* CPUState.swift */; };
+		2AD458DF1F205F4500F05121 /* CPU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458DE1F205F4500F05121 /* CPU.swift */; };
 		2AD458E11F2064CB00F05121 /* MemoryInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458E01F2064CB00F05121 /* MemoryInterface.swift */; };
 		2AD458E31F20661300F05121 /* CPUInstructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458E21F20661300F05121 /* CPUInstructions.swift */; };
 		2AD458E51F2070DF00F05121 /* Opcodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458E41F2070DF00F05121 /* Opcodes.swift */; };
@@ -29,7 +29,7 @@
 		2AD458D41F205EB700F05121 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		2AD458D61F205EB700F05121 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2AD458D71F205EB700F05121 /* FruitMachine.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FruitMachine.entitlements; sourceTree = "<group>"; };
-		2AD458DE1F205F4500F05121 /* CPUState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUState.swift; sourceTree = "<group>"; };
+		2AD458DE1F205F4500F05121 /* CPU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPU.swift; sourceTree = "<group>"; };
 		2AD458E01F2064CB00F05121 /* MemoryInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryInterface.swift; sourceTree = "<group>"; };
 		2AD458E21F20661300F05121 /* CPUInstructions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUInstructions.swift; sourceTree = "<group>"; };
 		2AD458E41F2070DF00F05121 /* Opcodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Opcodes.swift; sourceTree = "<group>"; };
@@ -81,7 +81,7 @@
 		2AD458DD1F205F0D00F05121 /* M6502 */ = {
 			isa = PBXGroup;
 			children = (
-				2AD458DE1F205F4500F05121 /* CPUState.swift */,
+				2AD458DE1F205F4500F05121 /* CPU.swift */,
 				2AD458E21F20661300F05121 /* CPUInstructions.swift */,
 				2AE5BA031F23DE4400FAA343 /* Disassembly.swift */,
 				2AD458E41F2070DF00F05121 /* Opcodes.swift */,
@@ -170,7 +170,7 @@
 				2AD458E51F2070DF00F05121 /* Opcodes.swift in Sources */,
 				2AE5BA061F2469EB00FAA343 /* AddressConversions.swift in Sources */,
 				2AD458E11F2064CB00F05121 /* MemoryInterface.swift in Sources */,
-				2AD458DF1F205F4500F05121 /* CPUState.swift in Sources */,
+				2AD458DF1F205F4500F05121 /* CPU.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -105,12 +105,12 @@ struct StatusRegister {
     }
 }
 
-class CPUState: NSObject {
+class CPU: NSObject {
     let NMI_VECTOR: UInt16      = 0xFFFA
     let RESET_VECTOR: UInt16    = 0xFFFC
     let IRQ_VECTOR: UInt16      = 0xFFFE
     
-    static var sharedInstance = CPUState()
+    static var sharedInstance = CPU()
     
     var cycles: Int
     
@@ -124,10 +124,9 @@ class CPUState: NSObject {
     var status_register: StatusRegister
     
     var page_boundary_crossed: Bool
+    var branch_was_taken: Bool
     
     var memoryInterface: MemoryInterface
-    
-    var branch_was_taken: Bool
     
     override init() {
         cycles = 0
@@ -147,32 +146,6 @@ class CPUState: NSObject {
         //Branches incur a 1-cycle penalty if taken plus the page boundary penalty if necessary.
         branch_was_taken = false
         
-    }
-    
-    func disassemble(fromAddress: UInt16, length: UInt16) -> [Disassembly] {
-        var disassembly: [Disassembly] = [Disassembly]()
-        
-        var currentAddress: UInt16 = fromAddress
-        let endAddress: UInt16 = fromAddress + length
-        
-        while(currentAddress < endAddress) {
-            let instruction = memoryInterface.readByte(offset: currentAddress)
-            let operation = InstructionTable[instruction]
-            var data = [UInt8]()
-            
-            if(operation != nil) {
-                for index in 1...operation!.bytes {
-                    data.append(memoryInterface.readByte(offset:currentAddress + UInt16(index)))
-                }
-                
-                disassembly.append(Disassembly(instruction: operation, address: currentAddress, data: data))
-                currentAddress = currentAddress + UInt16(operation!.bytes)
-            } else {
-                currentAddress = currentAddress + 1
-            }
-        }
-        
-        return disassembly
     }
     
     func getOperandByte() -> UInt8 {
@@ -215,7 +188,7 @@ class CPUState: NSObject {
             throw CPUExceptions.invalidInstruction
         }
         
-        operation!.action(CPUState.sharedInstance, operation!.addressingMode)
+        operation!.action(CPU.sharedInstance, operation!.addressingMode)
         
         self.cycles += operation!.cycles
         if(self.page_boundary_crossed) {
