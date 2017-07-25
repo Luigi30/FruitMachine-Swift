@@ -369,27 +369,30 @@ class Opcodes: NSObject {
     
     //CMP
     static func CMP(state: CPU, addressingMode: AddressingMode) -> Void {
-        let data = state.accumulator - state.getOperandByte() //CMP is a subtract that doesn't affect memory
+        let mem = getOperandByteForAddressingMode(state: state, mode: addressingMode)
+        let t = state.accumulator &- mem //CMP is a subtract that doesn't affect memory
         
-        state.updateZeroFlag(value: data)
-        state.updateNegativeFlag(value: data)
-        state.status_register.carry = (data >= 0)
+        state.status_register.zero = (t == 0) ? true : false
+        state.status_register.negative = (t & 0x80) == 0x80 ? true : false
+        state.status_register.carry = (state.accumulator >= mem)
     }
     
     static func CPX(state: CPU, addressingMode: AddressingMode) -> Void {
-        let data = state.index_x - state.getOperandByte() //CMP is a subtract that doesn't affect memory
+        let mem = getOperandByteForAddressingMode(state: state, mode: addressingMode)
+        let t = state.index_x &- mem //CMP is a subtract that doesn't affect memory
         
-        state.updateZeroFlag(value: data)
-        state.updateNegativeFlag(value: data)
-        state.status_register.carry = (data >= 0)
+        state.status_register.zero = (t == 0) ? true : false
+        state.status_register.negative = (t & 0x80) == 0x80 ? true : false
+        state.status_register.carry = (state.index_x >= mem)
     }
     
     static func CPY(state: CPU, addressingMode: AddressingMode) -> Void {
-        let data = state.index_y - state.getOperandByte() //CMP is a subtract that doesn't affect memory
+        let mem = getOperandByteForAddressingMode(state: state, mode: addressingMode)
+        let t = state.index_y &- mem //CMP is a subtract that doesn't affect memory
         
-        state.updateZeroFlag(value: data)
-        state.updateNegativeFlag(value: data)
-        state.status_register.carry = (data >= 0)
+        state.status_register.zero = (t == 0) ? true : false
+        state.status_register.negative = (t & 0x80) == 0x80 ? true : false
+        state.status_register.carry = (state.index_y >= mem)
     }
     
     //Boolean operators
@@ -556,8 +559,7 @@ class Opcodes: NSObject {
     }
     
     static func PHA(state: CPU, addressingMode: AddressingMode) -> Void {
-        state.memoryInterface.writeByte(offset: state.stackPointerAsUInt16(), value: state.accumulator)
-        state.stack_pointer = state.stack_pointer &- 1
+        state.pushByte(data: state.accumulator)
     }
     
     static func PLA(state: CPU, addressingMode: AddressingMode) -> Void {
@@ -569,13 +571,17 @@ class Opcodes: NSObject {
     }
     
     static func PHP(state: CPU, addressingMode: AddressingMode) -> Void {
-        state.memoryInterface.writeByte(offset: state.stackPointerAsUInt16(), value: state.status_register.asByte())
+        var sr = state.status_register
+        sr.brk = true //PHP pushes B as true
+        
+        state.memoryInterface.writeByte(offset: state.stackPointerAsUInt16(), value: sr.asByte())
         state.stack_pointer = state.stack_pointer &- 1
     }
     
     static func PLP(state: CPU, addressingMode: AddressingMode) -> Void {
         state.stack_pointer = state.stack_pointer &+ 1
         state.status_register.fromByte(state: state.memoryInterface.readByte(offset: state.stackPointerAsUInt16()))
+        state.status_register.brk = false //PLP sets B to 0
     }
     
     static func BPL(state: CPU, addressingMode: AddressingMode) -> Void {
@@ -643,12 +649,14 @@ class Opcodes: NSObject {
     static func RTI(state: CPU, addressingMode: AddressingMode) -> Void {
         state.status_register.fromByte(state: state.popByte())
         state.program_counter = state.popWord()
+        state.status_register.brk = false //RTI sets B to 0
     }
     
     static func BRK(state: CPU, addressingMode: AddressingMode) -> Void {
-        state.status_register.brk = true
+        var sr = state.status_register
+        sr.brk = true //BRK pushes B as true
         state.pushWord(data: state.program_counter)
-        state.pushByte(data: state.status_register.asByte())
+        state.pushByte(data: sr.asByte())
         state.program_counter = state.memoryInterface.readWord(offset: 0xFFFE)
     }
     

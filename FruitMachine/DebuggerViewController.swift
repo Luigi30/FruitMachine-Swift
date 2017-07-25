@@ -46,7 +46,7 @@ class DebuggerViewController: NSViewController {
         text_CPU_SR.stringValue = String(format:"%02X", cpuInstance.stack_pointer)
         text_CPU_Flags.stringValue = String(cpuInstance.status_register.asString())
         
-        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 10000)
+        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 40000)
         highlightCurrentInstruction()
     }
     
@@ -60,10 +60,10 @@ class DebuggerViewController: NSViewController {
         cpuInstance.performReset()
         cpuInstance.program_counter = 0x400 //entry point for the test program
         updateCPUStatusFields()
-        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 10000)
+        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 40000)
         debuggerTableView.reloadData()
         
-        cpuInstance.breakpoints.append(0x0528)
+        cpuInstance.breakpoints.append(0x94B) //failing at 0x36AC - JSR test. some stack problem
         
         // Do any additional setup after loading the view.
     }
@@ -89,7 +89,7 @@ class DebuggerViewController: NSViewController {
         isRunning = true
         
         cpuInstance.cycles = 0
-        cpuInstance.cyclesInBatch = 1000
+        cpuInstance.cyclesInBatch = 50000
         
         while(!cpuInstance.checkOutOfCycles() && isRunning) {
             cpuStep()
@@ -126,7 +126,7 @@ class DebuggerViewController: NSViewController {
     @IBAction func btn_CPU_Restart(_ sender: Any) {
         cpuInstance.performReset()
         cpuInstance.program_counter = 0x400
-        debugConsolePrint(str: "CPU restarted from $0400", newline: true)
+        debugConsolePrint(str: "CPU restarted from \(cpuInstance.program_counter)", newline: true)
     }
     
     
@@ -158,7 +158,7 @@ extension DebuggerViewController: NSTableViewDelegate {
         let operation = disassembly[row]
         
         if(tableColumn == tableView.tableColumns[0]) {
-            cellText = String(format: "%04X", operation.address)
+            cellText = operation.getAddressString()
             cellIdentifier = CellIdentifiers.AddressCell
         }
         
@@ -166,50 +166,13 @@ extension DebuggerViewController: NSTableViewDelegate {
             if(operation.instruction == nil) {
                 cellText = "ILLEGAL"
             } else {
-                switch(operation.instruction!.addressingMode) {
-                case .accumulator:
-                    cellText = String(format: "%@ A", operation.instruction!.mnemonic)
-                case .immediate:
-                    cellText = String(format: "%@ #$%02X", operation.instruction!.mnemonic, operation.data[1])
-                case .implied:
-                    cellText = String(format: "%@", operation.instruction!.mnemonic)
-                case .relative:
-                    var destination: UInt16 = operation.address
-                    if((operation.data[1] & 0x80) == 0x80) {
-                        destination = destination + 1 - UInt16(~operation.data[1])
-                    } else {
-                        destination = destination + 2 + UInt16(operation.data[1])
-                    }
-                    cellText = String(format: "%@ #$%04X", operation.instruction!.mnemonic, destination)
-                case .absolute:
-                    cellText = String(format: "%@ $%02X%02X", operation.instruction!.mnemonic, operation.data[2], operation.data[1])
-                case .zeropage:
-                    cellText = String(format: "%@ $%02X", operation.instruction!.mnemonic, operation.data[1])
-                case .indirect:
-                    cellText = String(format: "%@ ($%02X%02X)", operation.instruction!.mnemonic, operation.data[2], operation.data[1])
-                case .absolute_indexed_x:
-                    cellText = String(format: "%@ $%02X%02X,X", operation.instruction!.mnemonic, operation.data[2], operation.data[1])
-                case .absolute_indexed_y:
-                    cellText = String(format: "%@ $%02X%02X,Y", operation.instruction!.mnemonic, operation.data[2], operation.data[1])
-                case .zeropage_indexed_x:
-                    cellText = String(format: "%@ $%02X,X", operation.instruction!.mnemonic, operation.data[1])
-                case .zeropage_indexed_y:
-                    cellText = String(format: "%@ $%02X,Y", operation.instruction!.mnemonic, operation.data[1])
-                case .indexed_indirect:
-                    cellText = String(format: "%@ ($%02X,X)", operation.instruction!.mnemonic, operation.data[1])
-                case .indirect_indexed:
-                    cellText = String(format: "%@ ($%02X),Y", operation.instruction!.mnemonic, operation.data[1])
-                }
+                cellText = operation.getInstructionString()
             }
             cellIdentifier = CellIdentifiers.DataCell
         }
         
         if(tableColumn == tableView.tableColumns[2]) {
-            cellText = ""
-            for byte in operation.data {
-                cellText += String(format: "%02X ", byte)
-            }
-            
+            cellText = operation.getDataString()            
             cellIdentifier = CellIdentifiers.BytesCell
         }
         

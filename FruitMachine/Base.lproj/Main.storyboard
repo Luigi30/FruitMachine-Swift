@@ -1035,7 +1035,6 @@
                         </subviews>
                     </view>
                     <connections>
-                        <outlet property="btn_CPU_restart" destination="ki7-hi-cZ9" id="PD7-dk-eNE"/>
                         <outlet property="debuggerTableView" destination="MuT-J3-VZ6" id="TMx-Do-29u"/>
                         <outlet property="text_CPU_A" destination="WjO-ue-iRg" id="kaI-Bh-Efs"/>
                         <outlet property="text_CPU_Flags" destination="ecN-Ge-1hE" id="dDw-IG-xNd"/>

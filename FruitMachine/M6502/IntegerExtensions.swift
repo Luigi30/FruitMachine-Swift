@@ -17,3 +17,9 @@ extension UInt16 {
         return String(format: "%04X", self)
     }
 }
+
+extension UInt8 {
+    func asHexString() -> String {
+        return String(format: "%02X", self)
+    }
+}

@@ -37,7 +37,7 @@ struct StatusRegister {
             str += "-"
         }
         
-        str += "-" //0x20 is unassigned
+        str += "|" //0x20 is unassigned
         
         if(brk) {
             str += "B"
@@ -59,6 +59,12 @@ struct StatusRegister {
         
         if(zero) {
             str += "Z"
+        } else {
+            str += "-"
+        }
+        
+        if(carry) {
+            str += "C"
         } else {
             str += "-"
         }
@@ -206,7 +212,7 @@ class CPU: NSObject {
             self.branch_was_taken = false
         }
         
-        if(operation!.mnemonic != "JMP") {
+        if(operation!.mnemonic != "JMP" && operation!.mnemonic != "JSR") {
             self.program_counter = UInt16(Int(self.program_counter) + operation!.bytes)
         }
     }

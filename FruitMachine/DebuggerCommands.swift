@@ -24,9 +24,18 @@ extension DebuggerViewController {
         {
             debugConsolePrint(str: DebuggerCommands.bpdel(state: cpuInstance, parameters: parameters), newline: true)
         }
-        else if(commandSplit[0] == "bpadd")
+        else if(commandSplit[0] == "bpset")
         {
-            debugConsolePrint(str: DebuggerCommands.bpadd(state: cpuInstance, parameters: parameters), newline: true)
+            debugConsolePrint(str: DebuggerCommands.bpset(state: cpuInstance, parameters: parameters), newline: true)
+        }
+        else if(commandSplit[0] == "bpclear")
+        {
+            debugConsolePrint(str: DebuggerCommands.bpclear(state: cpuInstance, parameters: parameters), newline: true)
+        }
+        
+        else if(commandSplit[0] == "memread")
+        {
+            debugConsolePrint(str: DebuggerCommands.memread(state: cpuInstance, parameters: parameters), newline: true)
         }
         else
         {
@@ -46,7 +55,7 @@ class DebuggerCommands: NSObject {
         return output
     }
     
-    static func bpadd(state: CPU, parameters: [String]) -> String {
+    static func bpset(state: CPU, parameters: [String]) -> String {
         var output = ""
         let val = UInt16(parameters[0])
         
@@ -78,7 +87,30 @@ class DebuggerCommands: NSObject {
         }
         else
         {
-            output += "Usage: bpdel <breakpoint-number>. Use bplist to find breakpoint numbers."
+            output += "Usage: bpdel <breakpoint-number>\r\n Use bplist to find breakpoint numbers."
+        }
+        
+        return output
+    }
+    
+    static func bpclear(state: CPU, parameters: [String]) -> String {
+        var output = ""
+        
+        state.breakpoints.removeAll()
+        output += "All breakpoints deleted."
+        
+        return output
+    }
+    
+    static func memread(state: CPU, parameters: [String]) -> String {
+        var output = ""
+        let val = UInt16(parameters[0], radix: 16)
+        
+        if(val != nil) {
+            output += "$\(val!.asHexString()) == $\(state.memoryInterface.readByte(offset: val!).asHexString())"
+        }
+        else {
+            output += "Usage: memread <hex-address>"
         }
         
         return output
