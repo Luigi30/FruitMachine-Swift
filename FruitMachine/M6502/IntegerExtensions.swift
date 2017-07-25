@@ -12,4 +12,8 @@ extension UInt16 {
     static func + (left: UInt16, right: UInt8) -> UInt16 {
         return left + UInt16(right)
     }
+    
+    func asHexString() -> String {
+        return String(format: "%04X", self)
+    }
 }

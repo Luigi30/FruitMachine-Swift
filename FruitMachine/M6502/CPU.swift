@@ -113,6 +113,7 @@ class CPU: NSObject {
     static var sharedInstance = CPU()
     
     var cycles: Int
+    var cyclesInBatch: Int
     
     var instruction_register: UInt8
     
@@ -128,8 +129,11 @@ class CPU: NSObject {
     
     var memoryInterface: MemoryInterface
     
+    var breakpoints: [UInt16]
+    
     override init() {
         cycles = 0
+        cyclesInBatch = 0
         
         instruction_register = 0
         
@@ -145,6 +149,8 @@ class CPU: NSObject {
         page_boundary_crossed = false
         //Branches incur a 1-cycle penalty if taken plus the page boundary penalty if necessary.
         branch_was_taken = false
+        
+        breakpoints = [UInt16]()
         
     }
     
@@ -202,6 +208,14 @@ class CPU: NSObject {
         
         if(operation!.mnemonic != "JMP") {
             self.program_counter = UInt16(Int(self.program_counter) + operation!.bytes)
+        }
+    }
+    
+    func checkOutOfCycles() -> Bool {
+        if(cycles > cyclesInBatch) {
+            return true
+        } else {
+            return false
         }
     }
     

@@ -29,7 +29,7 @@ extension CPU {
 
     func pushWord(data: UInt16) -> Void {
         let low = UInt8(data & 0x00FF)
-        let high = UInt8(data & 0xFF00)
+        let high = UInt8((data & 0xFF00) >> 8)
         
         pushByte(data: low)
         pushByte(data: high)
@@ -52,8 +52,18 @@ extension CPU {
             }
         }
 
-        program_counter = UInt16(Int(program_counter) + Int(distance))
+        if(distance > 0) {
+            program_counter = UInt16(Int(program_counter) + Int(distance))
+        } else {
+            program_counter = UInt16(Int(program_counter) + Int(distance))
+        }
+
         branch_was_taken = true
+        
+        if(distance == -2) {
+            print("Infinite loop at $\(program_counter.asHexString()). Halting execution.")
+            cyclesInBatch = 0
+        }
     }
 }
 
@@ -116,7 +126,7 @@ func getOperandWordForAddressingMode(state: CPU, mode: AddressingMode) -> UInt16
         let pointer: UInt16 = state.memoryInterface.readWord(offset: UInt16(zp)) + UInt16(state.index_y)
         return state.memoryInterface.readWord(offset: pointer)
     default:
-        print("Called getOperand: UInt16 on an instruction that expects a UInt8")
+        print("Called getOperand: UInt16 on an instruction that expects a UInt8. Address: \(state.program_counter.asHexString())")
         return 0
     }
     
@@ -231,7 +241,7 @@ class Opcodes: NSObject {
             return
         }
     }
-    
+
     static func STY(state: CPU, addressingMode: AddressingMode) -> Void {
         let address: UInt16
         
@@ -294,14 +304,14 @@ class Opcodes: NSObject {
     }
     
     static func DEY(state: CPU, addressingMode: AddressingMode) -> Void {
-        state.index_y = state.index_x &- 1
+        state.index_y = state.index_y &- 1
         
         state.updateZeroFlag(value: state.index_y);
         state.updateNegativeFlag(value: state.index_y);
     }
     
     static func INY(state: CPU, addressingMode: AddressingMode) -> Void {
-        state.index_y = state.index_x &+ 1
+        state.index_y = state.index_y &+ 1
         
         state.updateZeroFlag(value: state.index_y);
         state.updateNegativeFlag(value: state.index_y);

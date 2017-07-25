@@ -16,6 +16,9 @@ class DebuggerViewController: NSViewController {
     @IBOutlet weak var text_CPU_SR: NSTextField!
     @IBOutlet weak var text_CPU_Flags: NSTextField!
     
+    @IBOutlet weak var text_debugger_output: NSTextView!
+    @IBOutlet weak var text_debugger_input: NSTextField!
+    
     @IBOutlet weak var debuggerTableView: NSTableView!
     
     var cpuInstance = CPU.sharedInstance
@@ -43,10 +46,8 @@ class DebuggerViewController: NSViewController {
         text_CPU_SR.stringValue = String(format:"%02X", cpuInstance.stack_pointer)
         text_CPU_Flags.stringValue = String(cpuInstance.status_register.asString())
         
-        if(!highlightCurrentInstruction()) {
-            disassembly = cpuInstance.disassemble(fromAddress: cpuInstance.program_counter, length: 256)
-            highlightCurrentInstruction()
-        }
+        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 10000)
+        highlightCurrentInstruction()
     }
     
     override func viewDidLoad() {
@@ -59,8 +60,10 @@ class DebuggerViewController: NSViewController {
         cpuInstance.performReset()
         cpuInstance.program_counter = 0x400 //entry point for the test program
         updateCPUStatusFields()
-        disassembly = cpuInstance.disassemble(fromAddress: cpuInstance.program_counter, length: 10000)
+        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 10000)
         debuggerTableView.reloadData()
+        
+        cpuInstance.breakpoints.append(0x0528)
         
         // Do any additional setup after loading the view.
     }
@@ -75,7 +78,8 @@ class DebuggerViewController: NSViewController {
         do {
             try cpuInstance.executeNextInstruction()
         } catch CPUExceptions.invalidInstruction {
-            print("*** 6502 Exception: Invalid instruction 0xXX at 0xXXXX")
+            isRunning = false
+            
         } catch {
             print(error)
         }
@@ -83,19 +87,25 @@ class DebuggerViewController: NSViewController {
     
     func cpuRun() {
         isRunning = true
-        let queue = DispatchQueue(label: "com.luigithirty.m6502.instructions")
-        let main  = DispatchQueue.main
         
-        queue.async {
-            while(self.isRunning == true)
-            {
-                queue.asyncAfter(deadline: .now() + .seconds(1), execute: {
-                    self.cpuStep()
-                    main.sync {
-                        self.updateCPUStatusFields()
-                    }
-                })
+        cpuInstance.cycles = 0
+        cpuInstance.cyclesInBatch = 1000
+        
+        while(!cpuInstance.checkOutOfCycles() && isRunning) {
+            cpuStep()
+            
+            if (cpuInstance.breakpoints.contains(cpuInstance.program_counter)) {
+                isRunning = false
+                updateCPUStatusFields()
+                debugConsolePrint(str: "Breakpoint reached at $\(cpuInstance.program_counter.asHexString())", newline: true)
             }
+        }
+        
+    }
+    
+    func queueCPUStep(queue: DispatchQueue) {
+        queue.async {
+            self.cpuStep()
         }
     }
     
@@ -112,7 +122,25 @@ class DebuggerViewController: NSViewController {
     @IBAction func btn_CPURun(_ sender: Any) {
         cpuRun()
     }
+
+    @IBAction func btn_CPU_Restart(_ sender: Any) {
+        cpuInstance.performReset()
+        cpuInstance.program_counter = 0x400
+        debugConsolePrint(str: "CPU restarted from $0400", newline: true)
+    }
     
+    
+    @IBAction func debuggerInput_submit(_ sender: NSTextField) {
+        interpretCommand(command: sender.stringValue)
+        sender.stringValue = ""
+    }
+    
+    func debugConsolePrint(str: String, newline: Bool) {
+        text_debugger_output.appendText(line: str)
+        if(newline) {
+            text_debugger_output.appendText(line:"\r\n")
+        }
+    }
     
 }
 
@@ -150,7 +178,7 @@ extension DebuggerViewController: NSTableViewDelegate {
                     if((operation.data[1] & 0x80) == 0x80) {
                         destination = destination + 1 - UInt16(~operation.data[1])
                     } else {
-                        destination = destination + UInt16(operation.data[1])
+                        destination = destination + 2 + UInt16(operation.data[1])
                     }
                     cellText = String(format: "%@ #$%04X", operation.instruction!.mnemonic, destination)
                 case .absolute:
@@ -202,5 +230,23 @@ extension DebuggerViewController: NSTableViewDataSource {
     
     func getItem(atIndex: Int) -> Disassembly {
         return disassembly[atIndex]
+    }
+}
+
+extension NSTextView {
+    func appendText(line: String) {
+        let attrDict = [NSAttributedStringKey.font: NSFont.userFixedPitchFont(ofSize: 11)]
+        let astring = NSAttributedString(string: "\(line)", attributes: attrDict)
+        self.textStorage?.append(astring)
+        let loc = self.string.lengthOfBytes(using: String.Encoding.utf8)
+        
+        let range = NSRange(location: loc, length: 0)
+        self.scrollRangeToVisible(range)
+    }
+}
+
+func xlog(logView:NSTextView?, line:String) {
+    if let view = logView {
+        view.appendText(line: line)
     }
 }
