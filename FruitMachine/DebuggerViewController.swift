@@ -60,10 +60,10 @@ class DebuggerViewController: NSViewController {
         cpuInstance.performReset()
         cpuInstance.program_counter = 0x400 //entry point for the test program
         updateCPUStatusFields()
-        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 40000)
+        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 65000)
         debuggerTableView.reloadData()
         
-        cpuInstance.breakpoints.append(0x94B) //failing at 0x36AC - JSR test. some stack problem
+        cpuInstance.breakpoints.append(0x34E8) //failing at $34FD SBC test
         
         // Do any additional setup after loading the view.
     }

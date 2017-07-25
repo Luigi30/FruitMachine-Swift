@@ -57,14 +57,19 @@ class DebuggerCommands: NSObject {
     
     static func bpset(state: CPU, parameters: [String]) -> String {
         var output = ""
-        let val = UInt16(parameters[0])
-        
-        if(val != nil) {
-            state.breakpoints.append(val!)
-            output += "Breakpoint added at $\(val!.asHexString())."
+        if(parameters.count > 0) {
+            let val = UInt16(parameters[0], radix: 16)
+            
+            if(val != nil) {
+                state.breakpoints.append(val!)
+                output += "Breakpoint added at $\(val!.asHexString())."
+            }
+            else {
+                output += "Usage: bpset <address>"
+            }
         }
         else {
-            output += "Usage: bpadd <address>"
+            output += "Usage: bpset <address>"
         }
         
         return output

@@ -212,7 +212,7 @@ class CPU: NSObject {
             self.branch_was_taken = false
         }
         
-        if(operation!.mnemonic != "JMP" && operation!.mnemonic != "JSR") {
+        if(operation!.mnemonic != "JMP" && operation!.mnemonic != "JSR" && operation!.mnemonic != "BRK" && operation!.mnemonic != "RTI") {
             self.program_counter = UInt16(Int(self.program_counter) + operation!.bytes)
         }
     }
