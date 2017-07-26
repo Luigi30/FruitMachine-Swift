@@ -173,14 +173,14 @@ func hex2bcd(hex: UInt8) -> UInt8 {
 
 class Opcodes: NSObject {
     
-    static func _Add(state: CPU, operand: UInt8) {
+    static func _Add(state: CPU, operand: UInt8, isSubtract: Bool) {
         if(state.accumulator == 0xFF) {
             _ = 1
         }
         var t16: UInt16 = UInt16(state.accumulator &+ operand) + UInt16((state.status_register.carry ? UInt8(1) : UInt8(0)))
         let t8: UInt8 = UInt8(t16 & 0xFF)
         
-        state.status_register.overflow = (~(state.accumulator ^ operand) & (state.accumulator ^ t8) & 0x80) == 0x80
+        state.status_register.overflow = (state.accumulator & 0x80) != (t8 & 0x80)
         state.status_register.zero = (t8 == 0)
         state.status_register.negative = (t8 & 0x80) == 0x80
         
@@ -190,33 +190,30 @@ class Opcodes: NSObject {
             state.status_register.carry = (t16 > 255)
         }
         
-        state.accumulator = (UInt8(t16 & 0xFF))
+        state.accumulator = t8
     }
     
     static func ADC(state: CPU, addressingMode: AddressingMode) -> Void {
-        _Add(state: state, operand: UInt8(getOperandByteForAddressingMode(state: state, mode: addressingMode)))
-        /*
-        let operand = UInt8(getOperandByteForAddressingMode(state: state, mode: addressingMode))
-        
-        var t16: UInt16 = UInt16(state.accumulator &+ operand) + UInt16((state.status_register.carry ? UInt8(1) : UInt8(0)))
-        let t8: UInt8 = UInt8(t16 & 0xFF)
-        
-        state.status_register.overflow = (~(state.accumulator ^ operand) & (state.accumulator ^ t8) & 0x80) == 0x80
-        state.status_register.zero = (t8 == 0)
-        state.status_register.negative = (t8 & 0x80) == 0x80
-        
-        if(state.status_register.decimal) {
-            t16 = UInt16(hex2bcd(hex: state.accumulator) + hex2bcd(hex: operand) + (state.status_register.carry ? UInt8(1) : UInt8(0)))
-        } else {
-            state.status_register.carry = (t16 > 255)
-        }
-        
-        state.accumulator = (UInt8(t16 & 0xFF))
-         */
+        _Add(state: state, operand: UInt8(getOperandByteForAddressingMode(state: state, mode: addressingMode)), isSubtract: false)
     }
     
     static func SBC(state: CPU, addressingMode: AddressingMode) -> Void {
-        _Add(state: state, operand: ~(UInt8(getOperandByteForAddressingMode(state: state, mode: addressingMode))))
+        let operand = UInt8(getOperandByteForAddressingMode(state: state, mode: addressingMode))
+        var t16: UInt16 = UInt16(state.accumulator &- operand) - UInt16((state.status_register.carry ? UInt8(0) : UInt8(1)))
+        let t8: UInt8 = UInt8(t16 & 0xFF)
+        
+        state.cyclesInBatch = 0
+        state.status_register.overflow = (t8 >= 0x80 && t8 <= 0xFF)
+        
+        if(state.status_register.decimal == true) {
+            t16 = UInt16(hex2bcd(hex: state.accumulator) + hex2bcd(hex: operand) + (state.status_register.carry ? UInt8(1) : UInt8(0)))
+        } else {
+            state.status_register.carry = (t16 >> 8) == 0 ? false : true
+        }
+        
+        state.accumulator = t8
+        state.updateZeroFlag(value: t8)
+        state.updateNegativeFlag(value: t8)
     }
     
     static func LDA(state: CPU, addressingMode: AddressingMode) -> Void {
