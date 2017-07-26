@@ -12,15 +12,33 @@ class MemoryInterface: NSObject {
     
     fileprivate var memory: [UInt8]
     
+    var read_overrides: [ReadOverride]
+    var write_overrides: [WriteOverride]
+    
     override init() {
         memory = [UInt8](repeating: 0x00, count: 65536)
+        read_overrides = [ReadOverride]()
+        write_overrides = [WriteOverride]()
     }
     
     func readByte(offset: UInt16) -> UInt8 {
+        for override in read_overrides {
+            if case override.rangeStart ... override.rangeEnd = offset {
+                override.action(CPU.sharedInstance, nil)
+            }
+        }
+        
+        //No match.
         return memory[Int(offset)]
     }
     
     func writeByte(offset: UInt16, value: UInt8) {
+        for override in read_overrides {
+            if case override.rangeStart ... override.rangeEnd = offset {
+                override.action(CPU.sharedInstance, value)
+            }
+        }
+        
         memory[Int(offset)] = value
     }
     

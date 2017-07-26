@@ -46,7 +46,7 @@ class DebuggerViewController: NSViewController {
         text_CPU_SR.stringValue = String(format:"%02X", cpuInstance.stack_pointer)
         text_CPU_Flags.stringValue = String(cpuInstance.status_register.asString())
         
-        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 40000)
+        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 65535)
         highlightCurrentInstruction()
     }
     
@@ -60,7 +60,7 @@ class DebuggerViewController: NSViewController {
         cpuInstance.performReset()
         cpuInstance.program_counter = 0x400 //entry point for the test program
         updateCPUStatusFields()
-        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 65000)
+        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 65535)
         debuggerTableView.reloadData()
         
         cpuInstance.breakpoints.append(0x34E8) //failing at $34FD SBC test

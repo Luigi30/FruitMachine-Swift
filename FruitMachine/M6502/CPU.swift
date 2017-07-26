@@ -156,8 +156,7 @@ class CPU: NSObject {
         //Branches incur a 1-cycle penalty if taken plus the page boundary penalty if necessary.
         branch_was_taken = false
         
-        breakpoints = [UInt16]()
-        
+        breakpoints = [UInt16]()        
     }
     
     func getOperandByte() -> UInt8 {
