@@ -103,34 +103,6 @@ func getOperandByteForAddressingMode(state: CPU, mode: AddressingMode) -> UInt8 
     }
 }
 
-func getOperandWordForAddressingMode(state: CPU, mode: AddressingMode) -> UInt16 {
-    //Function that will provide a 16-bit operand to instructions.
-    //All instructions have 2 data bytes, little-endian.
-    
-    switch(mode) {
-    case .absolute:
-        return state.getOperandWord()
-    case .absolute_indexed_x:
-        return state.getOperandWord() + state.index_x
-    case .absolute_indexed_y:
-        return state.getOperandWord() + state.index_y
-    case .indirect:
-        return state.memoryInterface.readWord(offset: state.getOperandWord())
-    case .indexed_indirect:
-        let zp: UInt8 = state.memoryInterface.readByte(offset: UInt16(state.program_counter + 1))
-        //read from (ZP)
-        let pointer: UInt16 = state.memoryInterface.readWord(offset: UInt16(zp &+ state.index_x))
-        return pointer
-    case .indirect_indexed:
-        let zp: UInt8 = state.memoryInterface.readByte(offset: UInt16(state.program_counter + 1))
-        let pointer: UInt16 = state.memoryInterface.readWord(offset: UInt16(zp)) &+ UInt16(state.index_y)
-        return pointer
-    default:
-        print("Called getOperand: UInt16 on an instruction that expects a UInt8. Address: \(state.program_counter.asHexString())")
-        return 0
-    }
-}
-
 func getOperandAddressForAddressingMode(state: CPU, mode: AddressingMode) -> UInt16 {
     //Function that will provide a 16-bit operand to instructions.
     //All instructions have 2 data bytes, little-endian.
@@ -139,9 +111,9 @@ func getOperandAddressForAddressingMode(state: CPU, mode: AddressingMode) -> UIn
     case .zeropage:
         return UInt16(0x0000 + (state.memoryInterface.readByte(offset: state.program_counter + 1)))
     case .zeropage_indexed_x:
-        return UInt16(0x0000 + (state.memoryInterface.readByte(offset: state.program_counter + 1) + state.index_x))
+        return UInt16(0x0000 + (state.memoryInterface.readByte(offset: state.program_counter + 1) &+ state.index_x))
     case .zeropage_indexed_y:
-        return UInt16(0x0000 + (state.memoryInterface.readByte(offset: state.program_counter + 1) + state.index_y))
+        return UInt16(0x0000 + (state.memoryInterface.readByte(offset: state.program_counter + 1) &+ state.index_y))
     case .absolute:
         return state.getOperandWord()
     case .absolute_indexed_x:
@@ -157,8 +129,10 @@ func getOperandAddressForAddressingMode(state: CPU, mode: AddressingMode) -> UIn
         let zp: UInt8 = state.memoryInterface.readByte(offset: UInt16(state.program_counter + 1))
         let pointer: UInt16 = state.memoryInterface.readWord(offset: UInt16(zp)) &+ UInt16(state.index_y)
         return pointer
+    case .indirect:
+        return state.memoryInterface.readWord(offset: state.getOperandWord())
     default:
-        print("Called getOperand: UInt16 on an instruction that expects a UInt8. Address: \(state.program_counter.asHexString())")
+        print("Called getOperandAddressForAddressingMode: UInt16 with an invalid addressing mode. Address: \(state.program_counter.asHexString())")
         return 0
     }
 }
@@ -238,71 +212,18 @@ class Opcodes: NSObject {
     }
     
     static func STA(state: CPU, addressingMode: AddressingMode) -> Void {
-        let address: UInt16
-        
-        if(addressingMode == .zeropage) {
-            address = AddressConversions.zeroPageAsUInt16(address: state.getOperandByte())
-            state.memoryInterface.writeByte(offset: address, value: state.accumulator)
-        }
-        else if(addressingMode == .zeropage_indexed_x) {
-            address = AddressConversions.zeroPageAsUInt16(address: state.getOperandByte() &+ state.index_x)
-            state.memoryInterface.writeByte(offset: address, value: state.accumulator)
-        }
-        else if (addressingMode == .absolute || addressingMode == .absolute_indexed_x || addressingMode == .absolute_indexed_y) {
-            address = getOperandWordForAddressingMode(state: state, mode: addressingMode)
-            state.memoryInterface.writeByte(offset: address, value: state.accumulator)
-        }
-        else if(addressingMode == .indexed_indirect || addressingMode == .indirect_indexed) {
-            address = getOperandWordForAddressingMode(state: state, mode: addressingMode)
-            state.memoryInterface.writeByte(offset: address, value: state.accumulator)
-        }
-        else {
-            print("Illegal addressing mode for STA")
-            return
-        }
+        let address: UInt16 = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
+        state.memoryInterface.writeByte(offset: address, value: state.accumulator)
     }
     
     static func STX(state: CPU, addressingMode: AddressingMode) -> Void {
-        let address: UInt16
-        
-        if(addressingMode == .zeropage) {
-            address = AddressConversions.zeroPageAsUInt16(address: state.getOperandByte())
-            state.memoryInterface.writeByte(offset: address, value: state.index_x)
-        }
-        else if(addressingMode == .zeropage_indexed_y) {
-            address = AddressConversions.zeroPageAsUInt16(address: state.getOperandByte() &+ state.index_y)
-            state.memoryInterface.writeByte(offset: address, value: state.index_x)
-        }
-        else if (addressingMode == .absolute) {
-            address = state.getOperandWord()
-            state.memoryInterface.writeByte(offset: address, value: state.index_x)
-        }
-        else {
-            print("Illegal addressing mode for STX")
-            return
-        }
+        let address: UInt16 = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
+        state.memoryInterface.writeByte(offset: address, value: state.index_x)
     }
 
     static func STY(state: CPU, addressingMode: AddressingMode) -> Void {
-        let address: UInt16
-        
-        if(addressingMode == .zeropage) {
-            address = AddressConversions.zeroPageAsUInt16(address: state.getOperandByte())
-            state.memoryInterface.writeByte(offset: address, value: state.index_y)
-            
-        }
-        else if(addressingMode == .zeropage_indexed_x) {
-            address = AddressConversions.zeroPageAsUInt16(address: state.getOperandByte() &+ state.index_x)
-            state.memoryInterface.writeByte(offset: address, value: state.index_y)
-        }
-        else if (addressingMode == .absolute) {
-            address = state.getOperandWord()
-            state.memoryInterface.writeByte(offset: address, value: state.index_y)
-        }
-        else {
-            print("Illegal addressing mode for STY")
-            return
-        }
+        let address: UInt16 = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
+        state.memoryInterface.writeByte(offset: address, value: state.index_y)
     }
     
     //Register instructions
@@ -363,22 +284,9 @@ class Opcodes: NSObject {
     }
     
     static func INC(state: CPU, addressingMode: AddressingMode) -> Void {
-        let address: UInt16
-        var val: UInt8
-        
-        if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x) {
-            address = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
-            val = state.memoryInterface.readByte(offset: address)
-        }
-        else if (addressingMode == .absolute || addressingMode == .absolute_indexed_x) {
-            address = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
-            val = state.memoryInterface.readByte(offset: address)
-        }
-        else {
-            print("Illegal addressing mode for INC")
-            return
-        }
-        
+        let address: UInt16 = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
+        var val: UInt8 = state.memoryInterface.readByte(offset: address)
+
         val = val &+ 1
         state.memoryInterface.writeByte(offset: address, value: val)
             
@@ -387,21 +295,8 @@ class Opcodes: NSObject {
     }
     
     static func DEC(state: CPU, addressingMode: AddressingMode) -> Void {
-        let address: UInt16
-        var val: UInt8
-        
-        if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x) {
-            address = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
-            val = state.memoryInterface.readByte(offset: address)
-        }
-        else if (addressingMode == .absolute || addressingMode == .absolute_indexed_x) {
-            address = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
-            val = state.memoryInterface.readByte(offset: address)
-        }
-        else {
-            print("Illegal addressing mode for DEC")
-            return
-        }
+        let address: UInt16 = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
+        var val: UInt8 = state.memoryInterface.readByte(offset: address)
         
         val = val &- 1
         state.memoryInterface.writeByte(offset: address, value: val)
@@ -415,8 +310,8 @@ class Opcodes: NSObject {
         let mem = getOperandByteForAddressingMode(state: state, mode: addressingMode)
         let t = state.accumulator &- mem //CMP is a subtract that doesn't affect memory
         
-        state.status_register.zero = (t == 0) ? true : false
-        state.status_register.negative = (t & 0x80) == 0x80 ? true : false
+        state.updateZeroFlag(value: t)
+        state.updateNegativeFlag(value: t)
         state.status_register.carry = (state.accumulator >= mem)
     }
     
@@ -424,8 +319,8 @@ class Opcodes: NSObject {
         let mem = getOperandByteForAddressingMode(state: state, mode: addressingMode)
         let t = state.index_x &- mem //CMP is a subtract that doesn't affect memory
         
-        state.status_register.zero = (t == 0) ? true : false
-        state.status_register.negative = (t & 0x80) == 0x80 ? true : false
+        state.updateZeroFlag(value: t)
+        state.updateNegativeFlag(value: t)
         state.status_register.carry = (state.index_x >= mem)
     }
     
@@ -433,8 +328,8 @@ class Opcodes: NSObject {
         let mem = getOperandByteForAddressingMode(state: state, mode: addressingMode)
         let t = state.index_y &- mem //CMP is a subtract that doesn't affect memory
         
-        state.status_register.zero = (t == 0) ? true : false
-        state.status_register.negative = (t & 0x80) == 0x80 ? true : false
+        state.updateZeroFlag(value: t)
+        state.updateNegativeFlag(value: t)
         state.status_register.carry = (state.index_y >= mem)
     }
     
@@ -465,8 +360,8 @@ class Opcodes: NSObject {
         let operand = getOperandByteForAddressingMode(state: state, mode: addressingMode)
         let data = state.accumulator & operand
         
-        state.status_register.zero = data == 0 ? true : false
-        state.status_register.negative = (operand & 0x80) == 0x80 ? true : false
+        state.updateZeroFlag(value: data)
+        state.updateNegativeFlag(value: operand)
         state.status_register.overflow = (operand & UInt8(0x40)) == 0x40
     }
     
@@ -480,18 +375,9 @@ class Opcodes: NSObject {
             state.updateZeroFlag(value: state.accumulator)
             state.updateNegativeFlag(value: state.accumulator)
         }
-        else if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x)
+        else
         {
             let address = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
-            var data = state.memoryInterface.readByte(offset: address)
-            state.status_register.carry = (data & 0x80) == 0x80
-            data = (data &<< 1) & 0xFE
-            state.memoryInterface.writeByte(offset: address, value: data)
-            state.updateZeroFlag(value: data)
-            state.updateNegativeFlag(value: data)
-        }
-        else {
-            let address = getOperandWordForAddressingMode(state: state, mode: addressingMode)
             var data = state.memoryInterface.readByte(offset: address)
             state.status_register.carry = (data & 0x80) == 0x80
             data = (data &<< 1) & 0xFE
@@ -508,25 +394,18 @@ class Opcodes: NSObject {
             operand = state.accumulator
             state.status_register.carry = ((operand & 0x01) == 0x01)
             state.accumulator = (state.accumulator &>> 1) & 0x7F
+            
             state.updateZeroFlag(value: state.accumulator)
-            state.status_register.negative = false
+            state.updateNegativeFlag(value: state.accumulator)
         }
-        else if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x)
+        else
         {
             let address = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
             var data = state.memoryInterface.readByte(offset: address)
             state.status_register.carry = (data & 0x01) == 0x01
             data = (data &>> 1) & 0x7F
             state.memoryInterface.writeByte(offset: address, value: data)
-            state.updateZeroFlag(value: data)
-            state.updateNegativeFlag(value: data)
-        }
-        else {
-            let address = getOperandWordForAddressingMode(state: state, mode: addressingMode)
-            var data = state.memoryInterface.readByte(offset: address)
-            state.status_register.carry = (data & 0x01) == 0x01
-            data = (data &>> 1) & 0x7F
-            state.memoryInterface.writeByte(offset: address, value: data)
+            
             state.updateZeroFlag(value: data)
             state.updateNegativeFlag(value: data)
         }
@@ -544,7 +423,8 @@ class Opcodes: NSObject {
             state.status_register.carry = ((operand & 0x80) == 0x80)
             state.status_register.zero = state.accumulator == 0 ? true : false
             state.status_register.negative = (state.accumulator & 0x80) == 0x80
-        } else if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x)
+        }
+        else
         {
             let address = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
             var data = state.memoryInterface.readByte(offset: address)
@@ -555,22 +435,8 @@ class Opcodes: NSObject {
             state.memoryInterface.writeByte(offset: address, value: data)
             
             state.status_register.carry = t
-            state.status_register.zero = data == 0 ? true : false
-            state.status_register.negative = (data & 0x80) == 0x80
-        }
-        else
-        {
-            let address = getOperandWordForAddressingMode(state: state, mode: addressingMode)
-            var data = state.memoryInterface.readByte(offset: address)
-            let t = (data & 0x80) == 0x80 ? true : false
-            
-            data = (data &<< 1) & 0xFE
-            data = data | (state.status_register.carry ? 0x01 : 0x00)
-            state.memoryInterface.writeByte(offset: address, value: data)
-            
-            state.status_register.carry = t
-            state.status_register.zero = data == 0 ? true : false
-            state.status_register.negative = (data & 0x80) == 0x80
+            state.updateZeroFlag(value: data)
+            state.updateNegativeFlag(value: data)
         }
     }
     
@@ -587,7 +453,7 @@ class Opcodes: NSObject {
             state.status_register.zero = state.accumulator == 0 ? true : false
             state.status_register.negative = (state.accumulator & 0x80) == 0x80
         }
-        else if(addressingMode == .zeropage || addressingMode == .zeropage_indexed_x)
+        else
         {
             let address = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
             var data = state.memoryInterface.readByte(offset: address)
@@ -598,22 +464,8 @@ class Opcodes: NSObject {
             state.memoryInterface.writeByte(offset: address, value: data)
             
             state.status_register.carry = t
-            state.status_register.zero = data == 0 ? true : false
-            state.status_register.negative = (data & 0x80) == 0x80
-        }
-        else
-        {
-            let address = getOperandWordForAddressingMode(state: state, mode: addressingMode)
-            var data = state.memoryInterface.readByte(offset: address)
-            let t = (data & 0x01) == 0x01 ? true : false
-            
-            data = (data &>> 1) & 0x7F
-            data = data | (state.status_register.carry ? 0x80 : 0x00)
-            state.memoryInterface.writeByte(offset: address, value: data)
-
-            state.status_register.carry = t
-            state.status_register.zero = data == 0 ? true : false
-            state.status_register.negative = (data & 0x80) == 0x80
+            state.updateZeroFlag(value: data)
+            state.updateNegativeFlag(value: data)
         }
     }
     
@@ -734,7 +586,7 @@ class Opcodes: NSObject {
     
     //Misc
     static func JMP(state: CPU, addressingMode: AddressingMode) -> Void {
-        state.program_counter = getOperandWordForAddressingMode(state: state, mode: addressingMode)
+        state.program_counter = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
     }
     
     static func JSR(state: CPU, addressingMode: AddressingMode) -> Void {
