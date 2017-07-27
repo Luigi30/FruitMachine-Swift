@@ -116,7 +116,9 @@ class CPU: NSObject {
     let RESET_VECTOR: UInt16    = 0xFFFC
     let IRQ_VECTOR: UInt16      = 0xFFFE
     
-    static var sharedInstance = CPU()
+    static let sharedInstance = CPU()
+    
+    var isRunning: Bool
     
     var cycles: Int
     var cyclesInBatch: Int
@@ -138,6 +140,8 @@ class CPU: NSObject {
     var breakpoints: [UInt16]
     
     override init() {
+        isRunning = false
+        
         cycles = 0
         cyclesInBatch = 0
         
@@ -216,7 +220,7 @@ class CPU: NSObject {
         }
     }
     
-    func checkOutOfCycles() -> Bool {
+    func outOfCycles() -> Bool {
         if(cycles > cyclesInBatch) {
             return true
         } else {
@@ -236,6 +240,30 @@ class CPU: NSObject {
     
     func updateZeroFlag(value: UInt8) {
         status_register.zero = (value == 0)
+    }
+    
+    /* Running */
+    func cpuStep() {
+        do {
+            try executeNextInstruction()
+        } catch CPUExceptions.invalidInstruction {
+            isRunning = false
+        } catch {
+            print(error)
+        }
+    }
+    
+    func runCyclesBatch() {
+        isRunning = true
+        
+        while(!outOfCycles() && isRunning) {
+            cpuStep()
+            
+            if (breakpoints.contains(program_counter)) {
+                isRunning = false
+            }
+            
+        }
     }
     
 }

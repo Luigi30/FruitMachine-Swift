@@ -74,7 +74,7 @@ extension CPU {
         var disassembly: [Disassembly] = [Disassembly]()
         
         var currentAddress: UInt16 = fromAddress
-        let endAddress: UInt16 = fromAddress + length
+        let endAddress: UInt16 = max(fromAddress &+ length, 0xFFFF)
         
         while(currentAddress < endAddress) {
             let instruction = memoryInterface.readByte(offset: currentAddress)

@@ -46,7 +46,7 @@ class DebuggerViewController: NSViewController {
         text_CPU_SR.stringValue = String(format:"%02X", cpuInstance.stack_pointer)
         text_CPU_Flags.stringValue = String(cpuInstance.status_register.asString())
         
-        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 65535)
+        disassembly = cpuInstance.disassemble(fromAddress: CPU.sharedInstance.program_counter, length: 256)
         highlightCurrentInstruction()
     }
     
@@ -56,14 +56,9 @@ class DebuggerViewController: NSViewController {
         debuggerTableView.delegate = self
         debuggerTableView.dataSource = self
 
-        cpuInstance.memoryInterface.loadBinary(path: "/Users/luigi/6502/test.bin")
-        cpuInstance.performReset()
-        cpuInstance.program_counter = 0x400 //entry point for the test program
         updateCPUStatusFields()
-        disassembly = cpuInstance.disassemble(fromAddress: 0, length: 65535)
+        disassembly = cpuInstance.disassemble(fromAddress: CPU.sharedInstance.program_counter, length: 256)
         debuggerTableView.reloadData()
-        
-        cpuInstance.breakpoints.append(0x34E8) //failing at $34FD SBC test
         
         // Do any additional setup after loading the view.
     }
@@ -73,26 +68,15 @@ class DebuggerViewController: NSViewController {
         // Update the view, if already loaded.
         }
     }
-
-    func cpuStep() {
-        do {
-            try cpuInstance.executeNextInstruction()
-        } catch CPUExceptions.invalidInstruction {
-            isRunning = false
-            
-        } catch {
-            print(error)
-        }
-    }
     
-    func cpuRun() {
+    func debugRun() {
         isRunning = true
         
         cpuInstance.cycles = 0
         cpuInstance.cyclesInBatch = 1000000
         
-        while(!cpuInstance.checkOutOfCycles() && isRunning) {
-            cpuStep()
+        while(!cpuInstance.outOfCycles() && isRunning) {
+            cpuInstance.cpuStep()
             
             if (cpuInstance.breakpoints.contains(cpuInstance.program_counter)) {
                 isRunning = false
@@ -105,12 +89,12 @@ class DebuggerViewController: NSViewController {
     
     func queueCPUStep(queue: DispatchQueue) {
         queue.async {
-            self.cpuStep()
+            self.cpuInstance.cpuStep()
         }
     }
     
     @IBAction func btn_CPUStep(_ sender: Any) {
-        cpuStep()
+        cpuInstance.cpuStep()
         updateCPUStatusFields()
     }
 
@@ -120,7 +104,7 @@ class DebuggerViewController: NSViewController {
     }
     
     @IBAction func btn_CPURun(_ sender: Any) {
-        cpuRun()
+        debugRun()
     }
 
     @IBAction func btn_CPU_Restart(_ sender: Any) {
@@ -155,6 +139,11 @@ extension DebuggerViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         var cellText: String = ""
         var cellIdentifier: String = ""
+        
+        if(row >= disassembly.count) {
+            return nil //no cell
+        }
+        
         let operation = disassembly[row]
         
         if(tableColumn == tableView.tableColumns[0]) {

@@ -629,6 +629,17 @@
                                                 <action selector="toggleFullScreen:" target="Ady-hI-5gd" id="dU3-MA-1Rq"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Lvb-d5-deQ"/>
+                                        <menuItem title="Scale 1x" keyEquivalent="1" id="nfL-VA-aet">
+                                            <connections>
+                                                <action selector="view_scale_1x:" target="Voe-Tx-rLC" id="QA5-yc-5zm"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Scale 2x" keyEquivalent="2" id="FYi-S6-fCx">
+                                            <connections>
+                                                <action selector="view_scale_2x:" target="Voe-Tx-rLC" id="rxd-VR-X3F"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>

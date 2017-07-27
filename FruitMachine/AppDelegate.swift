@@ -10,6 +10,7 @@ import Cocoa
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
+    let AppleScreenNotifications = Notification.Name("com.luigithirty.appleScreenNotifications")
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
@@ -19,5 +20,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Insert code here to tear down your application
     }
 
+    @IBAction func view_scale_1x(_ sender: Any) {
+        NotificationCenter.default.post(Notification(name: AppleScreenNotifications, object: "scaleFactor", userInfo: ["scaleFactor": 1]))
+    }
+    
+    @IBAction func view_scale_2x(_ sender: Any) {
+        NotificationCenter.default.post(Notification(name: AppleScreenNotifications, object: "scaleFactor", userInfo: ["scaleFactor": 2]))
+    }
 }
 

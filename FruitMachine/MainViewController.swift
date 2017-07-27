@@ -10,36 +10,23 @@ import Cocoa
 import CoreGraphics
 
 class MainViewController: NSViewController {
-    var windowController: NSWindowController?
-    var debuggerViewController = DebuggerViewController()
-    let emuScreenLayer = CALayer()
-
-    let cg = CharacterGenerator(romPath: "/Users/luigi/apple1/apple1.vid");
-    var appleScreenView: AppleScreenView = AppleScreenView(frame: NSMakeRect(0, 0, 400, 384))
-    let appleScreenViewDelegate = AppleScreenViewDelegate()
     
-    override func viewDidLoad() {
+    let computer = AppleI.sharedInstance
+    
+    var debuggerWindowController: DebuggerWindowController!
+    
+    override func viewDidLoad() {        
         super.viewDidLoad()
+
+        let debuggerStoryboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Debugger"), bundle: nil)
+        debuggerWindowController = debuggerStoryboard.instantiateInitialController() as! DebuggerWindowController
+        debuggerWindowController.showWindow(self)
+        
         // Do view setup here.
-        self.view.addSubview(appleScreenView)
+        self.view.addSubview(computer.emulatorView)
+        computer.emulatorView.display()
         
-        appleScreenView.wantsLayer = true
-        
-        emuScreenLayer.delegate = appleScreenViewDelegate
-        emuScreenLayer.frame = appleScreenView.bounds
-        emuScreenLayer.setNeedsDisplay()
-        appleScreenView.layer?.addSublayer(emuScreenLayer)
-        
-        appleScreenViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: 0x00), pixelPosition: appleScreenViewDelegate.getPixelOffset(charCellX: 0, charCellY: 0))
-        appleScreenViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: 0x01), pixelPosition: appleScreenViewDelegate.getPixelOffset(charCellX: 1, charCellY: 1))
-        appleScreenViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: 0x02), pixelPosition: appleScreenViewDelegate.getPixelOffset(charCellX: 2, charCellY: 2))
-        appleScreenViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: 0x03), pixelPosition: appleScreenViewDelegate.getPixelOffset(charCellX: 3, charCellY: 3))
-        appleScreenViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: 0x04), pixelPosition: appleScreenViewDelegate.getPixelOffset(charCellX: 4, charCellY: 4))
-        appleScreenViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: 0x05), pixelPosition: appleScreenViewDelegate.getPixelOffset(charCellX: 5, charCellY: 5))
-        appleScreenViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: 0x06), pixelPosition: appleScreenViewDelegate.getPixelOffset(charCellX: 6, charCellY: 6))
-        appleScreenViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: 0x07), pixelPosition: appleScreenViewDelegate.getPixelOffset(charCellX: 7, charCellY: 7))
-        appleScreenViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: 0x08), pixelPosition: appleScreenViewDelegate.getPixelOffset(charCellX: 8, charCellY: 8))
-        
-        appleScreenView.display()
+        computer.runFrame()
     }
+
 }

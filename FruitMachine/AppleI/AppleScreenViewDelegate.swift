@@ -52,13 +52,17 @@ class AppleScreenViewDelegate: NSObject, CALayerDelegate {
         
         for charY in 0..<CharacterGenerator.CHAR_HEIGHT {
             for charX in 0..<CharacterGenerator.CHAR_WIDTH {
-                indexedPixels[baseOffset + (PIXEL_WIDTH * charY) + CharacterGenerator.CHAR_WIDTH - charX] = (charPixels[charY] & UInt8(1 << charX)) > 0 ? 1 : 0
+                indexedPixels[baseOffset + (PIXEL_WIDTH * charY) + CharacterGenerator.CHAR_WIDTH - charX - 1] = (charPixels[charY] & UInt8(1 << charX)) > 0 ? 1 : 0
             }
         }
     }
     
     func getPixelOffset(charCellX: Int, charCellY: Int) -> CGPoint {
         return CGPoint(x: charCellX * 5, y: charCellY * 8)
+    }
+    
+    func getPixelOffset(charCellIndex: Int) -> CGPoint {
+        return getPixelOffset(charCellX: charCellIndex % Terminal.CELLS_WIDTH, charCellY: charCellIndex / Terminal.CELLS_WIDTH)
     }
 
     /* Draw the screen. */
@@ -70,8 +74,8 @@ class AppleScreenViewDelegate: NSObject, CALayerDelegate {
         let pixelProvider = CGDataProvider(data: NSData(bytes: &pixels, length: pixels.count * MemoryLayout<PixelData>.size))
         
         let renderedImage = CGImage(width: PIXEL_WIDTH, height: PIXEL_HEIGHT, bitsPerComponent: Int(bitsPerComponent), bitsPerPixel: Int(bitsPerPixel), bytesPerRow: PIXEL_WIDTH * Int(MemoryLayout<PixelData>.size), space: colorSpace, bitmapInfo: bitmapInfo, provider: pixelProvider!, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+        
         ctx.draw(renderedImage!, in: bounds)
-        //draw stuff here
     }
     
 }

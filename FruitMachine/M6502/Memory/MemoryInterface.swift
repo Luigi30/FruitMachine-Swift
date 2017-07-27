@@ -21,10 +21,13 @@ class MemoryInterface: NSObject {
         write_overrides = [WriteOverride]()
     }
     
-    func readByte(offset: UInt16) -> UInt8 {
-        for override in read_overrides {
-            if case override.rangeStart ... override.rangeEnd = offset {
-                override.action(CPU.sharedInstance, nil)
+    func readByte(offset: UInt16, bypassOverrides: Bool = false) -> UInt8 {
+        
+        if(!bypassOverrides) {
+            for override in read_overrides {
+                if case override.rangeStart ... override.rangeEnd = offset {
+                    override.action(CPU.sharedInstance, nil)
+                }
             }
         }
         
@@ -32,10 +35,16 @@ class MemoryInterface: NSObject {
         return memory[Int(offset)]
     }
     
-    func writeByte(offset: UInt16, value: UInt8) {
-        for override in read_overrides {
-            if case override.rangeStart ... override.rangeEnd = offset {
-                override.action(CPU.sharedInstance, value)
+    func writeByte(offset: UInt16, value: UInt8, bypassOverrides: Bool = false) {
+        
+        if(!bypassOverrides) {
+            for override in write_overrides {
+                if case override.rangeStart ... override.rangeEnd = offset {
+                    override.action(CPU.sharedInstance, value)
+                    if(!override.writeValue) {
+                        return
+                    }
+                }
             }
         }
         
@@ -48,10 +57,10 @@ class MemoryInterface: NSObject {
         return (UInt16(high) << 8) | UInt16(low)
     }
     
-    func loadBinary(path: String) {
+    func loadBinary(path: String, offset: UInt16) {
         do {
             let fileContent: NSData = try NSData(contentsOfFile: path)
-            fileContent.getBytes(&memory, range: NSRange(location: 0, length: 65536))
+            fileContent.getBytes(&memory[Int(offset)], range: NSRange(location: 0, length: 256))
         } catch {
             print(error)
         }

@@ -7,10 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2A2126841F2A9FA300E43DC1 /* DebuggerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2126831F2A9FA300E43DC1 /* DebuggerWindowController.swift */; };
 		2A22EBFB1F21A7A700A36A61 /* IntegerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */; };
 		2A5BC5191F29A28D008C03BE /* AppleScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5BC5181F29A28D008C03BE /* AppleScreenView.swift */; };
 		2A5BC51C1F29A2EB008C03BE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A5BC51B1F29A2EB008C03BE /* QuartzCore.framework */; };
 		2A5BC51E1F29A4C3008C03BE /* AppleScreenViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5BC51D1F29A4C3008C03BE /* AppleScreenViewDelegate.swift */; };
+		2AA8B5F81F2A8889002B350F /* AppleI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA8B5F71F2A8889002B350F /* AppleI.swift */; };
+		2AA8B5FC1F2A8EAD002B350F /* Terminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA8B5FB1F2A8EAD002B350F /* Terminal.swift */; };
+		2AA8B5FE1F2A942C002B350F /* PIAOverrides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA8B5FD1F2A942C002B350F /* PIAOverrides.swift */; };
 		2AD458CE1F205EB700F05121 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458CD1F205EB700F05121 /* AppDelegate.swift */; };
 		2AD458D01F205EB700F05121 /* DebuggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458CF1F205EB700F05121 /* DebuggerViewController.swift */; };
 		2AD458D21F205EB700F05121 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2AD458D11F205EB700F05121 /* Assets.xcassets */; };
@@ -31,10 +35,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2A2126831F2A9FA300E43DC1 /* DebuggerWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerWindowController.swift; sourceTree = "<group>"; };
 		2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerExtensions.swift; sourceTree = "<group>"; };
 		2A5BC5181F29A28D008C03BE /* AppleScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleScreenView.swift; sourceTree = "<group>"; };
 		2A5BC51B1F29A2EB008C03BE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2A5BC51D1F29A4C3008C03BE /* AppleScreenViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleScreenViewDelegate.swift; sourceTree = "<group>"; };
+		2AA8B5F71F2A8889002B350F /* AppleI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleI.swift; sourceTree = "<group>"; };
+		2AA8B5FB1F2A8EAD002B350F /* Terminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terminal.swift; sourceTree = "<group>"; };
+		2AA8B5FD1F2A942C002B350F /* PIAOverrides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIAOverrides.swift; sourceTree = "<group>"; };
 		2AD458CA1F205EB700F05121 /* FruitMachine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FruitMachine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2AD458CD1F205EB700F05121 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2AD458CF1F205EB700F05121 /* DebuggerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerViewController.swift; sourceTree = "<group>"; };
@@ -77,6 +85,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		2AA8B5F61F2A8844002B350F /* AppleI */ = {
+			isa = PBXGroup;
+			children = (
+				2AE42E411F28663600C4900E /* Video */,
+				2A5BC5181F29A28D008C03BE /* AppleScreenView.swift */,
+				2A5BC51D1F29A4C3008C03BE /* AppleScreenViewDelegate.swift */,
+				2AA8B5F71F2A8889002B350F /* AppleI.swift */,
+			);
+			path = AppleI;
+			sourceTree = "<group>";
+		};
 		2AD458C11F205EB700F05121 = {
 			isa = PBXGroup;
 			children = (
@@ -97,11 +116,9 @@
 		2AD458CC1F205EB700F05121 /* FruitMachine */ = {
 			isa = PBXGroup;
 			children = (
+				2AA8B5F61F2A8844002B350F /* AppleI */,
 				2AD458DD1F205F0D00F05121 /* M6502 */,
-				2AE42E411F28663600C4900E /* Video */,
 				2AD458CD1F205EB700F05121 /* AppDelegate.swift */,
-				2A5BC5181F29A28D008C03BE /* AppleScreenView.swift */,
-				2A5BC51D1F29A4C3008C03BE /* AppleScreenViewDelegate.swift */,
 				2AE42E381F28628300C4900E /* MainViewController.swift */,
 				2AE42E3F1F28638100C4900E /* FruitMachine.storyboard */,
 				2AD458D11F205EB700F05121 /* Assets.xcassets */,
@@ -139,6 +156,7 @@
 			children = (
 				2AD458D31F205EB700F05121 /* Debugger.storyboard */,
 				2AD458CF1F205EB700F05121 /* DebuggerViewController.swift */,
+				2A2126831F2A9FA300E43DC1 /* DebuggerWindowController.swift */,
 				2AD6D5831F26E6BF008F3CF5 /* DebuggerCommands.swift */,
 				2AE5BA031F23DE4400FAA343 /* Disassembly.swift */,
 			);
@@ -167,6 +185,8 @@
 			isa = PBXGroup;
 			children = (
 				2AE42E421F28665300C4900E /* CharacterGenerator.swift */,
+				2AA8B5FB1F2A8EAD002B350F /* Terminal.swift */,
+				2AA8B5FD1F2A942C002B350F /* PIAOverrides.swift */,
 			);
 			path = Video;
 			sourceTree = "<group>";
@@ -242,8 +262,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A2126841F2A9FA300E43DC1 /* DebuggerWindowController.swift in Sources */,
 				2AD458E31F20661300F05121 /* CPUInstructions.swift in Sources */,
 				2AD458D01F205EB700F05121 /* DebuggerViewController.swift in Sources */,
+				2AA8B5FC1F2A8EAD002B350F /* Terminal.swift in Sources */,
 				2A5BC51E1F29A4C3008C03BE /* AppleScreenViewDelegate.swift in Sources */,
 				2AD458CE1F205EB700F05121 /* AppDelegate.swift in Sources */,
 				2AE42E431F28665300C4900E /* CharacterGenerator.swift in Sources */,
@@ -254,10 +276,12 @@
 				2AE42E3A1F28628300C4900E /* MainViewController.swift in Sources */,
 				2AD458E51F2070DF00F05121 /* Opcodes.swift in Sources */,
 				2AE42E081F2850F400C4900E /* ReadOverride.swift in Sources */,
+				2AA8B5FE1F2A942C002B350F /* PIAOverrides.swift in Sources */,
 				2AE5BA061F2469EB00FAA343 /* AddressConversions.swift in Sources */,
 				2AE42E0A1F28521E00C4900E /* WriteOverride.swift in Sources */,
 				2A5BC5191F29A28D008C03BE /* AppleScreenView.swift in Sources */,
 				2AD458E11F2064CB00F05121 /* MemoryInterface.swift in Sources */,
+				2AA8B5F81F2A8889002B350F /* AppleI.swift in Sources */,
 				2AD458DF1F205F4500F05121 /* CPU.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
