@@ -8,10 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		2A22EBFB1F21A7A700A36A61 /* IntegerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */; };
+		2A5BC5191F29A28D008C03BE /* AppleScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5BC5181F29A28D008C03BE /* AppleScreenView.swift */; };
+		2A5BC51C1F29A2EB008C03BE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A5BC51B1F29A2EB008C03BE /* QuartzCore.framework */; };
+		2A5BC51E1F29A4C3008C03BE /* AppleScreenViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5BC51D1F29A4C3008C03BE /* AppleScreenViewDelegate.swift */; };
 		2AD458CE1F205EB700F05121 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458CD1F205EB700F05121 /* AppDelegate.swift */; };
 		2AD458D01F205EB700F05121 /* DebuggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458CF1F205EB700F05121 /* DebuggerViewController.swift */; };
 		2AD458D21F205EB700F05121 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2AD458D11F205EB700F05121 /* Assets.xcassets */; };
-		2AD458D51F205EB700F05121 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AD458D31F205EB700F05121 /* Main.storyboard */; };
+		2AD458D51F205EB700F05121 /* Debugger.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AD458D31F205EB700F05121 /* Debugger.storyboard */; };
 		2AD458DF1F205F4500F05121 /* CPU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458DE1F205F4500F05121 /* CPU.swift */; };
 		2AD458E11F2064CB00F05121 /* MemoryInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458E01F2064CB00F05121 /* MemoryInterface.swift */; };
 		2AD458E31F20661300F05121 /* CPUInstructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458E21F20661300F05121 /* CPUInstructions.swift */; };
@@ -20,17 +23,23 @@
 		2AE42E081F2850F400C4900E /* ReadOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E071F2850F400C4900E /* ReadOverride.swift */; };
 		2AE42E0A1F28521E00C4900E /* WriteOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E091F28521E00C4900E /* WriteOverride.swift */; };
 		2AE42E0C1F28522D00C4900E /* MemoryOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E0B1F28522D00C4900E /* MemoryOverride.swift */; };
+		2AE42E3A1F28628300C4900E /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E381F28628300C4900E /* MainViewController.swift */; };
+		2AE42E401F28638100C4900E /* FruitMachine.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AE42E3F1F28638100C4900E /* FruitMachine.storyboard */; };
+		2AE42E431F28665300C4900E /* CharacterGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E421F28665300C4900E /* CharacterGenerator.swift */; };
 		2AE5BA041F23DE4400FAA343 /* Disassembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE5BA031F23DE4400FAA343 /* Disassembly.swift */; };
 		2AE5BA061F2469EB00FAA343 /* AddressConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE5BA051F2469EB00FAA343 /* AddressConversions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerExtensions.swift; sourceTree = "<group>"; };
+		2A5BC5181F29A28D008C03BE /* AppleScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleScreenView.swift; sourceTree = "<group>"; };
+		2A5BC51B1F29A2EB008C03BE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		2A5BC51D1F29A4C3008C03BE /* AppleScreenViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleScreenViewDelegate.swift; sourceTree = "<group>"; };
 		2AD458CA1F205EB700F05121 /* FruitMachine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FruitMachine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2AD458CD1F205EB700F05121 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2AD458CF1F205EB700F05121 /* DebuggerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerViewController.swift; sourceTree = "<group>"; };
 		2AD458D11F205EB700F05121 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		2AD458D41F205EB700F05121 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		2AD458D41F205EB700F05121 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Debugger.storyboard; sourceTree = "<group>"; };
 		2AD458D61F205EB700F05121 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2AD458D71F205EB700F05121 /* FruitMachine.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FruitMachine.entitlements; sourceTree = "<group>"; };
 		2AD458DE1F205F4500F05121 /* CPU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPU.swift; sourceTree = "<group>"; };
@@ -41,6 +50,9 @@
 		2AE42E071F2850F400C4900E /* ReadOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOverride.swift; sourceTree = "<group>"; };
 		2AE42E091F28521E00C4900E /* WriteOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteOverride.swift; sourceTree = "<group>"; };
 		2AE42E0B1F28522D00C4900E /* MemoryOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryOverride.swift; sourceTree = "<group>"; };
+		2AE42E381F28628300C4900E /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		2AE42E3F1F28638100C4900E /* FruitMachine.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = FruitMachine.storyboard; sourceTree = "<group>"; };
+		2AE42E421F28665300C4900E /* CharacterGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGenerator.swift; sourceTree = "<group>"; };
 		2AE5BA031F23DE4400FAA343 /* Disassembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Disassembly.swift; sourceTree = "<group>"; };
 		2AE5BA051F2469EB00FAA343 /* AddressConversions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressConversions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -50,17 +62,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A5BC51C1F29A2EB008C03BE /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2A5BC51A1F29A2EB008C03BE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2A5BC51B1F29A2EB008C03BE /* QuartzCore.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		2AD458C11F205EB700F05121 = {
 			isa = PBXGroup;
 			children = (
 				2AD458CC1F205EB700F05121 /* FruitMachine */,
 				2AD458CB1F205EB700F05121 /* Products */,
+				2A5BC51A1F29A2EB008C03BE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -76,11 +98,13 @@
 			isa = PBXGroup;
 			children = (
 				2AD458DD1F205F0D00F05121 /* M6502 */,
+				2AE42E411F28663600C4900E /* Video */,
 				2AD458CD1F205EB700F05121 /* AppDelegate.swift */,
-				2AD458CF1F205EB700F05121 /* DebuggerViewController.swift */,
-				2AD6D5831F26E6BF008F3CF5 /* DebuggerCommands.swift */,
+				2A5BC5181F29A28D008C03BE /* AppleScreenView.swift */,
+				2A5BC51D1F29A4C3008C03BE /* AppleScreenViewDelegate.swift */,
+				2AE42E381F28628300C4900E /* MainViewController.swift */,
+				2AE42E3F1F28638100C4900E /* FruitMachine.storyboard */,
 				2AD458D11F205EB700F05121 /* Assets.xcassets */,
-				2AD458D31F205EB700F05121 /* Main.storyboard */,
 				2AD458D61F205EB700F05121 /* Info.plist */,
 				2AD458D71F205EB700F05121 /* FruitMachine.entitlements */,
 			);
@@ -90,13 +114,11 @@
 		2AD458DD1F205F0D00F05121 /* M6502 */ = {
 			isa = PBXGroup;
 			children = (
+				2AE42E0F1F28563800C4900E /* Types */,
+				2AE42E0E1F28562D00C4900E /* Opcodes */,
+				2AE42E0D1F28561A00C4900E /* Debugger */,
 				2AE42E061F2850E100C4900E /* Memory */,
 				2AD458DE1F205F4500F05121 /* CPU.swift */,
-				2AD458E21F20661300F05121 /* CPUInstructions.swift */,
-				2AE5BA031F23DE4400FAA343 /* Disassembly.swift */,
-				2AD458E41F2070DF00F05121 /* Opcodes.swift */,
-				2AE5BA051F2469EB00FAA343 /* AddressConversions.swift */,
-				2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */,
 			);
 			path = M6502;
 			sourceTree = "<group>";
@@ -110,6 +132,43 @@
 				2AE42E0B1F28522D00C4900E /* MemoryOverride.swift */,
 			);
 			path = Memory;
+			sourceTree = "<group>";
+		};
+		2AE42E0D1F28561A00C4900E /* Debugger */ = {
+			isa = PBXGroup;
+			children = (
+				2AD458D31F205EB700F05121 /* Debugger.storyboard */,
+				2AD458CF1F205EB700F05121 /* DebuggerViewController.swift */,
+				2AD6D5831F26E6BF008F3CF5 /* DebuggerCommands.swift */,
+				2AE5BA031F23DE4400FAA343 /* Disassembly.swift */,
+			);
+			path = Debugger;
+			sourceTree = "<group>";
+		};
+		2AE42E0E1F28562D00C4900E /* Opcodes */ = {
+			isa = PBXGroup;
+			children = (
+				2AD458E41F2070DF00F05121 /* Opcodes.swift */,
+				2AD458E21F20661300F05121 /* CPUInstructions.swift */,
+			);
+			path = Opcodes;
+			sourceTree = "<group>";
+		};
+		2AE42E0F1F28563800C4900E /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				2AE5BA051F2469EB00FAA343 /* AddressConversions.swift */,
+				2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */,
+			);
+			path = Types;
+			sourceTree = "<group>";
+		};
+		2AE42E411F28663600C4900E /* Video */ = {
+			isa = PBXGroup;
+			children = (
+				2AE42E421F28665300C4900E /* CharacterGenerator.swift */,
+			);
+			path = Video;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -171,7 +230,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				2AD458D21F205EB700F05121 /* Assets.xcassets in Resources */,
-				2AD458D51F205EB700F05121 /* Main.storyboard in Resources */,
+				2AE42E401F28638100C4900E /* FruitMachine.storyboard in Resources */,
+				2AD458D51F205EB700F05121 /* Debugger.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -184,15 +244,19 @@
 			files = (
 				2AD458E31F20661300F05121 /* CPUInstructions.swift in Sources */,
 				2AD458D01F205EB700F05121 /* DebuggerViewController.swift in Sources */,
+				2A5BC51E1F29A4C3008C03BE /* AppleScreenViewDelegate.swift in Sources */,
 				2AD458CE1F205EB700F05121 /* AppDelegate.swift in Sources */,
+				2AE42E431F28665300C4900E /* CharacterGenerator.swift in Sources */,
 				2AE42E0C1F28522D00C4900E /* MemoryOverride.swift in Sources */,
 				2A22EBFB1F21A7A700A36A61 /* IntegerExtensions.swift in Sources */,
 				2AD6D5841F26E6BF008F3CF5 /* DebuggerCommands.swift in Sources */,
 				2AE5BA041F23DE4400FAA343 /* Disassembly.swift in Sources */,
+				2AE42E3A1F28628300C4900E /* MainViewController.swift in Sources */,
 				2AD458E51F2070DF00F05121 /* Opcodes.swift in Sources */,
 				2AE42E081F2850F400C4900E /* ReadOverride.swift in Sources */,
 				2AE5BA061F2469EB00FAA343 /* AddressConversions.swift in Sources */,
 				2AE42E0A1F28521E00C4900E /* WriteOverride.swift in Sources */,
+				2A5BC5191F29A28D008C03BE /* AppleScreenView.swift in Sources */,
 				2AD458E11F2064CB00F05121 /* MemoryInterface.swift in Sources */,
 				2AD458DF1F205F4500F05121 /* CPU.swift in Sources */,
 			);
@@ -201,12 +265,12 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		2AD458D31F205EB700F05121 /* Main.storyboard */ = {
+		2AD458D31F205EB700F05121 /* Debugger.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				2AD458D41F205EB700F05121 /* Base */,
 			);
-			name = Main.storyboard;
+			name = Debugger.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
