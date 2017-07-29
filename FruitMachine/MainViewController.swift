@@ -26,24 +26,34 @@ class MainViewController: NSViewController {
         
         // Do view setup here.
         self.view.addSubview(computer.emulatorView)
-        computer.emulatorView.display()
         
         self.frameTimer = Timer.scheduledTimer(timeInterval: 1/60, target: self, selector: #selector(runEmulation), userInfo: nil, repeats: true)
         //runEmulation()
     }
     
     @objc func runEmulation() {
-        AppleI.sharedInstance.runFrame()
-        computer.emulatorView.setNeedsDisplay(computer.emulatorView.frame)
-        computer.emulatorView.layer!.setNeedsDisplay(computer.emulatorView.layer!.frame)
-        computer.emulatorView.display()
+        computer.runFrame()
     }
     
     override func keyDown(with event: NSEvent) {
-        let character = event.characters?.first
+        let c = returnChar(theEvent: event)
         
-        computer.pia["keyboard"]?.data = 0x41
+        computer.pia["keyboard"]?.data = UInt8((c?.asciiValue)! & 0x000000FF)
         computer.pia["keyboard"]?.control |= 0x80
     }
+    
+    private func returnChar(theEvent: NSEvent) -> Character?{
+        let s: String = theEvent.characters!
+        for char in s{
+            return char
+        }
+        return nil
+    }
 
+}
+
+extension Character {
+    var asciiValue: UInt32? {
+        return String(self).unicodeScalars.filter{$0.isASCII}.first?.value
+    }
 }

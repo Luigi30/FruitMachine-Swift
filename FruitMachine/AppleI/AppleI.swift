@@ -33,9 +33,13 @@ class AppleI: NSObject {
     override init() {
         super.init()
         
-        emulatorView.wantsLayer = true
+        emuScreenLayer.shouldRasterize = true
         emuScreenLayer.delegate = emulatorViewDelegate
         emuScreenLayer.frame = emulatorView.bounds
+        
+        //emulatorView.layer = emuScreenLayer
+        emulatorView.wantsLayer = true
+
         emuScreenLayer.setNeedsDisplay()
         emulatorView.layer?.addSublayer(emuScreenLayer)
         
@@ -54,8 +58,11 @@ class AppleI: NSObject {
         CPU.sharedInstance.memoryInterface.write_overrides.append(PIAOverrides.writeDSP)
         CPU.sharedInstance.memoryInterface.read_overrides.append(PIAOverrides.readDSP)
         
+        CPU.sharedInstance.memoryInterface.write_overrides.append(PIAOverrides.writeDSPCR)
+        
         CPU.sharedInstance.memoryInterface.read_overrides.append(PIAOverrides.readKBD)
         CPU.sharedInstance.memoryInterface.read_overrides.append(PIAOverrides.readKBDCR)
+        
     }
     
     func runFrame() {
@@ -68,6 +75,7 @@ class AppleI: NSObject {
             emulatorViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: character), pixelPosition: emulatorViewDelegate.getPixelOffset(charCellIndex: cellNum))
         }
         
+        emulatorView.setNeedsDisplay(emulatorView.frame)
         emulatorView.display()
     }
 }

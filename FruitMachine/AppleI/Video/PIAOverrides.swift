@@ -11,16 +11,25 @@ import Cocoa
 class PIAOverrides: NSObject {
     static let writeDSP = WriteOverride(start: 0xD012, end: 0xD012, writeAnyway: false, action: PIAOverrides.actionWriteDSP)
     static func actionWriteDSP(terminal: AnyObject, byte: UInt8?) -> UInt8? {
-        //TODO: implement actual 6520 PIA behavior
+
+        let pia = AppleI.sharedInstance.pia["display"]!
         
-        //Writing to DSP sets DSP.7
-        AppleI.sharedInstance.pia["display"]!.data = byte! | 0x80
-        
-        //Output our character to the terminal
-        AppleI.sharedInstance.terminal.putCharacter(charIndex: byte!)
-        
-        AppleI.sharedInstance.pia["display"]!.data = byte! & ~(0x80)
-        return nil;
+        if(pia.getMode() == .Output) {
+            //Writing to DSP sets DSP.7
+            AppleI.sharedInstance.pia["display"]!.data = byte! | 0x80
+            
+            //Output our character to the terminal
+            AppleI.sharedInstance.terminal.putCharacter(charIndex: byte!)
+            
+            AppleI.sharedInstance.pia["display"]!.data = byte! & ~(0x80)
+        }
+        return nil
+    }
+    
+    static let writeDSPCR = WriteOverride(start: 0xD013, end: 0xD013, writeAnyway: false, action: PIAOverrides.actionWriteDSPCR)
+    static func actionWriteDSPCR(terminal: AnyObject, byte: UInt8?) -> UInt8? {
+        AppleI.sharedInstance.pia["display"]?.control = byte!
+        return nil
     }
     
     static let readDSP = ReadOverride(start: 0xD012, end: 0xD012, readAnyway: false, action: PIAOverrides.actionReadDSP)

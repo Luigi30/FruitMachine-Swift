@@ -9,12 +9,25 @@
 import Cocoa
 
 class PIA: NSObject {
+    enum PIAMode {
+        case DDR
+        case Output
+    }
+    
     var data: UInt8
     var control: UInt8
     
     override init() {
         data = 0x00
         control = 0x00
+    }
+    
+    func getMode() -> PIAMode {
+        if((control & 0x04) == 0x04) {
+            return .Output
+        } else {
+            return .DDR
+        }
     }
 
 }
