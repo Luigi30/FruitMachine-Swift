@@ -14,6 +14,14 @@ class AppleI: NSObject {
     let cg = CharacterGenerator(romPath: "/Users/luigi/apple1/apple1.vid");
     let terminal = Terminal()
     
+    //PIA 0 = KBD
+    //PIA 1 = DSP
+    //let pia = [PIA(), PIA()]
+    let pia: [String:PIA] = [
+        "keyboard": PIA(),
+        "display": PIA()
+    ]
+    
     let emulatorViewDelegate = AppleScreenViewDelegate()
     let emulatorView = AppleScreenView(frame: NSMakeRect(0, 0, 400, 384))
     let emuScreenLayer = CALayer()
@@ -45,6 +53,9 @@ class AppleI: NSObject {
     func installOverrides() {
         CPU.sharedInstance.memoryInterface.write_overrides.append(PIAOverrides.writeDSP)
         CPU.sharedInstance.memoryInterface.read_overrides.append(PIAOverrides.readDSP)
+        
+        CPU.sharedInstance.memoryInterface.read_overrides.append(PIAOverrides.readKBD)
+        CPU.sharedInstance.memoryInterface.read_overrides.append(PIAOverrides.readKBDCR)
     }
     
     func runFrame() {
@@ -54,11 +65,6 @@ class AppleI: NSObject {
         
         //update the video display
         for (cellNum, character) in terminal.characters.enumerated() {
-            if(character == 0x8D) //CR
-            {
-                continue //ignore for now
-            }
-            
             emulatorViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: character), pixelPosition: emulatorViewDelegate.getPixelOffset(charCellIndex: cellNum))
         }
         

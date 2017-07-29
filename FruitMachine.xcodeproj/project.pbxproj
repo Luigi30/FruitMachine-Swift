@@ -12,6 +12,7 @@
 		2A5BC5191F29A28D008C03BE /* AppleScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5BC5181F29A28D008C03BE /* AppleScreenView.swift */; };
 		2A5BC51C1F29A2EB008C03BE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A5BC51B1F29A2EB008C03BE /* QuartzCore.framework */; };
 		2A5BC51E1F29A4C3008C03BE /* AppleScreenViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5BC51D1F29A4C3008C03BE /* AppleScreenViewDelegate.swift */; };
+		2A60851E1F2AFAE900E05B64 /* PIA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A60851D1F2AFAE900E05B64 /* PIA.swift */; };
 		2AA8B5F81F2A8889002B350F /* AppleI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA8B5F71F2A8889002B350F /* AppleI.swift */; };
 		2AA8B5FC1F2A8EAD002B350F /* Terminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA8B5FB1F2A8EAD002B350F /* Terminal.swift */; };
 		2AA8B5FE1F2A942C002B350F /* PIAOverrides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA8B5FD1F2A942C002B350F /* PIAOverrides.swift */; };
@@ -40,6 +41,7 @@
 		2A5BC5181F29A28D008C03BE /* AppleScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleScreenView.swift; sourceTree = "<group>"; };
 		2A5BC51B1F29A2EB008C03BE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2A5BC51D1F29A4C3008C03BE /* AppleScreenViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleScreenViewDelegate.swift; sourceTree = "<group>"; };
+		2A60851D1F2AFAE900E05B64 /* PIA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIA.swift; sourceTree = "<group>"; };
 		2AA8B5F71F2A8889002B350F /* AppleI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleI.swift; sourceTree = "<group>"; };
 		2AA8B5FB1F2A8EAD002B350F /* Terminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terminal.swift; sourceTree = "<group>"; };
 		2AA8B5FD1F2A942C002B350F /* PIAOverrides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIAOverrides.swift; sourceTree = "<group>"; };
@@ -92,6 +94,7 @@
 				2A5BC5181F29A28D008C03BE /* AppleScreenView.swift */,
 				2A5BC51D1F29A4C3008C03BE /* AppleScreenViewDelegate.swift */,
 				2AA8B5F71F2A8889002B350F /* AppleI.swift */,
+				2A60851D1F2AFAE900E05B64 /* PIA.swift */,
 			);
 			path = AppleI;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A60851E1F2AFAE900E05B64 /* PIA.swift in Sources */,
 				2A2126841F2A9FA300E43DC1 /* DebuggerWindowController.swift in Sources */,
 				2AD458E31F20661300F05121 /* CPUInstructions.swift in Sources */,
 				2AD458D01F205EB700F05121 /* DebuggerViewController.swift in Sources */,

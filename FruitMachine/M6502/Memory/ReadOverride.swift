@@ -12,5 +12,10 @@ import Cocoa
    Memory-mapped registers, peripherals, etc. */
 
 class ReadOverride: MemoryOverride {
+    let doRead: Bool //do we write anyway?
     
+    init(start: UInt16, end: UInt16, readAnyway: Bool, action: @escaping (AnyObject, UInt8?) -> UInt8?) {
+        doRead = readAnyway
+        super.init(start: start, end: end, action: action)
+    }
 }

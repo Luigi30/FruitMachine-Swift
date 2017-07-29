@@ -48,9 +48,14 @@ extension DebuggerViewController {
 class DebuggerCommands: NSObject {
     static func bplist(state: CPU, parameters: [String]) -> String {
         var output = ""
-        for (index, bp) in state.breakpoints.enumerated() {
-            output += "Breakpoint \(index): $\(bp.asHexString())\r\n"
+        
+        if(state.breakpoints.count > 0){
+            for (index, bp) in state.breakpoints.enumerated() {
+                output += "Breakpoint \(index): $\(bp.asHexString())\r\n"
+            }
         }
+        
+        output = "No breakpoints are set."
         
         return output
     }
