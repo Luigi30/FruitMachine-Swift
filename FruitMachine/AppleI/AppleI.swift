@@ -25,7 +25,9 @@ class AppleI: NSObject {
     let emulatorViewDelegate = AppleIBitmapDisplay()
     let emulatorView = AppleScreenView(frame: NSMakeRect(0, 0, 640, 384))
     let emuScreenLayer = CALayer()
-    let emuMetalLayer = CAMetalLayer()
+    
+    //OpenGL
+    let emuGLView = AppleGLDisplay()
     
     static let CPU_FREQUENCY = 1000000
     static let FRAMES_PER_SECOND = 60
@@ -42,6 +44,9 @@ class AppleI: NSObject {
 
         emuScreenLayer.setNeedsDisplay()
         emulatorView.layer?.addSublayer(emuScreenLayer)
+        
+        //GL
+        emuGLView.frame = emulatorView.bounds
         
         installOverrides()
         
@@ -78,5 +83,8 @@ class AppleI: NSObject {
         
         emulatorView.setNeedsDisplay(emulatorView.frame)
         emulatorView.display()
+        
+        //emuGLView.setNeedsDisplay(emuGLView.frame)
+        //emuGLView.display()
     }
 }

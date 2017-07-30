@@ -8,7 +8,8 @@
 
 import Cocoa
 import CoreGraphics
-import MetalKit
+import OpenGL
+import GLKit
 
 class MainViewController: NSViewController {
     
@@ -27,6 +28,9 @@ class MainViewController: NSViewController {
         
         // Do view setup here.
         self.view.addSubview(computer.emulatorView)
+        
+        //computer.emuGLView.doSetup()
+        //self.view.addSubview(computer.emuGLView)
         
         self.frameTimer = Timer.scheduledTimer(timeInterval: 1/60, target: self, selector: #selector(runEmulation), userInfo: nil, repeats: true)
     }
