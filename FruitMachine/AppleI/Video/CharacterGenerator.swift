@@ -38,7 +38,7 @@ class CharacterGenerator: NSObject {
         /* Instead of ignoring ASCII bit b6, we ignore bit b5. At the same time ASCII bit b6 must be inverted before it is fed to the character ROM. This way the entire character range from $40 to $7F will end up in the range $00 to $1F (twice of course). Now lower case characters are automatically translated into their corresponding upper case bit maps.
          */
 
-        var convertedCharIndex = (charIndex & 0x1f) | (((charIndex ^ 0x40) & 0x40) >> 1)
+        let convertedCharIndex = (charIndex & 0x1f) | (((charIndex ^ 0x40) & 0x40) >> 1)
         
         for scanlineIndex in 0..<CharacterGenerator.CHAR_HEIGHT {
             pixelArray[scanlineIndex] = ROM[scanlineIndex + (Int(convertedCharIndex) * CharacterGenerator.CHAR_HEIGHT)]

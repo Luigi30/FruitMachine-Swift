@@ -8,6 +8,7 @@
 
 import Cocoa
 import CoreGraphics
+import MetalKit
 
 class MainViewController: NSViewController {
     
@@ -46,7 +47,6 @@ class MainViewController: NSViewController {
 
         computer.pia["keyboard"]?.data = UInt8(ascii32 & 0x000000FF)
         computer.pia["keyboard"]?.control |= 0x80
-
     }
     
     private func returnChar(theEvent: NSEvent) -> Character?{

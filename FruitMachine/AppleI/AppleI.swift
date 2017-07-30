@@ -22,9 +22,10 @@ class AppleI: NSObject {
         "display": PIA()
     ]
     
-    let emulatorViewDelegate = AppleScreenViewDelegate()
+    let emulatorViewDelegate = AppleIBitmapDisplay()
     let emulatorView = AppleScreenView(frame: NSMakeRect(0, 0, 640, 384))
     let emuScreenLayer = CALayer()
+    let emuMetalLayer = CAMetalLayer()
     
     static let CPU_FREQUENCY = 1000000
     static let FRAMES_PER_SECOND = 60
@@ -37,7 +38,6 @@ class AppleI: NSObject {
         emuScreenLayer.delegate = emulatorViewDelegate
         emuScreenLayer.frame = emulatorView.bounds
         
-        //emulatorView.layer = emuScreenLayer
         emulatorView.wantsLayer = true
 
         emuScreenLayer.setNeedsDisplay()

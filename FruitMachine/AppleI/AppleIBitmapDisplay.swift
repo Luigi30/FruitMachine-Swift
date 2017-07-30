@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class AppleScreenViewDelegate: NSObject, CALayerDelegate {
+class AppleIBitmapDisplay: NSObject, CALayerDelegate {
     static let PIXEL_WIDTH = 320
     static let PIXEL_HEIGHT = 192
     
@@ -29,11 +29,11 @@ class AppleScreenViewDelegate: NSObject, CALayerDelegate {
     var indexedPixels: [UInt8]
     var colorValues: [PixelData]
     
-    var rgbPixels = [PixelData](repeating: PixelData(a: 255, r: 0, g: 0, b: 0), count: AppleScreenViewDelegate.PIXEL_WIDTH*AppleScreenViewDelegate.PIXEL_HEIGHT)
+    var rgbPixels = [PixelData](repeating: PixelData(a: 255, r: 0, g: 0, b: 0), count: AppleIBitmapDisplay.PIXEL_WIDTH*AppleIBitmapDisplay.PIXEL_HEIGHT)
     
     override init()
     {
-        indexedPixels = [UInt8](repeating: 0x00, count: AppleScreenViewDelegate.PIXEL_WIDTH*AppleScreenViewDelegate.PIXEL_HEIGHT)
+        indexedPixels = [UInt8](repeating: 0x00, count: AppleIBitmapDisplay.PIXEL_WIDTH*AppleIBitmapDisplay.PIXEL_HEIGHT)
         colorValues = [PixelData](repeating: PixelData(a: 255, r: 0, g: 0, b: 0), count: 256)
         colorValues[1] = PixelData(a: 0, r: 200, g: 200, b: 200
         )
@@ -49,12 +49,12 @@ class AppleScreenViewDelegate: NSObject, CALayerDelegate {
     
     func putCharacterPixels(charPixels: [UInt8], pixelPosition: CGPoint) {
         //Calculate the offset to reach the desired position.
-        let baseOffset = (Int(pixelPosition.y) * AppleScreenViewDelegate.PIXEL_WIDTH) + Int(pixelPosition.x)
+        let baseOffset = (Int(pixelPosition.y) * AppleIBitmapDisplay.PIXEL_WIDTH) + Int(pixelPosition.x)
         
         for charY in 0..<CharacterGenerator.CHAR_HEIGHT {
             //for charX in 0..<CharacterGenerator.CHAR_WIDTH {
             for charX in 0..<8 {
-                indexedPixels[baseOffset + (AppleScreenViewDelegate.PIXEL_WIDTH * charY) + 7 - charX] = (charPixels[charY] & UInt8(1 << charX)) > 0 ? 1 : 0
+                indexedPixels[baseOffset + (AppleIBitmapDisplay.PIXEL_WIDTH * charY) + 7 - charX] = (charPixels[charY] & UInt8(1 << charX)) > 0 ? 1 : 0
             }
         }
     }
@@ -74,11 +74,11 @@ class AppleScreenViewDelegate: NSObject, CALayerDelegate {
         var pixels = convertIndexedPixelsToRGB(pixels: indexedPixels)
         let pixelProvider = CGDataProvider(data: NSData(bytes: &pixels, length: pixels.count * MemoryLayout<PixelData>.size))
         
-        let renderedImage = CGImage(width: AppleScreenViewDelegate.PIXEL_WIDTH,
-                                    height: AppleScreenViewDelegate.PIXEL_HEIGHT,
+        let renderedImage = CGImage(width: AppleIBitmapDisplay.PIXEL_WIDTH,
+                                    height: AppleIBitmapDisplay.PIXEL_HEIGHT,
                                     bitsPerComponent: Int(bitsPerComponent),
                                     bitsPerPixel: Int(bitsPerPixel),
-                                    bytesPerRow: AppleScreenViewDelegate.PIXEL_WIDTH * Int(MemoryLayout<PixelData>.size),
+                                    bytesPerRow: AppleIBitmapDisplay.PIXEL_WIDTH * Int(MemoryLayout<PixelData>.size),
                                     space: colorSpace,
                                     bitmapInfo: bitmapInfo,
                                     provider: pixelProvider!,
