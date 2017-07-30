@@ -47,6 +47,7 @@ class DebuggerViewController: NSViewController {
         text_CPU_Flags.stringValue = String(cpuInstance.status_register.asString())
         
         disassembly = cpuInstance.disassemble(fromAddress: CPU.sharedInstance.program_counter, length: 256)
+        debuggerTableView.reloadData()
         highlightCurrentInstruction()
     }
     

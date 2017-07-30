@@ -173,7 +173,7 @@ class Opcodes: NSObject {
     
     static func SBC(state: CPU, addressingMode: AddressingMode) -> Void {
         let operand = UInt8(getOperandByteForAddressingMode(state: state, mode: addressingMode))
-        var t16: UInt16 = UInt16(state.accumulator &- operand) - UInt16((state.status_register.carry ? UInt8(0) : UInt8(1)))
+        var t16: UInt16 = UInt16(state.accumulator &- operand) &- UInt16((state.status_register.carry ? UInt8(0) : UInt8(1)))
         let t8: UInt8 = UInt8(t16 & 0xFF)
         
         state.cyclesInBatch = 0
@@ -182,7 +182,7 @@ class Opcodes: NSObject {
         if(state.status_register.decimal == true) {
             t16 = UInt16(hex2bcd(hex: state.accumulator) + hex2bcd(hex: operand) + (state.status_register.carry ? UInt8(1) : UInt8(0)))
         } else {
-            state.status_register.carry = (t16 >> 8) == 0 ? false : true
+            state.status_register.carry = t8 <= 127 ? true : false
         }
         
         state.accumulator = t8

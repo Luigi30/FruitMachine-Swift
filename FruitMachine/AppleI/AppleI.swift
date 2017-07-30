@@ -23,7 +23,7 @@ class AppleI: NSObject {
     ]
     
     let emulatorViewDelegate = AppleScreenViewDelegate()
-    let emulatorView = AppleScreenView(frame: NSMakeRect(0, 0, 400, 384))
+    let emulatorView = AppleScreenView(frame: NSMakeRect(0, 0, 640, 384))
     let emuScreenLayer = CALayer()
     
     static let CPU_FREQUENCY = 1000000
@@ -49,7 +49,8 @@ class AppleI: NSObject {
             emulatorViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: character), pixelPosition: emulatorViewDelegate.getPixelOffset(charCellIndex: cellNum))
         }
         
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple1/apple1.rom", offset: 0xFF00)
+        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple1/apple1.rom", offset: 0xFF00, length: 0x100)
+        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple1/basic.bin", offset: 0xE000, length: 0x1000)
         CPU.sharedInstance.performReset()
         
     }

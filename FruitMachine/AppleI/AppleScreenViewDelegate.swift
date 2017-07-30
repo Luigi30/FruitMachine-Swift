@@ -9,8 +9,8 @@
 import Cocoa
 
 class AppleScreenViewDelegate: NSObject, CALayerDelegate {
-    let PIXEL_WIDTH = 200
-    let PIXEL_HEIGHT = 192
+    static let PIXEL_WIDTH = 320
+    static let PIXEL_HEIGHT = 192
     
     /* Pixel data stuff. */
     struct PixelData {
@@ -19,6 +19,7 @@ class AppleScreenViewDelegate: NSObject, CALayerDelegate {
         var g: UInt8
         var b: UInt8
     }
+    
     let bitsPerComponent: UInt = 8
     let bitsPerPixel: UInt = 32
     let colorSpace = CGColorSpaceCreateDeviceRGB()
@@ -28,17 +29,17 @@ class AppleScreenViewDelegate: NSObject, CALayerDelegate {
     var indexedPixels: [UInt8]
     var colorValues: [PixelData]
     
+    var rgbPixels = [PixelData](repeating: PixelData(a: 255, r: 0, g: 0, b: 0), count: AppleScreenViewDelegate.PIXEL_WIDTH*AppleScreenViewDelegate.PIXEL_HEIGHT)
+    
     override init()
     {
-        indexedPixels = [UInt8](repeating: 0x00, count: 200*192)
+        indexedPixels = [UInt8](repeating: 0x00, count: AppleScreenViewDelegate.PIXEL_WIDTH*AppleScreenViewDelegate.PIXEL_HEIGHT)
         colorValues = [PixelData](repeating: PixelData(a: 255, r: 0, g: 0, b: 0), count: 256)
         colorValues[1] = PixelData(a: 0, r: 200, g: 200, b: 200
         )
     }
     
     func convertIndexedPixelsToRGB(pixels: [UInt8]) -> [PixelData] {
-        var rgbPixels = [PixelData](repeating: PixelData(a: 255, r: 0, g: 0, b: 0), count: 200*192)
-        
         for (num, colorIndex) in pixels.enumerated() {
             rgbPixels[num] = colorValues[Int(colorIndex)]
         }
@@ -48,17 +49,18 @@ class AppleScreenViewDelegate: NSObject, CALayerDelegate {
     
     func putCharacterPixels(charPixels: [UInt8], pixelPosition: CGPoint) {
         //Calculate the offset to reach the desired position.
-        let baseOffset = (Int(pixelPosition.y) * PIXEL_WIDTH) + Int(pixelPosition.x)
+        let baseOffset = (Int(pixelPosition.y) * AppleScreenViewDelegate.PIXEL_WIDTH) + Int(pixelPosition.x)
         
         for charY in 0..<CharacterGenerator.CHAR_HEIGHT {
-            for charX in 0..<CharacterGenerator.CHAR_WIDTH {
-                indexedPixels[baseOffset + (PIXEL_WIDTH * charY) + CharacterGenerator.CHAR_WIDTH - charX - 1] = (charPixels[charY] & UInt8(1 << charX)) > 0 ? 1 : 0
+            //for charX in 0..<CharacterGenerator.CHAR_WIDTH {
+            for charX in 0..<8 {
+                indexedPixels[baseOffset + (AppleScreenViewDelegate.PIXEL_WIDTH * charY) + 7 - charX] = (charPixels[charY] & UInt8(1 << charX)) > 0 ? 1 : 0
             }
         }
     }
     
     func getPixelOffset(charCellX: Int, charCellY: Int) -> CGPoint {
-        return CGPoint(x: charCellX * 5, y: charCellY * 8)
+        return CGPoint(x: charCellX * 8, y: charCellY * 8)
     }
     
     func getPixelOffset(charCellIndex: Int) -> CGPoint {
@@ -68,12 +70,21 @@ class AppleScreenViewDelegate: NSObject, CALayerDelegate {
     /* Draw the screen. */
     func draw(_ layer: CALayer, in ctx: CGContext) {
         let bounds = layer.bounds
-        ctx.interpolationQuality = CGInterpolationQuality.none
         
         var pixels = convertIndexedPixelsToRGB(pixels: indexedPixels)
         let pixelProvider = CGDataProvider(data: NSData(bytes: &pixels, length: pixels.count * MemoryLayout<PixelData>.size))
         
-        let renderedImage = CGImage(width: PIXEL_WIDTH, height: PIXEL_HEIGHT, bitsPerComponent: Int(bitsPerComponent), bitsPerPixel: Int(bitsPerPixel), bytesPerRow: PIXEL_WIDTH * Int(MemoryLayout<PixelData>.size), space: colorSpace, bitmapInfo: bitmapInfo, provider: pixelProvider!, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+        let renderedImage = CGImage(width: AppleScreenViewDelegate.PIXEL_WIDTH,
+                                    height: AppleScreenViewDelegate.PIXEL_HEIGHT,
+                                    bitsPerComponent: Int(bitsPerComponent),
+                                    bitsPerPixel: Int(bitsPerPixel),
+                                    bytesPerRow: AppleScreenViewDelegate.PIXEL_WIDTH * Int(MemoryLayout<PixelData>.size),
+                                    space: colorSpace,
+                                    bitmapInfo: bitmapInfo,
+                                    provider: pixelProvider!,
+                                    decode: nil,
+                                    shouldInterpolate: false,
+                                    intent: CGColorRenderingIntent.defaultIntent)
         
         ctx.draw(renderedImage!, in: bounds)
     }

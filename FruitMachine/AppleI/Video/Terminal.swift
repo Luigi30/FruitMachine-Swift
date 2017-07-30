@@ -16,6 +16,7 @@ struct Cell {
 class Terminal: NSObject {
     static let CELLS_WIDTH = 40
     static let CELLS_HEIGHT = 24
+    static let CELLS_COUNT = CELLS_WIDTH * CELLS_HEIGHT
     
     var cursorPosition: Cell
     var characters: [UInt8]
@@ -45,8 +46,9 @@ class Terminal: NSObject {
         if(cursorPosition.x == Terminal.CELLS_WIDTH) {
             cursorPosition.x = 0
             cursorPosition.y += 1
-            if(cursorPosition.y == Terminal.CELLS_HEIGHT) {
-                cursorPosition.y = 0 //TODO: scrolling
+            if(cursorPosition.y >= Terminal.CELLS_HEIGHT) {
+                cursorPosition.y = Terminal.CELLS_HEIGHT - 1
+                scrollUp(lines: 1)
             }
         }
     }
@@ -54,8 +56,15 @@ class Terminal: NSObject {
     func carriageReturn() {
         cursorPosition.x = 0
         cursorPosition.y += 1
-        if(cursorPosition.y == Terminal.CELLS_HEIGHT) {
-            cursorPosition.y = 0
+        if(cursorPosition.y >= Terminal.CELLS_HEIGHT) {
+            cursorPosition.y = Terminal.CELLS_HEIGHT - 1
+            scrollUp(lines: 1)
         }
+    }
+    
+    func scrollUp(lines: Int) {
+        let scrolled = characters[Terminal.CELLS_WIDTH ..< Terminal.CELLS_COUNT]
+        characters = [UInt8](scrolled)
+        characters.append(contentsOf: [UInt8](repeating: 0x00, count: Terminal.CELLS_WIDTH))
     }
 }

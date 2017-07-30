@@ -60,10 +60,10 @@ class MemoryInterface: NSObject {
         return (UInt16(high) << 8) | UInt16(low)
     }
     
-    func loadBinary(path: String, offset: UInt16) {
+    func loadBinary(path: String, offset: UInt16, length: Int) {
         do {
             let fileContent: NSData = try NSData(contentsOfFile: path)
-            fileContent.getBytes(&memory[Int(offset)], range: NSRange(location: 0, length: 256))
+            fileContent.getBytes(&memory[Int(offset)], range: NSRange(location: 0, length: length))
         } catch {
             print(error)
         }
