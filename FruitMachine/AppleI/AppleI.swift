@@ -58,7 +58,6 @@ class AppleI: NSObject {
     }
     
     func runFrame() {
-
         
         CPU.sharedInstance.cycles = 0
         CPU.sharedInstance.cyclesInBatch = AppleI.CYCLES_PER_BATCH
@@ -69,16 +68,11 @@ class AppleI: NSObject {
         let pixelBase = CVPixelBufferGetBaseAddress(emulatorViewDelegate.pixels!)
         let buf = pixelBase?.assumingMemoryBound(to: BitmapPixelsBE555.PixelData.self)
         
-        let startTime = CFAbsoluteTimeGetCurrent()
-        
         for (cellNum, character) in terminal.characters.enumerated() {
             emulatorViewDelegate.putCharacterPixels(buffer: buf,
                                                     charPixels: cg.getCharacterPixels(charIndex: character),
                                                     pixelPosition: emulatorViewDelegate.getPixelOffset(charCellIndex: cellNum))
         }
-        
-        let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
-        print("Time elapsed for runFrame: \(timeElapsed) s.")
         
         CVPixelBufferUnlockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
         

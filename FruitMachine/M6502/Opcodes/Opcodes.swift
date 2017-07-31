@@ -586,12 +586,12 @@ class Opcodes: NSObject {
     
     //Misc
     static func JMP(state: CPU, addressingMode: AddressingMode) -> Void {
-        state.program_counter = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
+        state.program_counter = getOperandAddressForAddressingMode(state: state, mode: addressingMode) - 3
     }
     
     static func JSR(state: CPU, addressingMode: AddressingMode) -> Void {
         state.pushWord(data: state.program_counter + 2)
-        state.program_counter = state.getOperandWord()
+        state.program_counter = state.getOperandWord() - 3
     }
     
     static func RTS(state: CPU, addressingMode: AddressingMode) -> Void {
@@ -600,7 +600,7 @@ class Opcodes: NSObject {
     
     static func RTI(state: CPU, addressingMode: AddressingMode) -> Void {
         state.status_register.fromByte(state: state.popByte())
-        state.program_counter = state.popWord()
+        state.program_counter = state.popWord() - 1
         state.status_register.brk = false //RTI sets B to 0
     }
     
@@ -610,7 +610,7 @@ class Opcodes: NSObject {
         state.pushWord(data: state.program_counter + 2)
         state.pushByte(data: sr.asByte())
         state.status_register.irq_disable = true //BRK disables interrupts before transferring control
-        state.program_counter = state.memoryInterface.readWord(offset: 0xFFFE)
+        state.program_counter = state.memoryInterface.readWord(offset: 0xFFFE) - 1
     }
     
     static func NOP(state: CPU, addressingMode: AddressingMode) -> Void {}
