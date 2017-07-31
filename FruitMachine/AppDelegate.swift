@@ -27,5 +27,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBAction func view_scale_2x(_ sender: Any) {
         NotificationCenter.default.post(Notification(name: AppleScreenNotifications, object: "scaleFactor", userInfo: ["scaleFactor": 2]))
     }
+    
+    func applicationShouldTerminateAfterLastWindowClosed (_ theApplication: NSApplication) -> Bool {
+        return true
+    }
+    
 }
 

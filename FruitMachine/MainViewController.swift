@@ -15,22 +15,19 @@ class MainViewController: NSViewController {
     
     let computer = AppleI.sharedInstance
     var debuggerWindowController: DebuggerWindowController!
+    var preferencesWindowController: PreferencesWindowController!
     
     var isPaused = false
     var frameTimer: Timer?
     
     override func viewDidLoad() {        
         super.viewDidLoad()
-
-        let debuggerStoryboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Debugger"), bundle: nil)
-        debuggerWindowController = debuggerStoryboard.instantiateInitialController() as! DebuggerWindowController
-        debuggerWindowController.showWindow(self)
+        
+        preferencesWindowController = PreferencesWindowController()
+        preferencesWindowController.loadWindow()
         
         // Do view setup here.
         self.view.addSubview(computer.emulatorView)
-        
-        //computer.emuGLView.doSetup()
-        //self.view.addSubview(computer.emuGLView)
         
         self.frameTimer = Timer.scheduledTimer(timeInterval: 1/60,
                                                target: self,
@@ -64,7 +61,12 @@ class MainViewController: NSViewController {
         }
         return nil
     }
-
+    
+    @IBAction func showDebugger(_ sender: Any) {
+        let debuggerStoryboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Debugger"), bundle: nil)
+        debuggerWindowController = debuggerStoryboard.instantiateInitialController() as! DebuggerWindowController
+        debuggerWindowController.showWindow(self)
+    }
 }
 
 extension Character {

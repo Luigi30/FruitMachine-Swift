@@ -13,7 +13,8 @@
 		2A5BC51C1F29A2EB008C03BE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A5BC51B1F29A2EB008C03BE /* QuartzCore.framework */; };
 		2A5BC51E1F29A4C3008C03BE /* AppleIBitmapDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5BC51D1F29A4C3008C03BE /* AppleIBitmapDisplay.swift */; };
 		2A60851E1F2AFAE900E05B64 /* PIA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A60851D1F2AFAE900E05B64 /* PIA.swift */; };
-		2A6D3BF21F2E6222001CBEFB /* AppleGLDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D3BF11F2E6222001CBEFB /* AppleGLDisplay.swift */; };
+		2A7665781F2F05F600135518 /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7665761F2F05F600135518 /* PreferencesWindowController.swift */; };
+		2A7665791F2F05F600135518 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A7665771F2F05F600135518 /* PreferencesWindow.xib */; };
 		2A91852A1F2EA84D00A9E5BE /* BitmapPixels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9185291F2EA84D00A9E5BE /* BitmapPixels.swift */; };
 		2AA8B5F81F2A8889002B350F /* AppleI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA8B5F71F2A8889002B350F /* AppleI.swift */; };
 		2AA8B5FC1F2A8EAD002B350F /* Terminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA8B5FB1F2A8EAD002B350F /* Terminal.swift */; };
@@ -44,7 +45,8 @@
 		2A5BC51B1F29A2EB008C03BE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2A5BC51D1F29A4C3008C03BE /* AppleIBitmapDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIBitmapDisplay.swift; sourceTree = "<group>"; };
 		2A60851D1F2AFAE900E05B64 /* PIA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIA.swift; sourceTree = "<group>"; };
-		2A6D3BF11F2E6222001CBEFB /* AppleGLDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleGLDisplay.swift; sourceTree = "<group>"; };
+		2A7665761F2F05F600135518 /* PreferencesWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
+		2A7665771F2F05F600135518 /* PreferencesWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferencesWindow.xib; sourceTree = "<group>"; };
 		2A9185291F2EA84D00A9E5BE /* BitmapPixels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapPixels.swift; sourceTree = "<group>"; };
 		2AA8B5F71F2A8889002B350F /* AppleI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleI.swift; sourceTree = "<group>"; };
 		2AA8B5FB1F2A8EAD002B350F /* Terminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terminal.swift; sourceTree = "<group>"; };
@@ -99,7 +101,6 @@
 				2A5BC51D1F29A4C3008C03BE /* AppleIBitmapDisplay.swift */,
 				2AA8B5F71F2A8889002B350F /* AppleI.swift */,
 				2A60851D1F2AFAE900E05B64 /* PIA.swift */,
-				2A6D3BF11F2E6222001CBEFB /* AppleGLDisplay.swift */,
 			);
 			path = AppleI;
 			sourceTree = "<group>";
@@ -129,6 +130,8 @@
 				2AD458CD1F205EB700F05121 /* AppDelegate.swift */,
 				2AE42E381F28628300C4900E /* MainViewController.swift */,
 				2AE42E3F1F28638100C4900E /* FruitMachine.storyboard */,
+				2A7665761F2F05F600135518 /* PreferencesWindowController.swift */,
+				2A7665771F2F05F600135518 /* PreferencesWindow.xib */,
 				2AD458D11F205EB700F05121 /* Assets.xcassets */,
 				2AD458D61F205EB700F05121 /* Info.plist */,
 				2AD458D71F205EB700F05121 /* FruitMachine.entitlements */,
@@ -258,6 +261,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A7665791F2F05F600135518 /* PreferencesWindow.xib in Resources */,
 				2AD458D21F205EB700F05121 /* Assets.xcassets in Resources */,
 				2AE42E401F28638100C4900E /* FruitMachine.storyboard in Resources */,
 				2AD458D51F205EB700F05121 /* Debugger.storyboard in Resources */,
@@ -275,6 +279,7 @@
 				2A2126841F2A9FA300E43DC1 /* DebuggerWindowController.swift in Sources */,
 				2AD458E31F20661300F05121 /* CPUInstructions.swift in Sources */,
 				2AD458D01F205EB700F05121 /* DebuggerViewController.swift in Sources */,
+				2A7665781F2F05F600135518 /* PreferencesWindowController.swift in Sources */,
 				2AA8B5FC1F2A8EAD002B350F /* Terminal.swift in Sources */,
 				2A5BC51E1F29A4C3008C03BE /* AppleIBitmapDisplay.swift in Sources */,
 				2AD458CE1F205EB700F05121 /* AppDelegate.swift in Sources */,
@@ -291,7 +296,6 @@
 				2AE5BA061F2469EB00FAA343 /* AddressConversions.swift in Sources */,
 				2AE42E0A1F28521E00C4900E /* WriteOverride.swift in Sources */,
 				2A5BC5191F29A28D008C03BE /* AppleScreenView.swift in Sources */,
-				2A6D3BF21F2E6222001CBEFB /* AppleGLDisplay.swift in Sources */,
 				2AD458E11F2064CB00F05121 /* MemoryInterface.swift in Sources */,
 				2AA8B5F81F2A8889002B350F /* AppleI.swift in Sources */,
 				2AD458DF1F205F4500F05121 /* CPU.swift in Sources */,
