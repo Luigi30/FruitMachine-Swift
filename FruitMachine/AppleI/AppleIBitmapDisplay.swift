@@ -13,48 +13,19 @@ class AppleIBitmapDisplay: NSObject, CALayerDelegate {
     static let PIXEL_HEIGHT = 192
     
     /* Pixel data stuff. */
-    struct PixelData {
-        var a: UInt8 = 255
-        var r: UInt8
-        var g: UInt8
-        var b: UInt8
-    }
-    
-    let bitsPerComponent: UInt = 8
-    let bitsPerPixel: UInt = 32
-    let colorSpace = CGColorSpaceCreateDeviceRGB()
     let bitmapInfo: CGBitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue)
-    /* */
     
-    var indexedPixels: [UInt8]
-    var colorValues: [PixelData]
-    
-    var rgbPixels = [PixelData](repeating: PixelData(a: 255, r: 0, g: 0, b: 0), count: AppleIBitmapDisplay.PIXEL_WIDTH*AppleIBitmapDisplay.PIXEL_HEIGHT)
-    
-    override init()
-    {
-        indexedPixels = [UInt8](repeating: 0x00, count: AppleIBitmapDisplay.PIXEL_WIDTH*AppleIBitmapDisplay.PIXEL_HEIGHT)
-        colorValues = [PixelData](repeating: PixelData(a: 255, r: 0, g: 0, b: 0), count: 256)
-        colorValues[1] = PixelData(a: 0, r: 200, g: 200, b: 200
-        )
-    }
-    
-    func convertIndexedPixelsToRGB(pixels: [UInt8]) -> [PixelData] {
-        for (num, colorIndex) in pixels.enumerated() {
-            rgbPixels[num] = colorValues[Int(colorIndex)]
-        }
-        
-        return rgbPixels
-    }
+    var rgbPixels = [BitmapPixels.PixelData](repeating: BitmapPixels.ColorBlack, count: AppleIBitmapDisplay.PIXEL_WIDTH*AppleIBitmapDisplay.PIXEL_HEIGHT)
     
     func putCharacterPixels(charPixels: [UInt8], pixelPosition: CGPoint) {
         //Calculate the offset to reach the desired position.
         let baseOffset = (Int(pixelPosition.y) * AppleIBitmapDisplay.PIXEL_WIDTH) + Int(pixelPosition.x)
         
         for charY in 0..<CharacterGenerator.CHAR_HEIGHT {
-            //for charX in 0..<CharacterGenerator.CHAR_WIDTH {
+            let offsetY = AppleIBitmapDisplay.PIXEL_WIDTH * charY
+            
             for charX in 0..<8 {
-                indexedPixels[baseOffset + (AppleIBitmapDisplay.PIXEL_WIDTH * charY) + 7 - charX] = (charPixels[charY] & UInt8(1 << charX)) > 0 ? 1 : 0
+                rgbPixels[baseOffset + offsetY + 7 - charX] = (charPixels[charY] & UInt8(1 << charX)) > 0 ? BitmapPixels.ColorWhite : BitmapPixels.ColorBlack
             }
         }
     }
@@ -71,15 +42,14 @@ class AppleIBitmapDisplay: NSObject, CALayerDelegate {
     func draw(_ layer: CALayer, in ctx: CGContext) {
         let bounds = layer.bounds
         
-        var pixels = convertIndexedPixelsToRGB(pixels: indexedPixels)
-        let pixelProvider = CGDataProvider(data: NSData(bytes: &pixels, length: pixels.count * MemoryLayout<PixelData>.size))
+        let pixelProvider = CGDataProvider(data: NSData(bytes: &rgbPixels, length: rgbPixels.count * MemoryLayout<BitmapPixels.PixelData>.size))
         
         let renderedImage = CGImage(width: AppleIBitmapDisplay.PIXEL_WIDTH,
                                     height: AppleIBitmapDisplay.PIXEL_HEIGHT,
-                                    bitsPerComponent: Int(bitsPerComponent),
-                                    bitsPerPixel: Int(bitsPerPixel),
-                                    bytesPerRow: AppleIBitmapDisplay.PIXEL_WIDTH * Int(MemoryLayout<PixelData>.size),
-                                    space: colorSpace,
+                                    bitsPerComponent: Int(BitmapPixels.bitsPerComponent),
+                                    bitsPerPixel: Int(BitmapPixels.bitsPerPixel),
+                                    bytesPerRow: AppleIBitmapDisplay.PIXEL_WIDTH * Int(MemoryLayout<BitmapPixels.PixelData>.size),
+                                    space: BitmapPixels.colorSpace,
                                     bitmapInfo: bitmapInfo,
                                     provider: pixelProvider!,
                                     decode: nil,

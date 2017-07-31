@@ -14,9 +14,6 @@ class AppleI: NSObject {
     let cg = CharacterGenerator(romPath: "/Users/luigi/apple1/apple1.vid");
     let terminal = Terminal()
     
-    //PIA 0 = KBD
-    //PIA 1 = DSP
-    //let pia = [PIA(), PIA()]
     let pia: [String:PIA] = [
         "keyboard": PIA(),
         "display": PIA()
@@ -78,7 +75,8 @@ class AppleI: NSObject {
         
         //update the video display
         for (cellNum, character) in terminal.characters.enumerated() {
-            emulatorViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: character), pixelPosition: emulatorViewDelegate.getPixelOffset(charCellIndex: cellNum))
+            emulatorViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: character),
+                                                    pixelPosition: emulatorViewDelegate.getPixelOffset(charCellIndex: cellNum))
         }
         
         emulatorView.setNeedsDisplay(emulatorView.frame)

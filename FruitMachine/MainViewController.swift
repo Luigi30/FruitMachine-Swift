@@ -32,7 +32,11 @@ class MainViewController: NSViewController {
         //computer.emuGLView.doSetup()
         //self.view.addSubview(computer.emuGLView)
         
-        self.frameTimer = Timer.scheduledTimer(timeInterval: 1/60, target: self, selector: #selector(runEmulation), userInfo: nil, repeats: true)
+        self.frameTimer = Timer.scheduledTimer(timeInterval: 1/60,
+                                               target: self,
+                                               selector: #selector(runEmulation),
+                                               userInfo: nil,
+                                               repeats: true)
     }
     
     @objc func runEmulation() {
