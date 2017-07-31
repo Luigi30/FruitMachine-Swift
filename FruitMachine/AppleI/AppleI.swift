@@ -41,10 +41,6 @@ class AppleI: NSObject {
         
         installOverrides()
         
-        for (cellNum, character) in terminal.characters.enumerated() {
-            emulatorViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: character), pixelPosition: emulatorViewDelegate.getPixelOffset(charCellIndex: cellNum))
-        }
-        
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple1/apple1.rom", offset: 0xFF00, length: 0x100)
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple1/basic.bin", offset: 0xE000, length: 0x1000)
         CPU.sharedInstance.performReset()
@@ -59,26 +55,35 @@ class AppleI: NSObject {
         
         CPU.sharedInstance.memoryInterface.read_overrides.append(PIAOverrides.readKBD)
         CPU.sharedInstance.memoryInterface.read_overrides.append(PIAOverrides.readKBDCR)
-        
     }
     
     func runFrame() {
-        let startTime = CFAbsoluteTimeGetCurrent()
+
         
         CPU.sharedInstance.cycles = 0
         CPU.sharedInstance.cyclesInBatch = AppleI.CYCLES_PER_BATCH
         CPU.sharedInstance.runCyclesBatch()
         
         //update the video display
+        CVPixelBufferLockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
+        let pixelBase = CVPixelBufferGetBaseAddress(emulatorViewDelegate.pixels!)
+        let buf = pixelBase?.assumingMemoryBound(to: BitmapPixelsBE555.PixelData.self)
+        
+        let startTime = CFAbsoluteTimeGetCurrent()
+        
         for (cellNum, character) in terminal.characters.enumerated() {
-            emulatorViewDelegate.putCharacterPixels(charPixels: cg.getCharacterPixels(charIndex: character),
+            emulatorViewDelegate.putCharacterPixels(buffer: buf,
+                                                    charPixels: cg.getCharacterPixels(charIndex: character),
                                                     pixelPosition: emulatorViewDelegate.getPixelOffset(charCellIndex: cellNum))
         }
+        
+        let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
+        print("Time elapsed for runFrame: \(timeElapsed) s.")
+        
+        CVPixelBufferUnlockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
         
         emulatorView.setNeedsDisplay(emulatorView.frame)
         emulatorView.display()
         
-        let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
-        print("Time elapsed for runFrame: \(timeElapsed) s.")
     }
 }

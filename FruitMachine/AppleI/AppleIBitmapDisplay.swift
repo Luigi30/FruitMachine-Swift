@@ -23,6 +23,8 @@ class AppleIBitmapDisplay: NSObject, CALayerDelegate {
     
     var renderedImage: CGImage?
     
+    var scanlineOffsets: [Int]
+    
     override init() {
         _ = CVPixelBufferCreate(kCFAllocatorDefault, AppleIBitmapDisplay.PIXEL_WIDTH, AppleIBitmapDisplay.PIXEL_HEIGHT, OSType(k16BE555PixelFormat), nil, &pixels)
         
@@ -31,25 +33,26 @@ class AppleIBitmapDisplay: NSObject, CALayerDelegate {
         bufferHeight = CVPixelBufferGetHeight(pixels!)
         
         renderedImage = nil
+        
+        scanlineOffsets = [Int]()
+        for i in 0..<AppleIBitmapDisplay.PIXEL_HEIGHT {
+            scanlineOffsets.append(i * AppleIBitmapDisplay.PIXEL_WIDTH)
+        }
     }
     
-    func putCharacterPixels(charPixels: [UInt8], pixelPosition: CGPoint) {
-        CVPixelBufferLockBaseAddress(pixels!, CVPixelBufferLockFlags(rawValue: 0))
-        let pixelBase = CVPixelBufferGetBaseAddress(pixels!)
-        let buf = pixelBase?.assumingMemoryBound(to: BitmapPixelsBE555.PixelData.self)
+    func putCharacterPixels(buffer: UnsafeMutablePointer<BitmapPixelsBE555.PixelData>?, charPixels: [UInt8], pixelPosition: CGPoint) {
+        //You better have locked the buffer before getting here...
         
         //Calculate the offset to reach the desired position.
-        let baseOffset = (Int(pixelPosition.y) * AppleIBitmapDisplay.PIXEL_WIDTH) + Int(pixelPosition.x)
+        let baseOffset = scanlineOffsets[Int(pixelPosition.y)] + Int(pixelPosition.x)
         
         for charY in 0..<CharacterGenerator.CHAR_HEIGHT {
             let offsetY = AppleIBitmapDisplay.PIXEL_WIDTH * charY
             
             for charX in 0..<8 {
-                buf![baseOffset + offsetY + 7 - charX] = (charPixels[charY] & UInt8(1 << charX)) > 0 ? BitmapPixelsBE555.ARGBWhite : BitmapPixelsBE555.ARGBBlack
+                buffer![baseOffset + offsetY + 7 - charX] = (charPixels[charY] & UInt8(1 << charX)) > 0 ? BitmapPixelsBE555.ARGBWhite : BitmapPixelsBE555.ARGBBlack
             }
         }
-        
-        CVPixelBufferUnlockBaseAddress(pixels!, CVPixelBufferLockFlags(rawValue: 0))
     }
     
     func getPixelOffset(charCellX: Int, charCellY: Int) -> CGPoint {
