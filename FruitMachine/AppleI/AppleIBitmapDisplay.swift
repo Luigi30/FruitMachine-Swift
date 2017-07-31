@@ -13,7 +13,7 @@ class AppleIBitmapDisplay: NSObject, CALayerDelegate {
     static let PIXEL_HEIGHT = 192
     
     /* Pixel data stuff. */
-    let bitmapInfo: CGBitmapInfo = [.byteOrder32Big, CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue)]
+    let bitmapInfo: CGBitmapInfo = [.byteOrder16Big, CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue)]
     
     var pixels: CVPixelBuffer?
     
@@ -21,18 +21,22 @@ class AppleIBitmapDisplay: NSObject, CALayerDelegate {
     let bufferWidth: Int
     let bufferHeight: Int
     
+    var renderedImage: CGImage?
+    
     override init() {
-        _ = CVPixelBufferCreate(kCFAllocatorDefault, AppleIBitmapDisplay.PIXEL_WIDTH, AppleIBitmapDisplay.PIXEL_HEIGHT, OSType(k32ARGBPixelFormat), nil, &pixels)
+        _ = CVPixelBufferCreate(kCFAllocatorDefault, AppleIBitmapDisplay.PIXEL_WIDTH, AppleIBitmapDisplay.PIXEL_HEIGHT, OSType(k16BE555PixelFormat), nil, &pixels)
         
         sourceRowBytes = CVPixelBufferGetBytesPerRow(pixels!)
         bufferWidth = CVPixelBufferGetWidth(pixels!)
         bufferHeight = CVPixelBufferGetHeight(pixels!)
+        
+        renderedImage = nil
     }
     
     func putCharacterPixels(charPixels: [UInt8], pixelPosition: CGPoint) {
         CVPixelBufferLockBaseAddress(pixels!, CVPixelBufferLockFlags(rawValue: 0))
         let pixelBase = CVPixelBufferGetBaseAddress(pixels!)
-        let buf = pixelBase?.assumingMemoryBound(to: BitmapPixelsARGB32.PixelData.self)
+        let buf = pixelBase?.assumingMemoryBound(to: BitmapPixelsBE555.PixelData.self)
         
         //Calculate the offset to reach the desired position.
         let baseOffset = (Int(pixelPosition.y) * AppleIBitmapDisplay.PIXEL_WIDTH) + Int(pixelPosition.x)
@@ -41,7 +45,7 @@ class AppleIBitmapDisplay: NSObject, CALayerDelegate {
             let offsetY = AppleIBitmapDisplay.PIXEL_WIDTH * charY
             
             for charX in 0..<8 {
-                buf![baseOffset + offsetY + 7 - charX] = (charPixels[charY] & UInt8(1 << charX)) > 0 ? BitmapPixelsARGB32.ARGBWhite : BitmapPixelsARGB32.ARGBBlack
+                buf![baseOffset + offsetY + 7 - charX] = (charPixels[charY] & UInt8(1 << charX)) > 0 ? BitmapPixelsBE555.ARGBWhite : BitmapPixelsBE555.ARGBBlack
             }
         }
         
@@ -58,25 +62,23 @@ class AppleIBitmapDisplay: NSObject, CALayerDelegate {
 
     /* Draw the screen. */
     func draw(_ layer: CALayer, in ctx: CGContext) {
-        let bounds = layer.bounds
-        
         CVPixelBufferLockBaseAddress(pixels!, CVPixelBufferLockFlags.readOnly)
         let pixelBase = CVPixelBufferGetBaseAddress(pixels!)
         let pixelRef = CGDataProvider(dataInfo: nil, data: pixelBase!, size: sourceRowBytes * bufferHeight, releaseData: releaseMaskImagePixelData)
         
-        let renderedImage = CGImage(width: AppleIBitmapDisplay.PIXEL_WIDTH,
+        renderedImage = CGImage(width: AppleIBitmapDisplay.PIXEL_WIDTH,
                                     height: AppleIBitmapDisplay.PIXEL_HEIGHT,
-                                    bitsPerComponent: Int(BitmapPixelsARGB32.bitsPerComponent), //8
-                                    bitsPerPixel: Int(BitmapPixelsARGB32.bitsPerPixel), //32
-                                    bytesPerRow: AppleIBitmapDisplay.PIXEL_WIDTH * Int(MemoryLayout<BitmapPixelsARGB32.PixelData>.size),
-                                    space: BitmapPixelsARGB32.colorSpace, //RGB
-                                    bitmapInfo: bitmapInfo, //ARGB32
+                                    bitsPerComponent: Int(BitmapPixelsBE555.bitsPerComponent), //5
+                                    bitsPerPixel: Int(BitmapPixelsBE555.bitsPerPixel), //16
+                                    bytesPerRow: AppleIBitmapDisplay.PIXEL_WIDTH * Int(MemoryLayout<BitmapPixelsBE555.PixelData>.size),
+                                    space: BitmapPixelsBE555.colorSpace, //RGB
+                                    bitmapInfo: bitmapInfo, //BE555
                                     provider: pixelRef!,
                                     decode: nil,
                                     shouldInterpolate: false,
                                     intent: CGColorRenderingIntent.defaultIntent)
         
-        ctx.draw(renderedImage!, in: bounds)
+        ctx.draw(renderedImage!, in: layer.bounds)
         
         CVPixelBufferUnlockBaseAddress(pixels!, CVPixelBufferLockFlags(rawValue: 0))
     }

@@ -8,8 +8,6 @@
 
 import Cocoa
 import CoreGraphics
-import OpenGL
-import GLKit
 
 class MainViewController: NSViewController {
     
@@ -24,7 +22,6 @@ class MainViewController: NSViewController {
         super.viewDidLoad()
         
         preferencesWindowController = PreferencesWindowController()
-        preferencesWindowController.loadWindow()
         
         // Do view setup here.
         self.view.addSubview(computer.emulatorView)
@@ -66,6 +63,10 @@ class MainViewController: NSViewController {
         let debuggerStoryboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Debugger"), bundle: nil)
         debuggerWindowController = debuggerStoryboard.instantiateInitialController() as! DebuggerWindowController
         debuggerWindowController.showWindow(self)
+    }
+    
+    @IBAction func showPreferences(_ sender: Any) {
+        preferencesWindowController.loadWindow()
     }
 }
 

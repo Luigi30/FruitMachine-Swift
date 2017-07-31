@@ -63,6 +63,8 @@ class AppleI: NSObject {
     }
     
     func runFrame() {
+        let startTime = CFAbsoluteTimeGetCurrent()
+        
         CPU.sharedInstance.cycles = 0
         CPU.sharedInstance.cyclesInBatch = AppleI.CYCLES_PER_BATCH
         CPU.sharedInstance.runCyclesBatch()
@@ -76,7 +78,7 @@ class AppleI: NSObject {
         emulatorView.setNeedsDisplay(emulatorView.frame)
         emulatorView.display()
         
-        //emuGLView.setNeedsDisplay(emuGLView.frame)
-        //emuGLView.display()
+        let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
+        print("Time elapsed for runFrame: \(timeElapsed) s.")
     }
 }
