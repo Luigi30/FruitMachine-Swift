@@ -21,3 +21,19 @@ class BitmapPixels: NSObject {
     static let ColorBlack = PixelData(data: 0b11000000)
     static let ColorWhite = PixelData(data: 0b11111111)
 }
+
+class BitmapPixelsARGB32 : NSObject {
+    struct PixelData {
+        var a: UInt8 = 255
+        var r: UInt8 = 0
+        var g: UInt8 = 0
+        var b: UInt8 = 0
+    }
+    
+    static let bitsPerComponent: UInt8 = 8
+    static let bitsPerPixel: UInt = 32
+    static let colorSpace = CGColorSpaceCreateDeviceRGB()
+    
+    static let ARGBWhite = PixelData(a: 255, r: 200, g: 200, b: 200)
+    static let ARGBBlack = PixelData(a: 255, r: 0, g: 0, b: 0)
+}
