@@ -15,6 +15,7 @@
 		2A5C5BBC1F304C3A00ED351D /* A2CharacterGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5C5BBB1F304C3A00ED351D /* A2CharacterGenerator.swift */; };
 		2A5C5BBE1F304D4B00ED351D /* Glyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5C5BBD1F304D4B00ED351D /* Glyph.swift */; };
 		2A60851E1F2AFAE900E05B64 /* PIA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A60851D1F2AFAE900E05B64 /* PIA.swift */; };
+		2A6C2D171F31216700B8DC60 /* SoftswitchOverrides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6C2D161F31216700B8DC60 /* SoftswitchOverrides.swift */; };
 		2A6DC7E91F3045280066FE0D /* AppleIIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6DC7E81F3045280066FE0D /* AppleIIViewController.swift */; };
 		2A6DC7EB1F3045C90066FE0D /* EmulatedSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6DC7EA1F3045C90066FE0D /* EmulatedSystem.swift */; };
 		2A6DC7ED1F30492C0066FE0D /* ScreenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6DC7EC1F30492C0066FE0D /* ScreenDelegate.swift */; };
@@ -54,6 +55,7 @@
 		2A5C5BBB1F304C3A00ED351D /* A2CharacterGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A2CharacterGenerator.swift; sourceTree = "<group>"; };
 		2A5C5BBD1F304D4B00ED351D /* Glyph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glyph.swift; sourceTree = "<group>"; };
 		2A60851D1F2AFAE900E05B64 /* PIA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIA.swift; sourceTree = "<group>"; };
+		2A6C2D161F31216700B8DC60 /* SoftswitchOverrides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftswitchOverrides.swift; sourceTree = "<group>"; };
 		2A6DC7E81F3045280066FE0D /* AppleIIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIIViewController.swift; sourceTree = "<group>"; };
 		2A6DC7EA1F3045C90066FE0D /* EmulatedSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatedSystem.swift; sourceTree = "<group>"; };
 		2A6DC7EC1F30492C0066FE0D /* ScreenDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenDelegate.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 			children = (
 				2A6DC7EE1F30492E0066FE0D /* Video */,
 				2AB6CACC1F3041A200DECAC0 /* AppleII.swift */,
+				2A6C2D161F31216700B8DC60 /* SoftswitchOverrides.swift */,
 			);
 			path = AppleII;
 			sourceTree = "<group>";
@@ -337,6 +340,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2A60851E1F2AFAE900E05B64 /* PIA.swift in Sources */,
+				2A6C2D171F31216700B8DC60 /* SoftswitchOverrides.swift in Sources */,
 				2A5C5BBE1F304D4B00ED351D /* Glyph.swift in Sources */,
 				2A2126841F2A9FA300E43DC1 /* DebuggerWindowController.swift in Sources */,
 				2AD458E31F20661300F05121 /* CPUInstructions.swift in Sources */,

@@ -10,6 +10,12 @@ import Cocoa
 
 extension AppleII {
 
+    enum CharacterAttributes {
+        case normal
+        case flashing
+        case inverse
+    }
+    
     class ScreenDelegate: NSObject, CALayerDelegate {
         static let PIXEL_WIDTH = 280
         static let PIXEL_HEIGHT = 192
@@ -17,6 +23,8 @@ extension AppleII {
         static let CELLS_WIDTH = 40
         static let CELLS_HEIGHT = 24
         static let CELLS_COUNT = CELLS_WIDTH * CELLS_HEIGHT
+        
+        var flashIsInverse = false
         
         /* Pixel data stuff. */
         let bitmapInfo: CGBitmapInfo = [.byteOrder16Big, CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue)]
@@ -46,8 +54,18 @@ extension AppleII {
             }
         }
         
-        func putGlyph(buffer: UnsafeMutablePointer<BitmapPixelsBE555.PixelData>?, glyph: Glyph, pixelPosition: CGPoint) {
+        func putGlyph(buffer: UnsafeMutablePointer<BitmapPixelsBE555.PixelData>?, glyph: Glyph, attributes: UInt8, pixelPosition: CGPoint) {
             //You better have locked the buffer before getting here...
+            if(pixelPosition.x == -1 && pixelPosition.y == -1) { return }
+            
+            let ca: CharacterAttributes
+            if(attributes == 0x00) {
+                ca = .inverse
+            } else if(attributes == 0x40) {
+                ca = .flashing
+            } else {
+                ca = .normal
+            }
             
             //Calculate the offset to reach the desired position.
             let baseOffset = scanlineOffsets[Int(pixelPosition.y)] + Int(pixelPosition.x)
@@ -57,7 +75,19 @@ extension AppleII {
                 let glyphOffsetY = (charY * 8)
                 
                 for charX in 0..<7 {
-                    buffer![offset + 6 - charX] = glyph.pixels[glyphOffsetY + charX]
+                    switch(ca) {
+                    case .normal:
+                        buffer![offset + 6 - charX] = glyph.pixels[glyphOffsetY + charX]
+                    case .inverse:
+                        buffer![offset + 6 - charX] = BitmapPixelsBE555.PixelData(data: ~glyph.pixels[glyphOffsetY + charX].data)
+                    case .flashing:
+                        if(!flashIsInverse) {
+                            buffer![offset + 6 - charX] = glyph.pixels[glyphOffsetY + charX]
+                        } else {
+                            buffer![offset + 6 - charX] = BitmapPixelsBE555.PixelData(data: ~glyph.pixels[glyphOffsetY + charX].data)
+                        }
+                    }
+                    
                 }
             }
         }
@@ -66,8 +96,37 @@ extension AppleII {
             return CGPoint(x: charCellX * 7, y: charCellY * 8)
         }
         
-        func getPixelOffset(charCellIndex: Int) -> CGPoint {
-            return getPixelOffset(charCellX: charCellIndex % AppleII.ScreenDelegate.CELLS_WIDTH, charCellY: charCellIndex / AppleII.ScreenDelegate.CELLS_WIDTH)
+        func getPixelOffset(memoryOffset: Int) -> CGPoint {
+            //Offset is between 0x000 and 0x3FF.
+            //If offset & 0x28, second batch.
+            //If offset & 0x50, third batch.
+            //Else, first batch.
+            
+            var rowNumber = memoryOffset / 0x80
+            let lowByte = memoryOffset & 0x0FF
+            let cellX: Int
+            
+            if(0x28 ... 0x4F ~= lowByte || 0xA8 ... 0xCF ~= lowByte) {
+                //Middle third.
+                rowNumber += 8
+                cellX = (lowByte & ~(0x80)) - 0x28
+            }
+            else if(0x50 ... 0x77 ~= lowByte || 0xD0 ... 0xF7 ~= lowByte) {
+                //Bottom third.
+                rowNumber += 16
+                cellX = (lowByte & ~(0x80)) - 0x50
+            }
+            else if(0x78 ... 0x7F ~= lowByte || 0xF8 ... 0xFF ~= lowByte) {
+                //Discard.
+                return CGPoint(x: -1, y: -1)
+            }
+            else {
+                //Top third.
+                rowNumber += 0
+                cellX = (lowByte & ~(0x80))
+            }
+            
+            return getPixelOffset(charCellX: cellX, charCellY: rowNumber)
         }
         
         /* Draw the screen. */

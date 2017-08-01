@@ -25,7 +25,7 @@ class AppleIIViewController: NSViewController {
         
         self.view.addSubview(computer.emulatorView)
         
-        self.frameTimer = Timer.scheduledTimer(timeInterval: 1/60,
+        self.frameTimer = Timer.scheduledTimer(timeInterval: 1.0/60.0,
                                                target: self,
                                                selector: #selector(runEmulation),
                                                userInfo: nil,
@@ -47,6 +47,25 @@ class AppleIIViewController: NSViewController {
     
     @IBAction func showPreferences(_ sender: Any) {
         preferencesWindowController.loadWindow()
+    }
+    
+    override func keyDown(with event: NSEvent) {
+        let c = returnChar(theEvent: event)
+        
+        guard let ascii32 = c?.asciiValue else {
+            return
+        }
+        
+        //Poke the ASCII byte into $C000.
+        CPU.sharedInstance.memoryInterface.writeByte(offset: 0xC000, value: UInt8((ascii32 | 0x80) & 0x000000FF))
+    }
+    
+    private func returnChar(theEvent: NSEvent) -> Character?{
+        let s: String = theEvent.characters!
+        for char in s{
+            return char
+        }
+        return nil
     }
     
 }

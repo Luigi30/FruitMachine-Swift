@@ -170,7 +170,6 @@ final class Opcodes: NSObject {
         var t16: UInt16 = UInt16(state.accumulator &- operand) &- UInt16((state.status_register.carry ? UInt8(0) : UInt8(1)))
         let t8: UInt8 = UInt8(t16 & 0xFF)
         
-        state.cyclesInBatch = 0
         state.status_register.overflow = (t8 >= 0x80 && t8 <= 0xFF)
         
         if(state.status_register.decimal == true) {
