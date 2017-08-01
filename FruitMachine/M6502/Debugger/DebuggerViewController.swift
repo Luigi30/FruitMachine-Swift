@@ -26,7 +26,7 @@ class DebuggerViewController: NSViewController {
     
     var disassembly: [Disassembly] = [Disassembly]()
     
-    func highlightCurrentInstruction() -> Bool {
+    @discardableResult func highlightCurrentInstruction() -> Bool {
         for (index, instruction) in disassembly.enumerated() {
             if(instruction.address == cpuInstance.program_counter) {
                 debuggerTableView.selectRowIndexes(NSIndexSet(index: index) as IndexSet, byExtendingSelection: false)

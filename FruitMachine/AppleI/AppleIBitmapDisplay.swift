@@ -40,17 +40,18 @@ class AppleIBitmapDisplay: NSObject, CALayerDelegate {
         }
     }
     
-    func putCharacterPixels(buffer: UnsafeMutablePointer<BitmapPixelsBE555.PixelData>?, charPixels: [UInt8], pixelPosition: CGPoint) {
+    func putGlyph(buffer: UnsafeMutablePointer<BitmapPixelsBE555.PixelData>?, glyph: Glyph, pixelPosition: CGPoint) {
         //You better have locked the buffer before getting here...
         
         //Calculate the offset to reach the desired position.
         let baseOffset = scanlineOffsets[Int(pixelPosition.y)] + Int(pixelPosition.x)
         
         for charY in 0..<CharacterGenerator.CHAR_HEIGHT {
-            let offsetY = AppleIBitmapDisplay.PIXEL_WIDTH * charY
+            let offset = baseOffset + AppleIBitmapDisplay.PIXEL_WIDTH * charY
+            let glyphOffsetY = (charY * 8)
             
             for charX in 0..<8 {
-                buffer![baseOffset + offsetY + 7 - charX] = (charPixels[charY] & UInt8(1 << charX)) > 0 ? BitmapPixelsBE555.ARGBWhite : BitmapPixelsBE555.ARGBBlack
+                buffer![offset + 7 - charX] = glyph.pixels[glyphOffsetY + charX]
             }
         }
     }

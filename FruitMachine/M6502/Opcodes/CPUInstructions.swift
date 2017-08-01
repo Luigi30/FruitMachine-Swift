@@ -8,31 +8,15 @@
 
 import Cocoa
 
-enum AddressingMode {
-    case accumulator
-    case immediate
-    case implied
-    case relative
-    case absolute
-    case zeropage
-    case indirect
-    case absolute_indexed_x
-    case absolute_indexed_y
-    case zeropage_indexed_x
-    case zeropage_indexed_y
-    case indexed_indirect
-    case indirect_indexed
-}
-
-class CPUInstruction: NSObject {
+final class CPUInstruction: NSObject {    
     let mnemonic: String    //The mnemonic for this instruction.
     let cycles: Int         //How many cycles does this instruction take?
     let bytes: Int          //How many bytes long is this instruction?
-    let addressingMode: AddressingMode //The addressing mode of this instruction.
+    let addressingMode: CPU.AddressingMode //The addressing mode of this instruction.
     
-    let action: (CPU, AddressingMode) -> Void //A closure that describes this function's action.
+    let action: (CPU, CPU.AddressingMode) -> Void //A closure that describes this function's action.
     
-    init(mnemonic: String, cycles: Int, bytes: Int, addressingMode: AddressingMode, action: @escaping (CPU, AddressingMode) -> Void) {
+    init(mnemonic: String, cycles: Int, bytes: Int, addressingMode: CPU.AddressingMode, action: @escaping (CPU, CPU.AddressingMode) -> Void) {
         self.mnemonic = mnemonic
         self.cycles = cycles
         self.bytes = bytes

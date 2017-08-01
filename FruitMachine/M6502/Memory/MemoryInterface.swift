@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class MemoryInterface: NSObject {
+final class MemoryInterface: NSObject {
     
     fileprivate var memory: [UInt8]
     
@@ -43,7 +43,7 @@ class MemoryInterface: NSObject {
         if(!bypassOverrides) {
             for override in write_overrides {
                 if case override.rangeStart ... override.rangeEnd = offset {
-                    override.action(CPU.sharedInstance, value)
+                    _ = override.action(CPU.sharedInstance, value)
                     if(!override.doWrite) {
                         return
                     }

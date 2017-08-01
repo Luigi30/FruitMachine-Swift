@@ -111,7 +111,23 @@ struct StatusRegister {
     }
 }
 
-class CPU: NSObject {
+final class CPU: NSObject {
+    enum AddressingMode {
+        case accumulator
+        case immediate
+        case implied
+        case relative
+        case absolute
+        case zeropage
+        case indirect
+        case absolute_indexed_x
+        case absolute_indexed_y
+        case zeropage_indexed_x
+        case zeropage_indexed_y
+        case indexed_indirect
+        case indirect_indexed
+    }
+    
     let NMI_VECTOR: UInt16      = 0xFFFA
     let RESET_VECTOR: UInt16    = 0xFFFC
     let IRQ_VECTOR: UInt16      = 0xFFFE
@@ -196,7 +212,7 @@ class CPU: NSObject {
         
     }
         
-    func executeNextInstruction() throws {
+    final func executeNextInstruction() throws {
         instruction_register = memoryInterface.readByte(offset: program_counter)
         let operation = InstructionTable[instruction_register]
         if(operation == nil) {
@@ -241,7 +257,7 @@ class CPU: NSObject {
     }
     
     /* Running */
-    func cpuStep() {
+    final func cpuStep() {
         do {
             try executeNextInstruction()
         } catch CPUExceptions.invalidInstruction {
@@ -252,11 +268,9 @@ class CPU: NSObject {
     }
     
     func runCyclesBatch() {
-        let startTime = CFAbsoluteTimeGetCurrent()
-        
         isRunning = true
         
-        while(!outOfCycles() && isRunning) {
+        while(!outOfCycles()) {
             cpuStep()
             
             if (breakpoints.contains(program_counter)) {
@@ -264,9 +278,6 @@ class CPU: NSObject {
             }
             
         }
- 
-        let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
-        print("Time elapsed for runFrame: \(timeElapsed) s.")
     }
     
 }

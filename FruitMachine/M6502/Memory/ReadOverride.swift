@@ -11,7 +11,7 @@ import Cocoa
 /* A ReadOverride is special behavior that occurs when a memory address is read.
    Memory-mapped registers, peripherals, etc. */
 
-class ReadOverride: MemoryOverride {
+final class ReadOverride: MemoryOverride {
     let doRead: Bool //do we write anyway?
     
     init(start: UInt16, end: UInt16, readAnyway: Bool, action: @escaping (AnyObject, UInt8?) -> UInt8?) {
