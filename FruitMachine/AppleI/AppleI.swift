@@ -57,15 +57,10 @@ class AppleI: NSObject {
         CPU.sharedInstance.memoryInterface.read_overrides.append(PIAOverrides.readKBDCR)
     }
     
-    func runFrame() {
-        let startTime = CFAbsoluteTimeGetCurrent()
-        
+    func runFrame() {        
         CPU.sharedInstance.cycles = 0
         CPU.sharedInstance.cyclesInBatch = AppleI.CYCLES_PER_BATCH
         CPU.sharedInstance.runCyclesBatch()
-        
-        let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
-        print("Time elapsed for runFrame: \(timeElapsed) s.")
         
         //update the video display
         CVPixelBufferLockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))

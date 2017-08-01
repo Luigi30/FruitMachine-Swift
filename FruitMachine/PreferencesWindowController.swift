@@ -36,8 +36,62 @@ class PreferencesWindowController: NSWindowController {
         }
     }
     
+    func windowWillClose(_ notification: Notification) {
+        defaults.set(path_ROMMonitor.stringValue, forKey: "path_ROMMonitor")
+        defaults.set(path_ROMCharacter.stringValue, forKey: "path_ROMCharacter")
+        defaults.set(path_ROMBasic.stringValue, forKey: "path_ROMBasic")
+        
+        defaults.synchronize()
+    }
+    
     override var windowNibName : NSNib.Name? {
         return NSNib.Name(rawValue: "PreferencesWindow")
     }
+    
+    @IBAction func btn_click_Monitor(_ sender: NSButton) {
+        let picker = NSOpenPanel()
+        
+        picker.title = "Select your Monitor ROM (apple1.rom)"
+        picker.showsHiddenFiles = false
+        picker.canChooseFiles = true
+        picker.canChooseDirectories = false
+        picker.allowsMultipleSelection = false
+        picker.allowedFileTypes = ["rom"]
+        
+        if(picker.runModal() == .OK) {
+            path_ROMMonitor.stringValue = picker.url!.path
+        }
+    }
+    
+    @IBAction func btn_click_Character(_ sender: NSButton) {
+        let picker = NSOpenPanel()
+        
+        picker.title = "Select your Monitor ROM (apple1.vid)"
+        picker.showsHiddenFiles = false
+        picker.canChooseFiles = true
+        picker.canChooseDirectories = false
+        picker.allowsMultipleSelection = false
+        picker.allowedFileTypes = ["vid"]
+        
+        if(picker.runModal() == .OK) {
+            path_ROMCharacter.stringValue = picker.url!.path
+        }
+    }
+    
+    @IBAction func btn_click_BASIC(_ sender: NSButton) {
+        let picker = NSOpenPanel()
+        
+        picker.title = "Select your Monitor ROM (basic.bin)"
+        picker.showsHiddenFiles = false
+        picker.canChooseFiles = true
+        picker.canChooseDirectories = false
+        picker.allowsMultipleSelection = false
+        picker.allowedFileTypes = ["bin"]
+        
+        if(picker.runModal() == .OK) {
+            path_ROMBasic.stringValue = picker.url!.path
+        }
+    }
+    
     
 }
