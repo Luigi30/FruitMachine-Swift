@@ -34,9 +34,9 @@ class Disassembly: NSObject {
         case .relative:
             var destination: UInt16 = address
             if((data[1] & 0x80) == 0x80) {
-                destination = destination + 1 - UInt16(~data[1])
+                destination = destination &+ 1 &- UInt16(~data[1])
             } else {
-                destination = destination + 2 + UInt16(data[1])
+                destination = destination &+ 2 &+ UInt16(data[1])
             }
             return String(format: "%@ #$%04X", instruction!.mnemonic, destination)
         case .absolute:

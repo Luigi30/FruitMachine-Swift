@@ -11,12 +11,14 @@ import Cocoa
 class AppleII: NSObject, EmulatedSystem {
     static let sharedInstance = AppleII(cpuFrequency: (14.31818 / 7 / 2) * 1000000, fps: 60.0)
     
+    let cg = A2CharacterGenerator(romPath: "/Users/luigi/apple2/a2.chr");
+    
     var CPU_FREQUENCY: Double
     var FRAMES_PER_SECOND: Double
     var CYCLES_PER_BATCH: Int
     
     let emulatorViewDelegate = AppleII.ScreenDelegate()
-    let emulatorView = AppleII.ScreenView(frame: NSMakeRect(0, 0, 640, 384))
+    let emulatorView = AppleII.ScreenView(frame: NSMakeRect(0, 0, 560, 384))
     let emuScreenLayer = CALayer()
     
     required init(cpuFrequency: Double, fps: Double) {
@@ -27,7 +29,6 @@ class AppleII: NSObject, EmulatedSystem {
         
         loadROMs()
         
-        /*
         emuScreenLayer.shouldRasterize = true
         emuScreenLayer.delegate = emulatorViewDelegate
         emuScreenLayer.frame = emulatorView.bounds
@@ -38,11 +39,8 @@ class AppleII: NSObject, EmulatedSystem {
         emulatorView.layer?.addSublayer(emuScreenLayer)
         
         installOverrides()
-        
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple1/apple1.rom", offset: 0xFF00, length: 0x100)
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple1/basic.bin", offset: 0xE000, length: 0x1000)
+
         CPU.sharedInstance.performReset()
-         */
     }
     
     func loadROMs() {
@@ -62,6 +60,23 @@ class AppleII: NSObject, EmulatedSystem {
         CPU.sharedInstance.runCyclesBatch()
         
         //TODO
+        //update the video display
+        CVPixelBufferLockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
+        let pixelBase = CVPixelBufferGetBaseAddress(emulatorViewDelegate.pixels!)
+        let buf = pixelBase?.assumingMemoryBound(to: BitmapPixelsBE555.PixelData.self)
+        
+        //Text mode: Get character codes from $0400-$07FF
+        for address in 0x0400 ..< 0x07C0 {
+            let charCode = CPU.sharedInstance.memoryInterface.readByte(offset: UInt16(address), bypassOverrides: true)
+            
+            emulatorViewDelegate.putGlyph(buffer: buf,
+                                          glyph: cg.glyphs[Int(charCode & ~(0x80))],
+                                          pixelPosition: emulatorViewDelegate.getPixelOffset(charCellIndex: address - 0x400))
+        }
+        
+        CVPixelBufferUnlockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
+        
+        emulatorView.setNeedsDisplay(emulatorView.frame)
     }
     
 }

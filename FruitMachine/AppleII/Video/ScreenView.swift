@@ -28,8 +28,8 @@ extension AppleII {
             super.draw(dirtyRect)
             // Drawing code here.
             
-            //layer?.sublayers![0].setNeedsDisplay()
-            //layer?.sublayers![0].display()
+            layer?.sublayers![0].setNeedsDisplay()
+            layer?.sublayers![0].display()
         }
         
     }

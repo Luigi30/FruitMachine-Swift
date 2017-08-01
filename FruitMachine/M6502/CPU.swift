@@ -231,7 +231,7 @@ final class CPU: NSObject {
             self.branch_was_taken = false
         }
         
-        self.program_counter = UInt16(Int(self.program_counter) + operation!.bytes)
+        self.program_counter = UInt16(self.program_counter &+ UInt16(operation!.bytes))
     }
     
     func outOfCycles() -> Bool {

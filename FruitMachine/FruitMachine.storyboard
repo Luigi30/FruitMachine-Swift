@@ -224,10 +224,10 @@
             </objects>
             <point key="canvasLocation" x="97" y="-661"/>
         </scene>
-        <!--AppleI View Controller-->
+        <!--AppleII View Controller-->
         <scene sceneID="AMw-8X-nlH">
             <objects>
-                <viewController id="gw1-M7-9Je" customClass="AppleIViewController" customModule="FruitMachine" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="gw1-M7-9Je" customClass="AppleIIViewController" customModule="FruitMachine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="DiY-xb-Usb">
                         <rect key="frame" x="0.0" y="0.0" width="640" height="384"/>
                         <autoresizingMask key="autoresizingMask"/>
