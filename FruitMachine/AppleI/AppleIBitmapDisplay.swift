@@ -46,7 +46,7 @@ class AppleIBitmapDisplay: NSObject, CALayerDelegate {
         //Calculate the offset to reach the desired position.
         let baseOffset = scanlineOffsets[Int(pixelPosition.y)] + Int(pixelPosition.x)
         
-        for charY in 0..<CharacterGenerator.CHAR_HEIGHT {
+        for charY in 0..<AppleI.A1CharacterGenerator.CHAR_HEIGHT {
             let offset = baseOffset + AppleIBitmapDisplay.PIXEL_WIDTH * charY
             let glyphOffsetY = (charY * 8)
             
@@ -61,7 +61,7 @@ class AppleIBitmapDisplay: NSObject, CALayerDelegate {
     }
     
     func getPixelOffset(charCellIndex: Int) -> CGPoint {
-        return getPixelOffset(charCellX: charCellIndex % Terminal.CELLS_WIDTH, charCellY: charCellIndex / Terminal.CELLS_WIDTH)
+        return getPixelOffset(charCellX: charCellIndex % AppleI.Terminal.CELLS_WIDTH, charCellY: charCellIndex / AppleI.Terminal.CELLS_WIDTH)
     }
 
     /* Draw the screen. */

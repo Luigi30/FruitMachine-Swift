@@ -9,7 +9,7 @@
 import Cocoa
 import CoreGraphics
 
-class MainViewController: NSViewController {
+class AppleIViewController: NSViewController {
     
     let computer = AppleI.sharedInstance
     var debuggerWindowController: DebuggerWindowController!

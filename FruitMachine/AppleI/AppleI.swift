@@ -8,10 +8,14 @@
 
 import Cocoa
 
-class AppleI: NSObject {
-    static let sharedInstance = AppleI()
+class AppleI: NSObject, EmulatedSystem {
+    var CPU_FREQUENCY: Double
+    var FRAMES_PER_SECOND: Double
+    var CYCLES_PER_BATCH: Int
     
-    let cg = CharacterGenerator(romPath: "/Users/luigi/apple1/apple1.vid");
+    static let sharedInstance = AppleI(cpuFrequency: 1000000.0, fps: 60.0)
+    
+    let cg = A1CharacterGenerator(romPath: "/Users/luigi/apple1/apple1.vid");
     let terminal = Terminal()
     
     let pia: [String:PIA] = [
@@ -20,14 +24,13 @@ class AppleI: NSObject {
     ]
     
     let emulatorViewDelegate = AppleIBitmapDisplay()
-    let emulatorView = AppleScreenView(frame: NSMakeRect(0, 0, 640, 384))
+    let emulatorView = AppleIScreenView(frame: NSMakeRect(0, 0, 640, 384))
     let emuScreenLayer = CALayer()
     
-    static let CPU_FREQUENCY = 1000000
-    static let FRAMES_PER_SECOND = 60
-    static let CYCLES_PER_BATCH = CPU_FREQUENCY / FRAMES_PER_SECOND
-    
-    override init() {
+    required init(cpuFrequency: Double, fps: Double) {
+        CPU_FREQUENCY = cpuFrequency
+        FRAMES_PER_SECOND = fps
+        CYCLES_PER_BATCH = Int(cpuFrequency / fps)
         super.init()
         
         emuScreenLayer.shouldRasterize = true
@@ -35,7 +38,7 @@ class AppleI: NSObject {
         emuScreenLayer.frame = emulatorView.bounds
         
         emulatorView.wantsLayer = true
-
+        
         emuScreenLayer.setNeedsDisplay()
         emulatorView.layer?.addSublayer(emuScreenLayer)
         
@@ -44,7 +47,6 @@ class AppleI: NSObject {
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple1/apple1.rom", offset: 0xFF00, length: 0x100)
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple1/basic.bin", offset: 0xE000, length: 0x1000)
         CPU.sharedInstance.performReset()
-        
     }
     
     func installOverrides() {
@@ -59,7 +61,7 @@ class AppleI: NSObject {
     
     func runFrame() {        
         CPU.sharedInstance.cycles = 0
-        CPU.sharedInstance.cyclesInBatch = AppleI.CYCLES_PER_BATCH
+        CPU.sharedInstance.cyclesInBatch = AppleI.sharedInstance.CYCLES_PER_BATCH
         CPU.sharedInstance.runCyclesBatch()
         
         //update the video display

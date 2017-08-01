@@ -9,16 +9,23 @@
 /* Begin PBXBuildFile section */
 		2A2126841F2A9FA300E43DC1 /* DebuggerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2126831F2A9FA300E43DC1 /* DebuggerWindowController.swift */; };
 		2A22EBFB1F21A7A700A36A61 /* IntegerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */; };
-		2A5BC5191F29A28D008C03BE /* AppleScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5BC5181F29A28D008C03BE /* AppleScreenView.swift */; };
+		2A5BC5191F29A28D008C03BE /* AppleIScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5BC5181F29A28D008C03BE /* AppleIScreenView.swift */; };
 		2A5BC51C1F29A2EB008C03BE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A5BC51B1F29A2EB008C03BE /* QuartzCore.framework */; };
 		2A5BC51E1F29A4C3008C03BE /* AppleIBitmapDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5BC51D1F29A4C3008C03BE /* AppleIBitmapDisplay.swift */; };
+		2A5C5BBC1F304C3A00ED351D /* A2CharacterGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5C5BBB1F304C3A00ED351D /* A2CharacterGenerator.swift */; };
+		2A5C5BBE1F304D4B00ED351D /* Glyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5C5BBD1F304D4B00ED351D /* Glyph.swift */; };
 		2A60851E1F2AFAE900E05B64 /* PIA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A60851D1F2AFAE900E05B64 /* PIA.swift */; };
+		2A6DC7E91F3045280066FE0D /* AppleIIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6DC7E81F3045280066FE0D /* AppleIIViewController.swift */; };
+		2A6DC7EB1F3045C90066FE0D /* EmulatedSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6DC7EA1F3045C90066FE0D /* EmulatedSystem.swift */; };
+		2A6DC7ED1F30492C0066FE0D /* ScreenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6DC7EC1F30492C0066FE0D /* ScreenDelegate.swift */; };
+		2A6DC7F01F30495D0066FE0D /* ScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6DC7EF1F30495D0066FE0D /* ScreenView.swift */; };
 		2A7665781F2F05F600135518 /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7665761F2F05F600135518 /* PreferencesWindowController.swift */; };
 		2A7665791F2F05F600135518 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A7665771F2F05F600135518 /* PreferencesWindow.xib */; };
 		2A91852A1F2EA84D00A9E5BE /* BitmapPixels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9185291F2EA84D00A9E5BE /* BitmapPixels.swift */; };
 		2AA8B5F81F2A8889002B350F /* AppleI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA8B5F71F2A8889002B350F /* AppleI.swift */; };
 		2AA8B5FC1F2A8EAD002B350F /* Terminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA8B5FB1F2A8EAD002B350F /* Terminal.swift */; };
 		2AA8B5FE1F2A942C002B350F /* PIAOverrides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA8B5FD1F2A942C002B350F /* PIAOverrides.swift */; };
+		2AB6CACD1F3041A200DECAC0 /* AppleII.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB6CACC1F3041A200DECAC0 /* AppleII.swift */; };
 		2AD458CE1F205EB700F05121 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458CD1F205EB700F05121 /* AppDelegate.swift */; };
 		2AD458D01F205EB700F05121 /* DebuggerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458CF1F205EB700F05121 /* DebuggerViewController.swift */; };
 		2AD458D21F205EB700F05121 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2AD458D11F205EB700F05121 /* Assets.xcassets */; };
@@ -31,9 +38,9 @@
 		2AE42E081F2850F400C4900E /* ReadOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E071F2850F400C4900E /* ReadOverride.swift */; };
 		2AE42E0A1F28521E00C4900E /* WriteOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E091F28521E00C4900E /* WriteOverride.swift */; };
 		2AE42E0C1F28522D00C4900E /* MemoryOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E0B1F28522D00C4900E /* MemoryOverride.swift */; };
-		2AE42E3A1F28628300C4900E /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E381F28628300C4900E /* MainViewController.swift */; };
+		2AE42E3A1F28628300C4900E /* AppleIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E381F28628300C4900E /* AppleIViewController.swift */; };
 		2AE42E401F28638100C4900E /* FruitMachine.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2AE42E3F1F28638100C4900E /* FruitMachine.storyboard */; };
-		2AE42E431F28665300C4900E /* CharacterGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E421F28665300C4900E /* CharacterGenerator.swift */; };
+		2AE42E431F28665300C4900E /* A1CharacterGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E421F28665300C4900E /* A1CharacterGenerator.swift */; };
 		2AE5BA041F23DE4400FAA343 /* Disassembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE5BA031F23DE4400FAA343 /* Disassembly.swift */; };
 		2AE5BA061F2469EB00FAA343 /* AddressConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE5BA051F2469EB00FAA343 /* AddressConversions.swift */; };
 /* End PBXBuildFile section */
@@ -41,16 +48,23 @@
 /* Begin PBXFileReference section */
 		2A2126831F2A9FA300E43DC1 /* DebuggerWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerWindowController.swift; sourceTree = "<group>"; };
 		2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerExtensions.swift; sourceTree = "<group>"; };
-		2A5BC5181F29A28D008C03BE /* AppleScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleScreenView.swift; sourceTree = "<group>"; };
+		2A5BC5181F29A28D008C03BE /* AppleIScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIScreenView.swift; sourceTree = "<group>"; };
 		2A5BC51B1F29A2EB008C03BE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2A5BC51D1F29A4C3008C03BE /* AppleIBitmapDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIBitmapDisplay.swift; sourceTree = "<group>"; };
+		2A5C5BBB1F304C3A00ED351D /* A2CharacterGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A2CharacterGenerator.swift; sourceTree = "<group>"; };
+		2A5C5BBD1F304D4B00ED351D /* Glyph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glyph.swift; sourceTree = "<group>"; };
 		2A60851D1F2AFAE900E05B64 /* PIA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIA.swift; sourceTree = "<group>"; };
+		2A6DC7E81F3045280066FE0D /* AppleIIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIIViewController.swift; sourceTree = "<group>"; };
+		2A6DC7EA1F3045C90066FE0D /* EmulatedSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatedSystem.swift; sourceTree = "<group>"; };
+		2A6DC7EC1F30492C0066FE0D /* ScreenDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenDelegate.swift; sourceTree = "<group>"; };
+		2A6DC7EF1F30495D0066FE0D /* ScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenView.swift; sourceTree = "<group>"; };
 		2A7665761F2F05F600135518 /* PreferencesWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
 		2A7665771F2F05F600135518 /* PreferencesWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferencesWindow.xib; sourceTree = "<group>"; };
 		2A9185291F2EA84D00A9E5BE /* BitmapPixels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapPixels.swift; sourceTree = "<group>"; };
 		2AA8B5F71F2A8889002B350F /* AppleI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleI.swift; sourceTree = "<group>"; };
 		2AA8B5FB1F2A8EAD002B350F /* Terminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terminal.swift; sourceTree = "<group>"; };
 		2AA8B5FD1F2A942C002B350F /* PIAOverrides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIAOverrides.swift; sourceTree = "<group>"; };
+		2AB6CACC1F3041A200DECAC0 /* AppleII.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleII.swift; sourceTree = "<group>"; };
 		2AD458CA1F205EB700F05121 /* FruitMachine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FruitMachine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2AD458CD1F205EB700F05121 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2AD458CF1F205EB700F05121 /* DebuggerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerViewController.swift; sourceTree = "<group>"; };
@@ -66,9 +80,9 @@
 		2AE42E071F2850F400C4900E /* ReadOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOverride.swift; sourceTree = "<group>"; };
 		2AE42E091F28521E00C4900E /* WriteOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteOverride.swift; sourceTree = "<group>"; };
 		2AE42E0B1F28522D00C4900E /* MemoryOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryOverride.swift; sourceTree = "<group>"; };
-		2AE42E381F28628300C4900E /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		2AE42E381F28628300C4900E /* AppleIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIViewController.swift; sourceTree = "<group>"; };
 		2AE42E3F1F28638100C4900E /* FruitMachine.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = FruitMachine.storyboard; sourceTree = "<group>"; };
-		2AE42E421F28665300C4900E /* CharacterGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGenerator.swift; sourceTree = "<group>"; };
+		2AE42E421F28665300C4900E /* A1CharacterGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A1CharacterGenerator.swift; sourceTree = "<group>"; };
 		2AE5BA031F23DE4400FAA343 /* Disassembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Disassembly.swift; sourceTree = "<group>"; };
 		2AE5BA051F2469EB00FAA343 /* AddressConversions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressConversions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -93,16 +107,62 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		2A6DC7E51F3043DB0066FE0D /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				2A6DC7E71F3044080066FE0D /* Peripherals */,
+				2A6DC7E61F3043E10066FE0D /* Video */,
+				2A6DC7EA1F3045C90066FE0D /* EmulatedSystem.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		2A6DC7E61F3043E10066FE0D /* Video */ = {
+			isa = PBXGroup;
+			children = (
+				2A9185291F2EA84D00A9E5BE /* BitmapPixels.swift */,
+				2A5C5BBD1F304D4B00ED351D /* Glyph.swift */,
+			);
+			path = Video;
+			sourceTree = "<group>";
+		};
+		2A6DC7E71F3044080066FE0D /* Peripherals */ = {
+			isa = PBXGroup;
+			children = (
+				2A60851D1F2AFAE900E05B64 /* PIA.swift */,
+			);
+			path = Peripherals;
+			sourceTree = "<group>";
+		};
+		2A6DC7EE1F30492E0066FE0D /* Video */ = {
+			isa = PBXGroup;
+			children = (
+				2A5C5BBB1F304C3A00ED351D /* A2CharacterGenerator.swift */,
+				2A6DC7EC1F30492C0066FE0D /* ScreenDelegate.swift */,
+				2A6DC7EF1F30495D0066FE0D /* ScreenView.swift */,
+			);
+			path = Video;
+			sourceTree = "<group>";
+		};
 		2AA8B5F61F2A8844002B350F /* AppleI */ = {
 			isa = PBXGroup;
 			children = (
 				2AE42E411F28663600C4900E /* Video */,
-				2A5BC5181F29A28D008C03BE /* AppleScreenView.swift */,
+				2A5BC5181F29A28D008C03BE /* AppleIScreenView.swift */,
 				2A5BC51D1F29A4C3008C03BE /* AppleIBitmapDisplay.swift */,
 				2AA8B5F71F2A8889002B350F /* AppleI.swift */,
-				2A60851D1F2AFAE900E05B64 /* PIA.swift */,
+				2AA8B5FD1F2A942C002B350F /* PIAOverrides.swift */,
 			);
 			path = AppleI;
+			sourceTree = "<group>";
+		};
+		2AB6CAC71F30407200DECAC0 /* AppleII */ = {
+			isa = PBXGroup;
+			children = (
+				2A6DC7EE1F30492E0066FE0D /* Video */,
+				2AB6CACC1F3041A200DECAC0 /* AppleII.swift */,
+			);
+			path = AppleII;
 			sourceTree = "<group>";
 		};
 		2AD458C11F205EB700F05121 = {
@@ -125,10 +185,13 @@
 		2AD458CC1F205EB700F05121 /* FruitMachine */ = {
 			isa = PBXGroup;
 			children = (
+				2A6DC7E51F3043DB0066FE0D /* Common */,
 				2AA8B5F61F2A8844002B350F /* AppleI */,
+				2AB6CAC71F30407200DECAC0 /* AppleII */,
 				2AD458DD1F205F0D00F05121 /* M6502 */,
 				2AD458CD1F205EB700F05121 /* AppDelegate.swift */,
-				2AE42E381F28628300C4900E /* MainViewController.swift */,
+				2AE42E381F28628300C4900E /* AppleIViewController.swift */,
+				2A6DC7E81F3045280066FE0D /* AppleIIViewController.swift */,
 				2AE42E3F1F28638100C4900E /* FruitMachine.storyboard */,
 				2A7665761F2F05F600135518 /* PreferencesWindowController.swift */,
 				2A7665771F2F05F600135518 /* PreferencesWindow.xib */,
@@ -195,9 +258,7 @@
 		2AE42E411F28663600C4900E /* Video */ = {
 			isa = PBXGroup;
 			children = (
-				2A9185291F2EA84D00A9E5BE /* BitmapPixels.swift */,
-				2AE42E421F28665300C4900E /* CharacterGenerator.swift */,
-				2AA8B5FD1F2A942C002B350F /* PIAOverrides.swift */,
+				2AE42E421F28665300C4900E /* A1CharacterGenerator.swift */,
 				2AA8B5FB1F2A8EAD002B350F /* Terminal.swift */,
 			);
 			path = Video;
@@ -276,29 +337,36 @@
 			buildActionMask = 2147483647;
 			files = (
 				2A60851E1F2AFAE900E05B64 /* PIA.swift in Sources */,
+				2A5C5BBE1F304D4B00ED351D /* Glyph.swift in Sources */,
 				2A2126841F2A9FA300E43DC1 /* DebuggerWindowController.swift in Sources */,
 				2AD458E31F20661300F05121 /* CPUInstructions.swift in Sources */,
+				2A5C5BBC1F304C3A00ED351D /* A2CharacterGenerator.swift in Sources */,
 				2AD458D01F205EB700F05121 /* DebuggerViewController.swift in Sources */,
 				2A7665781F2F05F600135518 /* PreferencesWindowController.swift in Sources */,
 				2AA8B5FC1F2A8EAD002B350F /* Terminal.swift in Sources */,
 				2A5BC51E1F29A4C3008C03BE /* AppleIBitmapDisplay.swift in Sources */,
 				2AD458CE1F205EB700F05121 /* AppDelegate.swift in Sources */,
 				2A91852A1F2EA84D00A9E5BE /* BitmapPixels.swift in Sources */,
-				2AE42E431F28665300C4900E /* CharacterGenerator.swift in Sources */,
+				2AE42E431F28665300C4900E /* A1CharacterGenerator.swift in Sources */,
+				2A6DC7F01F30495D0066FE0D /* ScreenView.swift in Sources */,
 				2AE42E0C1F28522D00C4900E /* MemoryOverride.swift in Sources */,
 				2A22EBFB1F21A7A700A36A61 /* IntegerExtensions.swift in Sources */,
 				2AD6D5841F26E6BF008F3CF5 /* DebuggerCommands.swift in Sources */,
 				2AE5BA041F23DE4400FAA343 /* Disassembly.swift in Sources */,
-				2AE42E3A1F28628300C4900E /* MainViewController.swift in Sources */,
+				2A6DC7EB1F3045C90066FE0D /* EmulatedSystem.swift in Sources */,
+				2AE42E3A1F28628300C4900E /* AppleIViewController.swift in Sources */,
 				2AD458E51F2070DF00F05121 /* Opcodes.swift in Sources */,
 				2AE42E081F2850F400C4900E /* ReadOverride.swift in Sources */,
 				2AA8B5FE1F2A942C002B350F /* PIAOverrides.swift in Sources */,
+				2AB6CACD1F3041A200DECAC0 /* AppleII.swift in Sources */,
 				2AE5BA061F2469EB00FAA343 /* AddressConversions.swift in Sources */,
 				2AE42E0A1F28521E00C4900E /* WriteOverride.swift in Sources */,
-				2A5BC5191F29A28D008C03BE /* AppleScreenView.swift in Sources */,
+				2A6DC7ED1F30492C0066FE0D /* ScreenDelegate.swift in Sources */,
+				2A5BC5191F29A28D008C03BE /* AppleIScreenView.swift in Sources */,
 				2AD458E11F2064CB00F05121 /* MemoryInterface.swift in Sources */,
 				2AA8B5F81F2A8889002B350F /* AppleI.swift in Sources */,
 				2AD458DF1F205F4500F05121 /* CPU.swift in Sources */,
+				2A6DC7E91F3045280066FE0D /* AppleIIViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class AppleScreenView: NSView {
+class AppleIScreenView: NSView {
     
     override var acceptsFirstResponder: Bool {
         return true
