@@ -167,6 +167,7 @@ final class Opcodes: NSObject {
     
     static func SBC(state: CPU, addressingMode: CPU.AddressingMode) -> Void {
         let operand = UInt8(getOperandByteForAddressingMode(state: state, mode: addressingMode))
+        //I don't think this 16-bit calculation is working right
         var t16: UInt16 = UInt16(state.accumulator &- operand) &- UInt16((state.status_register.carry ? UInt8(0) : UInt8(1)))
         let t8: UInt8 = UInt8(t16 & 0xFF)
         
@@ -175,8 +176,10 @@ final class Opcodes: NSObject {
         if(state.status_register.decimal == true) {
             t16 = UInt16(hex2bcd(hex: state.accumulator) + hex2bcd(hex: operand) + (state.status_register.carry ? UInt8(1) : UInt8(0)))
         } else {
+            state.status_register.carry = (t16 >> 8) == 0
             //carry flag isn't being set properly
-            state.status_register.carry = (t8 >= 127) ? true : false
+            //let signed = Int8(bitPattern: t8)
+            //state.status_register.carry = ((-128 > signed) || (127 < signed)) ? true : false
         }
         
         state.accumulator = t8
