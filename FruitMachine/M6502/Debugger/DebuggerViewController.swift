@@ -46,7 +46,7 @@ class DebuggerViewController: NSViewController {
         text_CPU_SR.stringValue = String(format:"%02X", cpuInstance.stack_pointer)
         text_CPU_Flags.stringValue = String(cpuInstance.status_register.asString())
         
-        disassembly = cpuInstance.disassemble(fromAddress: CPU.sharedInstance.program_counter, length: 256)
+        disassembly = cpuInstance.disassemble(fromAddress: CPU.sharedInstance.program_counter &- 16, length: 256)
         debuggerTableView.reloadData()
         highlightCurrentInstruction()
     }
@@ -58,7 +58,7 @@ class DebuggerViewController: NSViewController {
         debuggerTableView.dataSource = self
 
         updateCPUStatusFields()
-        disassembly = cpuInstance.disassemble(fromAddress: CPU.sharedInstance.program_counter, length: 256)
+        disassembly = cpuInstance.disassemble(fromAddress: CPU.sharedInstance.program_counter &- 16, length: 256)
         debuggerTableView.reloadData()
         
         // Do any additional setup after loading the view.

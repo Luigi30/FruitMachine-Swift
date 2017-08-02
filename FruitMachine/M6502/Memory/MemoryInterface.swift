@@ -9,11 +9,19 @@
 import Cocoa
 
 final class MemoryInterface: NSObject {
+    enum pageMode {
+        case ro
+        case rw
+        case null
+    }
+    
     
     fileprivate var memory: [UInt8]
     
     var read_overrides: [ReadOverride]
     var write_overrides: [WriteOverride]
+    
+    var pages: [pageMode] = [pageMode](repeating: .null, count: 256)
     
     override init() {
         memory = [UInt8](repeating: 0x00, count: 65536)
@@ -21,8 +29,11 @@ final class MemoryInterface: NSObject {
         write_overrides = [WriteOverride]()
     }
     
+    func getPage(offset: UInt16) -> UInt8 {
+        return UInt8(offset >> 8)
+    }
+    
     func readByte(offset: UInt16, bypassOverrides: Bool = false) -> UInt8 {
-        
         if(!bypassOverrides) {
             for override in read_overrides {
                 if case override.rangeStart ... override.rangeEnd = offset {
@@ -32,6 +43,11 @@ final class MemoryInterface: NSObject {
                     }
                 }
             }
+        }
+        
+        //If no override, check if there's memory here.
+        if(pages[Int(getPage(offset: offset))] == pageMode.null) {
+            return 0x00
         }
         
         //No match.
@@ -49,6 +65,11 @@ final class MemoryInterface: NSObject {
                     }
                 }
             }
+        }
+        
+        //If no override, check if there's memory here to write.
+        if(pages[Int(getPage(offset: offset))] != pageMode.rw) {
+            return
         }
         
         memory[Int(offset)] = value

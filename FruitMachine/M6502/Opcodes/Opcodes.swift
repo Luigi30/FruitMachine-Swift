@@ -175,7 +175,8 @@ final class Opcodes: NSObject {
         if(state.status_register.decimal == true) {
             t16 = UInt16(hex2bcd(hex: state.accumulator) + hex2bcd(hex: operand) + (state.status_register.carry ? UInt8(1) : UInt8(0)))
         } else {
-            state.status_register.carry = t8 <= 127 ? true : false
+            //carry flag isn't being set properly
+            state.status_register.carry = (t8 >= 127) ? true : false
         }
         
         state.accumulator = t8

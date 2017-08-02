@@ -14,6 +14,7 @@ class AppleII: NSObject, EmulatedSystem {
     var frameCounter: Int = 0
     
     let cg = A2CharacterGenerator(romPath: "/Users/luigi/apple2/a2.chr");
+    let keyboardController = KeyboardController()
     
     var CPU_FREQUENCY: Double
     var FRAMES_PER_SECOND: Double
@@ -30,6 +31,7 @@ class AppleII: NSObject, EmulatedSystem {
         super.init()
         
         loadROMs()
+        setupMemory(ramConfig: .sixteenK)
         
         emuScreenLayer.shouldRasterize = true
         emuScreenLayer.delegate = emulatorViewDelegate
@@ -42,14 +44,21 @@ class AppleII: NSObject, EmulatedSystem {
         
         installOverrides()
 
+        doReset()
+    }
+    
+    func doReset() {
         CPU.sharedInstance.performReset()
     }
     
     func loadROMs() {
+        /*
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0001-00.e0", offset: 0xE000, length: 0x800)
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0002-00.e8", offset: 0xE800, length: 0x800)
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0003-00.f0", offset: 0xF000, length: 0x800)
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0004-00.f8", offset: 0xF800, length: 0x800)
+         */
+        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/6502/test.bin", offset: 0x0000, length: 0x10000)
     }
     
     func installOverrides() {
@@ -87,6 +96,35 @@ class AppleII: NSObject, EmulatedSystem {
         CVPixelBufferUnlockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
         
         emulatorView.setNeedsDisplay(emulatorView.frame)
+    }
+    
+    enum MemoryConfiguration {
+        case fourK
+        case sixteenK
+        case fortyeightK
+    }
+    
+    func setupMemory(ramConfig: MemoryConfiguration) {
+        let ramPages: Int
+        
+        switch ramConfig {
+        case .fourK:
+            ramPages = 4096 / 256
+        case .sixteenK:
+            ramPages = 16384 / 256
+        case .fortyeightK:
+            ramPages = 49152 / 256
+        }
+        
+        for page in 0 ..< ramPages {
+            CPU.sharedInstance.memoryInterface.pages[page] = MemoryInterface.pageMode.rw    //RAM
+        }
+        for page in ramPages ..< 192 {
+            CPU.sharedInstance.memoryInterface.pages[page] = MemoryInterface.pageMode.null  //not connected
+        }
+        for page in 224 ..< 256 {
+            CPU.sharedInstance.memoryInterface.pages[page] = MemoryInterface.pageMode.ro  //not connected
+        }
     }
     
 }

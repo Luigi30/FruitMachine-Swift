@@ -25,11 +25,15 @@ class AppleIIViewController: NSViewController {
         
         self.view.addSubview(computer.emulatorView)
         
+        /*
         self.frameTimer = Timer.scheduledTimer(timeInterval: 1.0/60.0,
                                                target: self,
                                                selector: #selector(runEmulation),
                                                userInfo: nil,
                                                repeats: true)
+         */
+        
+        CPU.sharedInstance.program_counter = 0x400
     }
     
     @objc func runEmulation() {
@@ -39,7 +43,7 @@ class AppleIIViewController: NSViewController {
         }
     }
     
-    @IBAction func showDebugger(_ sender: Any) {
+    @IBAction func showDebugger(_ sender: Any) {        
         let debuggerStoryboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Debugger"), bundle: nil)
         debuggerWindowController = debuggerStoryboard.instantiateInitialController() as! DebuggerWindowController
         debuggerWindowController.showWindow(self)
@@ -49,6 +53,10 @@ class AppleIIViewController: NSViewController {
         preferencesWindowController.loadWindow()
     }
     
+    @IBAction func doReset(_ sender: Any) {
+        computer.doReset()
+    }
+    
     override func keyDown(with event: NSEvent) {
         let c = returnChar(theEvent: event)
         
@@ -56,8 +64,8 @@ class AppleIIViewController: NSViewController {
             return
         }
         
-        //Poke the ASCII byte into $C000.
-        CPU.sharedInstance.memoryInterface.writeByte(offset: 0xC000, value: UInt8((ascii32 | 0x80) & 0x000000FF))
+        //Set the keyboard input register accordingly. Set b7 so the OS knows there's a keypress waiting
+        computer.keyboardController.KEYBOARD = UInt8((ascii32 | 0x80) & 0x000000FF)
     }
     
     private func returnChar(theEvent: NSEvent) -> Character?{
