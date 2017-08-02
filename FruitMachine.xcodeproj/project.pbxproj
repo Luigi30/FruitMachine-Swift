@@ -23,6 +23,7 @@
 		2A7665781F2F05F600135518 /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7665761F2F05F600135518 /* PreferencesWindowController.swift */; };
 		2A7665791F2F05F600135518 /* PreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A7665771F2F05F600135518 /* PreferencesWindow.xib */; };
 		2A86FB971F316CB500AD0C68 /* KeyboardController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A86FB961F316CB500AD0C68 /* KeyboardController.swift */; };
+		2A86FB991F32694A00AD0C68 /* VideoModes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A86FB981F32694A00AD0C68 /* VideoModes.swift */; };
 		2A91852A1F2EA84D00A9E5BE /* BitmapPixels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9185291F2EA84D00A9E5BE /* BitmapPixels.swift */; };
 		2AA8B5F81F2A8889002B350F /* AppleI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA8B5F71F2A8889002B350F /* AppleI.swift */; };
 		2AA8B5FC1F2A8EAD002B350F /* Terminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA8B5FB1F2A8EAD002B350F /* Terminal.swift */; };
@@ -64,6 +65,7 @@
 		2A7665761F2F05F600135518 /* PreferencesWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
 		2A7665771F2F05F600135518 /* PreferencesWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PreferencesWindow.xib; sourceTree = "<group>"; };
 		2A86FB961F316CB500AD0C68 /* KeyboardController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardController.swift; sourceTree = "<group>"; };
+		2A86FB981F32694A00AD0C68 /* VideoModes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoModes.swift; sourceTree = "<group>"; };
 		2A9185291F2EA84D00A9E5BE /* BitmapPixels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapPixels.swift; sourceTree = "<group>"; };
 		2AA8B5F71F2A8889002B350F /* AppleI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleI.swift; sourceTree = "<group>"; };
 		2AA8B5FB1F2A8EAD002B350F /* Terminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terminal.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 				2A5C5BBB1F304C3A00ED351D /* A2CharacterGenerator.swift */,
 				2A6DC7EC1F30492C0066FE0D /* ScreenDelegate.swift */,
 				2A6DC7EF1F30495D0066FE0D /* ScreenView.swift */,
+				2A86FB981F32694A00AD0C68 /* VideoModes.swift */,
 			);
 			path = Video;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				2AD458E11F2064CB00F05121 /* MemoryInterface.swift in Sources */,
 				2AA8B5F81F2A8889002B350F /* AppleI.swift in Sources */,
 				2AD458DF1F205F4500F05121 /* CPU.swift in Sources */,
+				2A86FB991F32694A00AD0C68 /* VideoModes.swift in Sources */,
 				2A6DC7E91F3045280066FE0D /* AppleIIViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -27,7 +27,7 @@ extension AppleII {
         var flashIsInverse = false
         
         /* Pixel data stuff. */
-        let bitmapInfo: CGBitmapInfo = [.byteOrder16Big, CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue)]
+        let bitmapInfo: CGBitmapInfo = [.byteOrder16Little, CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue)]
         
         var pixels: CVPixelBuffer?
         
@@ -54,7 +54,7 @@ extension AppleII {
             }
         }
         
-        func putGlyph(buffer: UnsafeMutablePointer<BitmapPixelsBE555.PixelData>?, glyph: Glyph, attributes: UInt8, pixelPosition: CGPoint) {
+        func putGlyph(buffer: UnsafeMutablePointer<BitmapPixelsLE555.PixelData>?, glyph: Glyph, attributes: UInt8, pixelPosition: CGPoint) {
             //You better have locked the buffer before getting here...
             if(pixelPosition.x == -1 && pixelPosition.y == -1) { return }
             
@@ -79,17 +79,50 @@ extension AppleII {
                     case .normal:
                         buffer![offset + 6 - charX] = glyph.pixels[glyphOffsetY + charX]
                     case .inverse:
-                        buffer![offset + 6 - charX] = BitmapPixelsBE555.PixelData(data: ~glyph.pixels[glyphOffsetY + charX].data)
+                        buffer![offset + 6 - charX] = BitmapPixelsLE555.PixelData(data: ~glyph.pixels[glyphOffsetY + charX].data)
                     case .flashing:
                         if(!flashIsInverse) {
                             buffer![offset + 6 - charX] = glyph.pixels[glyphOffsetY + charX]
                         } else {
-                            buffer![offset + 6 - charX] = BitmapPixelsBE555.PixelData(data: ~glyph.pixels[glyphOffsetY + charX].data)
+                            buffer![offset + 6 - charX] = BitmapPixelsLE555.PixelData(data: ~glyph.pixels[glyphOffsetY + charX].data)
                         }
                     }
                     
                 }
             }
+        }
+        
+        func putLoresPixel(buffer: UnsafeMutablePointer<BitmapPixelsLE555.PixelData>?, pixel: UInt8, address: UInt16) {
+            let pageOffset = address - 0x400
+            let pixelPosition = getPixelOffset(memoryOffset: Int(pageOffset))
+            if(pixelPosition.x == -1 && pixelPosition.y == -1) {
+                return
+            }
+            
+            let pixelNybbleHi = pixel & 0x0F
+            let pixelNybbleLo = (pixel & 0xF0) >> 4
+            
+            let colorHi = LoresColors.getColor(index: pixelNybbleHi)
+            let colorLo = LoresColors.getColor(index: pixelNybbleLo)
+            
+            //One lores pixel is 7px wide and 4px tall for a resolution of 40x48.
+            let baseOffset = scanlineOffsets[Int(pixelPosition.y)] + Int(pixelPosition.x)
+            
+            for charY in 0..<5 {
+                let offsetHi = baseOffset + (AppleII.ScreenDelegate.PIXEL_WIDTH * charY)
+                
+                for charX in 0..<7 {
+                    buffer![offsetHi + 6 - charX] = colorHi
+                }
+            }
+            for charY in 4..<8 {
+                let offsetLo = baseOffset + (AppleII.ScreenDelegate.PIXEL_WIDTH * charY)
+                
+                for charX in 0..<7 {
+                    buffer![offsetLo + 6 - charX] = colorLo
+                }
+            }
+
         }
         
         func getPixelOffset(charCellX: Int, charCellY: Int) -> CGPoint {
@@ -137,10 +170,10 @@ extension AppleII {
             
             renderedImage = CGImage(width: AppleII.ScreenDelegate.PIXEL_WIDTH,
                                     height: AppleII.ScreenDelegate.PIXEL_HEIGHT,
-                                    bitsPerComponent: Int(BitmapPixelsBE555.bitsPerComponent), //5
-                                    bitsPerPixel: Int(BitmapPixelsBE555.bitsPerPixel), //16
-                                    bytesPerRow: AppleII.ScreenDelegate.PIXEL_WIDTH * Int(MemoryLayout<BitmapPixelsBE555.PixelData>.size),
-                                    space: BitmapPixelsBE555.colorSpace, //RGB
+                                    bitsPerComponent: Int(BitmapPixelsLE555.bitsPerComponent), //5
+                                    bitsPerPixel: Int(BitmapPixelsLE555.bitsPerPixel), //16
+                                    bytesPerRow: AppleII.ScreenDelegate.PIXEL_WIDTH * Int(MemoryLayout<BitmapPixelsLE555.PixelData>.size),
+                                    space: BitmapPixelsLE555.colorSpace, //RGB
                                     bitmapInfo: bitmapInfo, //BE555
                                     provider: pixelRef!,
                                     decode: nil,

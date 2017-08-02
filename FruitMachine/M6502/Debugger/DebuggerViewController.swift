@@ -74,7 +74,7 @@ class DebuggerViewController: NSViewController {
         isRunning = true
         
         cpuInstance.cycles = 0
-        cpuInstance.cyclesInBatch = 10000
+        cpuInstance.cyclesInBatch = 1000000
         
         while(!cpuInstance.outOfCycles() && isRunning) {
             cpuInstance.cpuStep()

@@ -157,10 +157,10 @@
                 <windowController id="0Wh-dg-gsU" sceneMemberID="viewController">
                     <window key="window" title="Fruit Machine" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="O0r-h6-7La">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
-                        <rect key="contentRect" x="293" y="264" width="640" height="360"/>
+                        <rect key="contentRect" x="293" y="264" width="560" height="360"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1916" height="936"/>
-                        <value key="minSize" type="size" width="640" height="360"/>
-                        <value key="maxSize" type="size" width="640" height="360"/>
+                        <value key="minSize" type="size" width="560" height="360"/>
+                        <value key="maxSize" type="size" width="560" height="360"/>
                         <connections>
                             <outlet property="delegate" destination="0Wh-dg-gsU" id="tmJ-Ae-YJP"/>
                         </connections>
@@ -178,7 +178,7 @@
             <objects>
                 <viewController id="gw1-M7-9Je" customClass="AppleIIViewController" customModule="FruitMachine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="DiY-xb-Usb">
-                        <rect key="frame" x="0.0" y="0.0" width="640" height="384"/>
+                        <rect key="frame" x="0.0" y="0.0" width="560" height="384"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </view>
                 </viewController>

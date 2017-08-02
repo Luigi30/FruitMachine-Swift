@@ -25,15 +25,11 @@ class AppleIIViewController: NSViewController {
         
         self.view.addSubview(computer.emulatorView)
         
-        /*
         self.frameTimer = Timer.scheduledTimer(timeInterval: 1.0/60.0,
                                                target: self,
                                                selector: #selector(runEmulation),
                                                userInfo: nil,
                                                repeats: true)
-         */
-        
-        CPU.sharedInstance.program_counter = 0x400
     }
     
     @objc func runEmulation() {

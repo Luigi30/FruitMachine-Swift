@@ -67,7 +67,7 @@ class AppleI: NSObject, EmulatedSystem {
         //update the video display
         CVPixelBufferLockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
         let pixelBase = CVPixelBufferGetBaseAddress(emulatorViewDelegate.pixels!)
-        let buf = pixelBase?.assumingMemoryBound(to: BitmapPixelsBE555.PixelData.self)
+        let buf = pixelBase?.assumingMemoryBound(to: BitmapPixelsLE555.PixelData.self)
         
         for (cellNum, character) in terminal.characters.enumerated() {
             emulatorViewDelegate.putGlyph(buffer: buf,

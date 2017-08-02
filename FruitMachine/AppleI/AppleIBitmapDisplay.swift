@@ -40,7 +40,7 @@ class AppleIBitmapDisplay: NSObject, CALayerDelegate {
         }
     }
     
-    func putGlyph(buffer: UnsafeMutablePointer<BitmapPixelsBE555.PixelData>?, glyph: Glyph, pixelPosition: CGPoint) {
+    func putGlyph(buffer: UnsafeMutablePointer<BitmapPixelsLE555.PixelData>?, glyph: Glyph, pixelPosition: CGPoint) {
         //You better have locked the buffer before getting here...
         
         //Calculate the offset to reach the desired position.
@@ -72,10 +72,10 @@ class AppleIBitmapDisplay: NSObject, CALayerDelegate {
         
         renderedImage = CGImage(width: AppleIBitmapDisplay.PIXEL_WIDTH,
                                     height: AppleIBitmapDisplay.PIXEL_HEIGHT,
-                                    bitsPerComponent: Int(BitmapPixelsBE555.bitsPerComponent), //5
-                                    bitsPerPixel: Int(BitmapPixelsBE555.bitsPerPixel), //16
-                                    bytesPerRow: AppleIBitmapDisplay.PIXEL_WIDTH * Int(MemoryLayout<BitmapPixelsBE555.PixelData>.size),
-                                    space: BitmapPixelsBE555.colorSpace, //RGB
+                                    bitsPerComponent: Int(BitmapPixelsLE555.bitsPerComponent), //5
+                                    bitsPerPixel: Int(BitmapPixelsLE555.bitsPerPixel), //16
+                                    bytesPerRow: AppleIBitmapDisplay.PIXEL_WIDTH * Int(MemoryLayout<BitmapPixelsLE555.PixelData>.size),
+                                    space: BitmapPixelsLE555.colorSpace, //RGB
                                     bitmapInfo: bitmapInfo, //BE555
                                     provider: pixelRef!,
                                     decode: nil,

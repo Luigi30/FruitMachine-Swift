@@ -38,7 +38,7 @@ class BitmapPixelsARGB32 : NSObject {
     static let Black = PixelData(a: 255, r: 0, g: 0, b: 0)
 }
 
-class BitmapPixelsBE555 : NSObject {
+class BitmapPixelsLE555 : NSObject {
     struct PixelData {
         var data: UInt16 = 0
     }
@@ -47,6 +47,19 @@ class BitmapPixelsBE555 : NSObject {
     static let bitsPerPixel: UInt = 16
     static let colorSpace = CGColorSpaceCreateDeviceRGB()
     
-    static let White = PixelData(data: 0b1111111101111111)
+    static let White = PixelData(data: 0b0111111111111111)
     static let Black = PixelData(data: 0b0000000000000000)
+    
+    static func RGB32toLE555(r: UInt8, g: UInt8, b: UInt8) -> PixelData {
+        let r5: UInt16 = UInt16(r >> 3)
+        let g5: UInt16 = UInt16(g >> 3)
+        let b5: UInt16 = UInt16(b >> 3)
+        
+        var pixel = PixelData()
+        pixel.data |= b5
+        pixel.data |= g5 << 5
+        pixel.data |= r5 << 10
+        
+        return pixel
+    }
 }

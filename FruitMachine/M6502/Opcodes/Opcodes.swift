@@ -142,20 +142,21 @@ fileprivate func hex2bcd(hex: UInt8) -> UInt8 {
 final class Opcodes: NSObject {
     
     static func _Add(state: CPU, operand: UInt8, isSubtract: Bool) {
-        if(state.accumulator == 0xFF) {
+        if((state.accumulator == 0xFF) && operand == 0x01 && state.status_register.carry == false) {
             _ = 1
         }
-        var t16: UInt16 = UInt16(state.accumulator &+ operand) + UInt16((state.status_register.carry ? UInt8(1) : UInt8(0)))
+        var t16: UInt16 = UInt16(state.accumulator) &+ UInt16(operand) + UInt16((state.status_register.carry ? UInt8(1) : UInt8(0)))
         let t8: UInt8 = UInt8(t16 & 0xFF)
         
-        state.status_register.overflow = (state.accumulator & 0x80) != (t8 & 0x80)
+        //state.status_register.overflow = (state.accumulator & 0x80) != (t8 & 0x80)
+        state.status_register.overflow = ((t16 ^ UInt16(state.accumulator)) & (t16 ^ UInt16(operand)) & 0x0080) > UInt16(0)
         state.status_register.zero = (t8 == 0)
         state.status_register.negative = (t8 & 0x80) == 0x80
         
         if(state.status_register.decimal) {
             t16 = UInt16(hex2bcd(hex: state.accumulator) + hex2bcd(hex: operand) + (state.status_register.carry ? UInt8(1) : UInt8(0)))
         } else {
-            state.status_register.carry = (t16 > 255)
+            state.status_register.carry = (t16 & 0xFF00) > 0
         }
         
         state.accumulator = t8
@@ -166,25 +167,16 @@ final class Opcodes: NSObject {
     }
     
     static func SBC(state: CPU, addressingMode: CPU.AddressingMode) -> Void {
-        let operand = UInt8(getOperandByteForAddressingMode(state: state, mode: addressingMode))
-        //I don't think this 16-bit calculation is working right
-        var t16: UInt16 = UInt16(state.accumulator &- operand) &- UInt16((state.status_register.carry ? UInt8(0) : UInt8(1)))
-        let t8: UInt8 = UInt8(t16 & 0xFF)
+        let operand = UInt16(getOperandByteForAddressingMode(state: state, mode: addressingMode))
         
-        state.status_register.overflow = (t8 >= 0x80 && t8 <= 0xFF)
+        let carryValue = UInt16(state.status_register.carry ? 0 : 1)
+        let t16 = UInt16(state.accumulator) &- operand &- carryValue
         
-        if(state.status_register.decimal == true) {
-            t16 = UInt16(hex2bcd(hex: state.accumulator) + hex2bcd(hex: operand) + (state.status_register.carry ? UInt8(1) : UInt8(0)))
-        } else {
-            state.status_register.carry = (t16 >> 8) == 0
-            //carry flag isn't being set properly
-            //let signed = Int8(bitPattern: t8)
-            //state.status_register.carry = ((-128 > signed) || (127 < signed)) ? true : false
-        }
-        
-        state.accumulator = t8
-        state.updateZeroFlag(value: t8)
-        state.updateNegativeFlag(value: t8)
+        state.status_register.overflow = ((UInt16(state.accumulator) ^ operand) & (UInt16(state.accumulator) ^ t16) & 0x80) > 0
+        state.status_register.carry = (t16 >> 8) == 0
+        state.accumulator = UInt8(t16 & 0xFF)
+        state.updateZeroFlag(value: UInt8(t16 & 0xFF))
+        state.updateNegativeFlag(value: UInt8(t16 & 0xFF))
     }
     
     static func LDA(state: CPU, addressingMode: CPU.AddressingMode) -> Void {

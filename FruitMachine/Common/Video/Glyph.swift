@@ -9,9 +9,9 @@
 import Cocoa
 
 struct Glyph {
-    var pixels: [BitmapPixelsBE555.PixelData] = [BitmapPixelsBE555.PixelData]()
+    var pixels: [BitmapPixelsLE555.PixelData] = [BitmapPixelsLE555.PixelData]()
     
-    init(inPixels: [BitmapPixelsBE555.PixelData]) {
+    init(inPixels: [BitmapPixelsLE555.PixelData]) {
         pixels = inPixels
     }
 }

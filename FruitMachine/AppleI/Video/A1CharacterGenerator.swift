@@ -21,7 +21,7 @@ extension AppleI {
         
         init(romPath: String) {
             ROM = [UInt8](repeating: 0xCC, count: 512)
-            glyphs = [Glyph](repeating: Glyph(inPixels: [BitmapPixelsBE555.PixelData]()), count: 64)
+            glyphs = [Glyph](repeating: Glyph(inPixels: [BitmapPixelsLE555.PixelData]()), count: 64)
             
             super.init()
             loadROM(path: romPath)
@@ -40,7 +40,7 @@ extension AppleI {
             }
         }
 
-        private func getCharacterPixels(charIndex: UInt8) -> [BitmapPixelsBE555.PixelData] {
+        private func getCharacterPixels(charIndex: UInt8) -> [BitmapPixelsLE555.PixelData] {
             var pixelArray = [UInt8](repeating: 0x00, count: A1CharacterGenerator.CHAR_HEIGHT)
             
             /* Instead of ignoring ASCII bit b6, we ignore bit b5. At the same time ASCII bit b6 must be inverted before it is fed to the character ROM. This way the entire character range from $40 to $7F will end up in the range $00 to $1F (twice of course). Now lower case characters are automatically translated into their corresponding upper case bit maps.
@@ -51,11 +51,11 @@ extension AppleI {
                 pixelArray[scanlineIndex] = ROM[scanlineIndex + (Int(charIndex) * A1CharacterGenerator.CHAR_HEIGHT)]
             }
             
-            var glyphPixels = [BitmapPixelsBE555.PixelData]()
+            var glyphPixels = [BitmapPixelsLE555.PixelData]()
             
             for charY in 0..<A1CharacterGenerator.CHAR_HEIGHT {
                 for charX in 0..<8 {
-                    glyphPixels.append(pixelArray[Int(charY)] & (1 << charX) > 0 ? BitmapPixelsBE555.White : BitmapPixelsBE555.Black)
+                    glyphPixels.append(pixelArray[Int(charY)] & (1 << charX) > 0 ? BitmapPixelsLE555.White : BitmapPixelsLE555.Black)
                 }
             }
             

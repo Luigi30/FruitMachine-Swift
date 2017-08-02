@@ -15,6 +15,8 @@ class AppleII: NSObject, EmulatedSystem {
     
     let cg = A2CharacterGenerator(romPath: "/Users/luigi/apple2/a2.chr");
     let keyboardController = KeyboardController()
+    var videoSoftswitches = VideoSoftswitches()
+    var videoMode: VideoMode
     
     var CPU_FREQUENCY: Double
     var FRAMES_PER_SECOND: Double
@@ -28,6 +30,9 @@ class AppleII: NSObject, EmulatedSystem {
         CPU_FREQUENCY = cpuFrequency
         FRAMES_PER_SECOND = fps
         CYCLES_PER_BATCH = Int(cpuFrequency / fps)
+        
+        videoMode = .Text
+        
         super.init()
         
         loadROMs()
@@ -48,23 +53,40 @@ class AppleII: NSObject, EmulatedSystem {
     }
     
     func doReset() {
+        videoSoftswitches.reset()
+        videoMode = .Text
         CPU.sharedInstance.performReset()
     }
     
     func loadROMs() {
-        /*
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0001-00.e0", offset: 0xE000, length: 0x800)
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0002-00.e8", offset: 0xE800, length: 0x800)
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0003-00.f0", offset: 0xF000, length: 0x800)
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0004-00.f8", offset: 0xF800, length: 0x800)
-         */
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/6502/test.bin", offset: 0x0000, length: 0x10000)
     }
     
     func installOverrides() {
         CPU.sharedInstance.memoryInterface.read_overrides.append(SoftswitchOverrides.readKeyboard)
         CPU.sharedInstance.memoryInterface.read_overrides.append(SoftswitchOverrides.clearKeypressStrobeR)
         CPU.sharedInstance.memoryInterface.write_overrides.append(SoftswitchOverrides.clearKeypressStrobeW)
+        
+        CPU.sharedInstance.memoryInterface.read_overrides.append(SoftswitchOverrides.switchC050R)
+        CPU.sharedInstance.memoryInterface.read_overrides.append(SoftswitchOverrides.switchC051R)
+        CPU.sharedInstance.memoryInterface.read_overrides.append(SoftswitchOverrides.switchC052R)
+        CPU.sharedInstance.memoryInterface.read_overrides.append(SoftswitchOverrides.switchC053R)
+        CPU.sharedInstance.memoryInterface.read_overrides.append(SoftswitchOverrides.switchC054R)
+        CPU.sharedInstance.memoryInterface.read_overrides.append(SoftswitchOverrides.switchC055R)
+        CPU.sharedInstance.memoryInterface.read_overrides.append(SoftswitchOverrides.switchC056R)
+        CPU.sharedInstance.memoryInterface.read_overrides.append(SoftswitchOverrides.switchC057R)
+        
+        CPU.sharedInstance.memoryInterface.write_overrides.append(SoftswitchOverrides.switchC050W)
+        CPU.sharedInstance.memoryInterface.write_overrides.append(SoftswitchOverrides.switchC051W)
+        CPU.sharedInstance.memoryInterface.write_overrides.append(SoftswitchOverrides.switchC052W)
+        CPU.sharedInstance.memoryInterface.write_overrides.append(SoftswitchOverrides.switchC053W)
+        CPU.sharedInstance.memoryInterface.write_overrides.append(SoftswitchOverrides.switchC054W)
+        CPU.sharedInstance.memoryInterface.write_overrides.append(SoftswitchOverrides.switchC055W)
+        CPU.sharedInstance.memoryInterface.write_overrides.append(SoftswitchOverrides.switchC056W)
+        CPU.sharedInstance.memoryInterface.write_overrides.append(SoftswitchOverrides.switchC057W)
     }
     
     func runFrame() {
@@ -77,25 +99,65 @@ class AppleII: NSObject, EmulatedSystem {
         CPU.sharedInstance.cyclesInBatch = CYCLES_PER_BATCH
         CPU.sharedInstance.runCyclesBatch()
         
-        //TODO
         //update the video display
         CVPixelBufferLockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
         let pixelBase = CVPixelBufferGetBaseAddress(emulatorViewDelegate.pixels!)
-        let buf = pixelBase?.assumingMemoryBound(to: BitmapPixelsBE555.PixelData.self)
+        let buf = pixelBase?.assumingMemoryBound(to: BitmapPixelsLE555.PixelData.self)
         
-        //Text mode: Get character codes from $0400-$07FF
-        for address in 0x0400 ..< 0x07F8 {
-            let charCode = CPU.sharedInstance.memoryInterface.readByte(offset: UInt16(address), bypassOverrides: true)
+        videoMode = getCurrentVideoMode(switches: videoSoftswitches)
+        
+        if(videoMode == .Text)
+        {
+            //Text mode: Get character codes from $0400-$07FF
+            putGlyphs(buffer: buf!, start: 0x400, end: 0x7F8)
+        }
+        else if(videoMode == .Lores)
+        {
+            putLoresPixels(buffer: buf!, start: 0x400, end: 0x7F8)
+        }
+        else if(videoMode == .MixedLores) {
+            //Draw the lores pixel rows.
+            putLoresPixels(buffer: buf!, start: 0x400, end: 0x650)
+            putLoresPixels(buffer: buf!, start: 0x680, end: 0x6A8)
+            putLoresPixels(buffer: buf!, start: 0x700, end: 0x728)
+            putLoresPixels(buffer: buf!, start: 0x780, end: 0x7A8)
+            putLoresPixels(buffer: buf!, start: 0x6A8, end: 0x6D0)
+            putLoresPixels(buffer: buf!, start: 0x728, end: 0x750)
+            putLoresPixels(buffer: buf!, start: 0x7A8, end: 0x7D0)
             
-            emulatorViewDelegate.putGlyph(buffer: buf,
-                                          glyph: cg.glyphs[Int(charCode & 0x3F)],
-                                          attributes: charCode & 0xC0, //d6 and d7
-                                          pixelPosition: emulatorViewDelegate.getPixelOffset(memoryOffset: address - 0x400))
+            //Draw the bottom 4 text rows.
+            putGlyphs(buffer: buf!, start: 0x650, end: 0x678)
+            putGlyphs(buffer: buf!, start: 0x6D0, end: 0x6F8)
+            putGlyphs(buffer: buf!, start: 0x750, end: 0x778)
+            putGlyphs(buffer: buf!, start: 0x7D0, end: 0x7F8)
+        } else {
+            print("Unimplemented video mode!")
         }
         
-        CVPixelBufferUnlockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
         
-        emulatorView.setNeedsDisplay(emulatorView.frame)
+        CVPixelBufferUnlockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
+        emulatorView.display()
+    }
+    
+    func putLoresPixels(buffer: UnsafeMutablePointer<BitmapPixelsLE555.PixelData>, start: UInt16, end: UInt16) {
+        for address in start ..< end {
+            let pixelData = CPU.sharedInstance.memoryInterface.readByte(offset: UInt16(address), bypassOverrides: true)
+            
+            emulatorViewDelegate.putLoresPixel(buffer: buffer,
+                                               pixel: pixelData,
+                                               address: UInt16(address))
+        }
+    }
+    
+    func putGlyphs(buffer: UnsafeMutablePointer<BitmapPixelsLE555.PixelData>, start: UInt16, end: UInt16) {
+        for address in start ... end {
+            let charCode = CPU.sharedInstance.memoryInterface.readByte(offset: UInt16(address), bypassOverrides: true)
+            
+            emulatorViewDelegate.putGlyph(buffer: buffer,
+                                          glyph: cg.glyphs[Int(charCode & 0x3F)],
+                                          attributes: charCode & 0xC0, //d6 and d7
+                pixelPosition: emulatorViewDelegate.getPixelOffset(memoryOffset: Int(address - 0x400)))
+        }
     }
     
     enum MemoryConfiguration {
