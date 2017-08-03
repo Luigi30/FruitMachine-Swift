@@ -37,7 +37,7 @@ final class MemoryInterface: NSObject {
         if(!bypassOverrides) {
             for override in read_overrides {
                 if case override.rangeStart ... override.rangeEnd = offset {
-                    let readValue = override.action(CPU.sharedInstance, nil)
+                    let readValue = override.action(CPU.sharedInstance, offset, nil)
                     if(!override.doRead) {
                         return readValue!
                     }
@@ -59,7 +59,7 @@ final class MemoryInterface: NSObject {
         if(!bypassOverrides) {
             for override in write_overrides {
                 if case override.rangeStart ... override.rangeEnd = offset {
-                    _ = override.action(CPU.sharedInstance, value)
+                    _ = override.action(CPU.sharedInstance, offset, value)
                     if(!override.doWrite) {
                         return
                     }

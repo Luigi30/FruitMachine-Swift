@@ -16,27 +16,17 @@ extension AppleI {
         static let CHAR_WIDTH = 5
         static let CHAR_HEIGHT = 8
         
-        var ROM: [UInt8]
         var glyphs: [Glyph]
+        var romManager: ROMDelegate
         
         init(romPath: String) {
-            ROM = [UInt8](repeating: 0xCC, count: 512)
             glyphs = [Glyph](repeating: Glyph(inPixels: [BitmapPixelsLE555.PixelData]()), count: 64)
+            romManager = ROMManager(path: romPath, atAddress: 0x00, size: 512)
             
             super.init()
-            loadROM(path: romPath)
             
             for index in 0..<64 {
                 glyphs[index] = Glyph(inPixels: getCharacterPixels(charIndex: UInt8(index)))
-            }
-        }
-        
-        private func loadROM(path: String) {
-            do {
-                let fileContent: NSData = try NSData(contentsOfFile: path)
-                fileContent.getBytes(&ROM, range: NSRange(location: 0, length: 512))
-            } catch {
-                print(error)
             }
         }
 
@@ -48,7 +38,7 @@ extension AppleI {
             
             //Don't convert the character indexes if we're populating the glyphs array.
             for scanlineIndex in 0..<A1CharacterGenerator.CHAR_HEIGHT {
-                pixelArray[scanlineIndex] = ROM[scanlineIndex + (Int(charIndex) * A1CharacterGenerator.CHAR_HEIGHT)]
+                pixelArray[scanlineIndex] = romManager.ROM[scanlineIndex + (Int(charIndex) * A1CharacterGenerator.CHAR_HEIGHT)]
             }
             
             var glyphPixels = [BitmapPixelsLE555.PixelData]()

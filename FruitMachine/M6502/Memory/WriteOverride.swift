@@ -14,7 +14,7 @@ import Cocoa
 final class WriteOverride: MemoryOverride {
     let doWrite: Bool //do we write anyway?
     
-    init(start: UInt16, end: UInt16, writeAnyway: Bool, action: @escaping (AnyObject, UInt8?) -> UInt8?) {
+    init(start: UInt16, end: UInt16, writeAnyway: Bool, action: @escaping (AnyObject, UInt16, UInt8?) -> UInt8?) {
         doWrite = writeAnyway
         super.init(start: start, end: end, action: action)
     }

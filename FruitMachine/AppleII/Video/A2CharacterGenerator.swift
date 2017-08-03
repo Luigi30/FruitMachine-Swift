@@ -12,19 +12,18 @@ extension AppleII {
     
     //The Apple II character generator is a clone of the Signetics 2513 from the Apple I.
     
-    class A2CharacterGenerator: NSObject {
+    class A2CharacterGenerator: NSObject, HasROM {
         static let CHAR_WIDTH = 5
         static let CHAR_HEIGHT = 8
         
-        var ROM: [UInt8]
         var glyphs: [Glyph]
+        var romManager: ROMManager
         
         init(romPath: String) {
-            ROM = [UInt8](repeating: 0xCC, count: 0x800)
+            romManager = ROMManager(path: romPath, atAddress: 0x00, size: 0x800)
             glyphs = [Glyph](repeating: Glyph(inPixels: [BitmapPixelsLE555.PixelData]()), count: 64)
             
             super.init()
-            loadROM(path: romPath)
             
             for index in 0..<64 {
                 glyphs[index] = Glyph(inPixels: getCharacterPixels(charIndex: UInt8(index)))
@@ -39,7 +38,7 @@ extension AppleII {
             
             //Don't convert the character indexes if we're populating the glyphs array.
             for scanlineIndex in 0..<A2CharacterGenerator.CHAR_HEIGHT {
-                pixelArray[scanlineIndex] = ROM[scanlineIndex + (Int(charIndex) * A2CharacterGenerator.CHAR_HEIGHT)]
+                pixelArray[scanlineIndex] = romManager.ROM[scanlineIndex + (Int(charIndex) * A2CharacterGenerator.CHAR_HEIGHT)]
             }
             
             var glyphPixels = [BitmapPixelsLE555.PixelData]()
@@ -55,15 +54,6 @@ extension AppleII {
         
         func asciiToAppleCharIndex(ascii: UInt8) -> UInt8 {
             return (ascii & 0x1f) | (((ascii ^ 0x40) & 0x40) >> 1)
-        }
-        
-        private func loadROM(path: String) {
-            do {
-                let fileContent: NSData = try NSData(contentsOfFile: path)
-                fileContent.getBytes(&ROM, range: NSRange(location: 0, length: 0x800))
-            } catch {
-                print(error)
-            }
         }
     }
 

@@ -54,7 +54,16 @@ class AppleIIViewController: NSViewController {
     }
     
     override func keyDown(with event: NSEvent) {
+        let leftArrowKeyCode = 123
+        let rightArrowKeyCode = 124
+        
         let c = returnChar(theEvent: event)
+        
+        if(event.keyCode == leftArrowKeyCode) {
+            computer.keyboardController.KEYBOARD = UInt8((0x08 | 0x80) & 0x000000FF)
+        } else if(event.keyCode == rightArrowKeyCode) {
+            computer.keyboardController.KEYBOARD = UInt8((0x15 | 0x80) & 0x000000FF)
+        }
         
         guard let ascii32 = c?.asciiValue else {
             return

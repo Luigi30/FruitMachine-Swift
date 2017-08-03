@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class AppleII: NSObject, EmulatedSystem {
+final class AppleII: NSObject, EmulatedSystem {
     static let sharedInstance = AppleII(cpuFrequency: (14.31818 / 7 / 2) * 1000000, fps: 60.0)
     
     var frameCounter: Int = 0
@@ -17,6 +17,9 @@ class AppleII: NSObject, EmulatedSystem {
     let keyboardController = KeyboardController()
     var videoSoftswitches = VideoSoftswitches()
     var videoMode: VideoMode
+    
+    //Peripherals
+    var backplane = [Int: Peripheral?]()
     
     var CPU_FREQUENCY: Double
     var FRAMES_PER_SECOND: Double
@@ -33,10 +36,15 @@ class AppleII: NSObject, EmulatedSystem {
         
         videoMode = .Text
         
+        for i in 1...7 {
+            backplane[i] = nil
+        }
+        
         super.init()
         
         loadROMs()
         setupMemory(ramConfig: .sixteenK)
+        backplane[6] = DiskII(slot: 6, romPath: "/Users/luigi/apple2/341-0027-a.p5")
         
         emuScreenLayer.shouldRasterize = true
         emuScreenLayer.delegate = emulatorViewDelegate
@@ -66,6 +74,12 @@ class AppleII: NSObject, EmulatedSystem {
     }
     
     func installOverrides() {
+        for (slotNum, peripheral) in backplane {
+            if(peripheral != nil) {
+                peripheral!.installOverrides()
+            }
+        }
+        
         CPU.sharedInstance.memoryInterface.read_overrides.append(SoftswitchOverrides.readKeyboard)
         CPU.sharedInstance.memoryInterface.read_overrides.append(SoftswitchOverrides.clearKeypressStrobeR)
         CPU.sharedInstance.memoryInterface.write_overrides.append(SoftswitchOverrides.clearKeypressStrobeW)
@@ -143,7 +157,7 @@ class AppleII: NSObject, EmulatedSystem {
         for address in start ..< end {
             let pixelData = CPU.sharedInstance.memoryInterface.readByte(offset: UInt16(address), bypassOverrides: true)
             
-            emulatorViewDelegate.putLoresPixel(buffer: buffer,
+            LoresMode.putLoresPixel(buffer: buffer,
                                                pixel: pixelData,
                                                address: UInt16(address))
         }
@@ -153,10 +167,10 @@ class AppleII: NSObject, EmulatedSystem {
         for address in start ... end {
             let charCode = CPU.sharedInstance.memoryInterface.readByte(offset: UInt16(address), bypassOverrides: true)
             
-            emulatorViewDelegate.putGlyph(buffer: buffer,
-                                          glyph: cg.glyphs[Int(charCode & 0x3F)],
-                                          attributes: charCode & 0xC0, //d6 and d7
-                pixelPosition: emulatorViewDelegate.getPixelOffset(memoryOffset: Int(address - 0x400)))
+            TextMode.putGlyph(buffer: buffer,
+                              glyph: cg.glyphs[Int(charCode & 0x3F)],
+                              attributes: charCode & 0xC0, //d6 and d7
+                              pixelPosition: VideoHelpers.getPixelOffset(memoryOffset: Int(address - 0x400)))
         }
     }
     

@@ -15,6 +15,11 @@
 		2A5C5BBC1F304C3A00ED351D /* A2CharacterGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5C5BBB1F304C3A00ED351D /* A2CharacterGenerator.swift */; };
 		2A5C5BBE1F304D4B00ED351D /* Glyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5C5BBD1F304D4B00ED351D /* Glyph.swift */; };
 		2A60851E1F2AFAE900E05B64 /* PIA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A60851D1F2AFAE900E05B64 /* PIA.swift */; };
+		2A63C2331F32C39300D4F4F8 /* TextMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A63C2321F32C39300D4F4F8 /* TextMode.swift */; };
+		2A63C2351F32C4F700D4F4F8 /* LoresMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A63C2341F32C4F700D4F4F8 /* LoresMode.swift */; };
+		2A63C2371F32C55100D4F4F8 /* VideoHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A63C2361F32C55100D4F4F8 /* VideoHelpers.swift */; };
+		2A63C23A1F32CCE900D4F4F8 /* DiskII.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A63C2391F32CCE900D4F4F8 /* DiskII.swift */; };
+		2A63C23C1F32CD4800D4F4F8 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A63C23B1F32CD4800D4F4F8 /* Peripheral.swift */; };
 		2A6C2D171F31216700B8DC60 /* SoftswitchOverrides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6C2D161F31216700B8DC60 /* SoftswitchOverrides.swift */; };
 		2A6DC7E91F3045280066FE0D /* AppleIIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6DC7E81F3045280066FE0D /* AppleIIViewController.swift */; };
 		2A6DC7EB1F3045C90066FE0D /* EmulatedSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6DC7EA1F3045C90066FE0D /* EmulatedSystem.swift */; };
@@ -38,6 +43,7 @@
 		2AD458E31F20661300F05121 /* CPUInstructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458E21F20661300F05121 /* CPUInstructions.swift */; };
 		2AD458E51F2070DF00F05121 /* Opcodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458E41F2070DF00F05121 /* Opcodes.swift */; };
 		2AD6D5841F26E6BF008F3CF5 /* DebuggerCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD6D5831F26E6BF008F3CF5 /* DebuggerCommands.swift */; };
+		2AE3BB971F32CEB100C11060 /* ROMManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE3BB961F32CEB100C11060 /* ROMManager.swift */; };
 		2AE42E081F2850F400C4900E /* ReadOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E071F2850F400C4900E /* ReadOverride.swift */; };
 		2AE42E0A1F28521E00C4900E /* WriteOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E091F28521E00C4900E /* WriteOverride.swift */; };
 		2AE42E0C1F28522D00C4900E /* MemoryOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E0B1F28522D00C4900E /* MemoryOverride.swift */; };
@@ -57,6 +63,11 @@
 		2A5C5BBB1F304C3A00ED351D /* A2CharacterGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = A2CharacterGenerator.swift; sourceTree = "<group>"; };
 		2A5C5BBD1F304D4B00ED351D /* Glyph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glyph.swift; sourceTree = "<group>"; };
 		2A60851D1F2AFAE900E05B64 /* PIA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIA.swift; sourceTree = "<group>"; };
+		2A63C2321F32C39300D4F4F8 /* TextMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMode.swift; sourceTree = "<group>"; };
+		2A63C2341F32C4F700D4F4F8 /* LoresMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoresMode.swift; sourceTree = "<group>"; };
+		2A63C2361F32C55100D4F4F8 /* VideoHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoHelpers.swift; sourceTree = "<group>"; };
+		2A63C2391F32CCE900D4F4F8 /* DiskII.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskII.swift; sourceTree = "<group>"; };
+		2A63C23B1F32CD4800D4F4F8 /* Peripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 		2A6C2D161F31216700B8DC60 /* SoftswitchOverrides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftswitchOverrides.swift; sourceTree = "<group>"; };
 		2A6DC7E81F3045280066FE0D /* AppleIIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIIViewController.swift; sourceTree = "<group>"; };
 		2A6DC7EA1F3045C90066FE0D /* EmulatedSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatedSystem.swift; sourceTree = "<group>"; };
@@ -83,6 +94,7 @@
 		2AD458E21F20661300F05121 /* CPUInstructions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUInstructions.swift; sourceTree = "<group>"; };
 		2AD458E41F2070DF00F05121 /* Opcodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Opcodes.swift; sourceTree = "<group>"; };
 		2AD6D5831F26E6BF008F3CF5 /* DebuggerCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerCommands.swift; sourceTree = "<group>"; };
+		2AE3BB961F32CEB100C11060 /* ROMManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROMManager.swift; sourceTree = "<group>"; };
 		2AE42E071F2850F400C4900E /* ReadOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOverride.swift; sourceTree = "<group>"; };
 		2AE42E091F28521E00C4900E /* WriteOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteOverride.swift; sourceTree = "<group>"; };
 		2AE42E0B1F28522D00C4900E /* MemoryOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryOverride.swift; sourceTree = "<group>"; };
@@ -113,9 +125,29 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		2A63C2311F32C38400D4F4F8 /* Modes */ = {
+			isa = PBXGroup;
+			children = (
+				2A86FB981F32694A00AD0C68 /* VideoModes.swift */,
+				2A63C2321F32C39300D4F4F8 /* TextMode.swift */,
+				2A63C2341F32C4F700D4F4F8 /* LoresMode.swift */,
+			);
+			path = Modes;
+			sourceTree = "<group>";
+		};
+		2A63C2381F32CCDB00D4F4F8 /* Peripherals */ = {
+			isa = PBXGroup;
+			children = (
+				2A63C2391F32CCE900D4F4F8 /* DiskII.swift */,
+				2A63C23B1F32CD4800D4F4F8 /* Peripheral.swift */,
+			);
+			path = Peripherals;
+			sourceTree = "<group>";
+		};
 		2A6DC7E51F3043DB0066FE0D /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				2AE3BB981F32D24D00C11060 /* Memory */,
 				2A6DC7E71F3044080066FE0D /* Peripherals */,
 				2A6DC7E61F3043E10066FE0D /* Video */,
 				2A6DC7EA1F3045C90066FE0D /* EmulatedSystem.swift */,
@@ -143,10 +175,11 @@
 		2A6DC7EE1F30492E0066FE0D /* Video */ = {
 			isa = PBXGroup;
 			children = (
+				2A63C2311F32C38400D4F4F8 /* Modes */,
 				2A5C5BBB1F304C3A00ED351D /* A2CharacterGenerator.swift */,
+				2A63C2361F32C55100D4F4F8 /* VideoHelpers.swift */,
 				2A6DC7EC1F30492C0066FE0D /* ScreenDelegate.swift */,
 				2A6DC7EF1F30495D0066FE0D /* ScreenView.swift */,
-				2A86FB981F32694A00AD0C68 /* VideoModes.swift */,
 			);
 			path = Video;
 			sourceTree = "<group>";
@@ -166,6 +199,7 @@
 		2AB6CAC71F30407200DECAC0 /* AppleII */ = {
 			isa = PBXGroup;
 			children = (
+				2A63C2381F32CCDB00D4F4F8 /* Peripherals */,
 				2A6DC7EE1F30492E0066FE0D /* Video */,
 				2AB6CACC1F3041A200DECAC0 /* AppleII.swift */,
 				2A86FB961F316CB500AD0C68 /* KeyboardController.swift */,
@@ -221,6 +255,14 @@
 				2AD458DE1F205F4500F05121 /* CPU.swift */,
 			);
 			path = M6502;
+			sourceTree = "<group>";
+		};
+		2AE3BB981F32D24D00C11060 /* Memory */ = {
+			isa = PBXGroup;
+			children = (
+				2AE3BB961F32CEB100C11060 /* ROMManager.swift */,
+			);
+			path = Memory;
 			sourceTree = "<group>";
 		};
 		2AE42E061F2850E100C4900E /* Memory */ = {
@@ -362,22 +404,28 @@
 				2AE42E0C1F28522D00C4900E /* MemoryOverride.swift in Sources */,
 				2A22EBFB1F21A7A700A36A61 /* IntegerExtensions.swift in Sources */,
 				2AD6D5841F26E6BF008F3CF5 /* DebuggerCommands.swift in Sources */,
+				2AE3BB971F32CEB100C11060 /* ROMManager.swift in Sources */,
 				2AE5BA041F23DE4400FAA343 /* Disassembly.swift in Sources */,
 				2A6DC7EB1F3045C90066FE0D /* EmulatedSystem.swift in Sources */,
 				2A86FB971F316CB500AD0C68 /* KeyboardController.swift in Sources */,
+				2A63C2351F32C4F700D4F4F8 /* LoresMode.swift in Sources */,
 				2AE42E3A1F28628300C4900E /* AppleIViewController.swift in Sources */,
 				2AD458E51F2070DF00F05121 /* Opcodes.swift in Sources */,
 				2AE42E081F2850F400C4900E /* ReadOverride.swift in Sources */,
 				2AA8B5FE1F2A942C002B350F /* PIAOverrides.swift in Sources */,
 				2AB6CACD1F3041A200DECAC0 /* AppleII.swift in Sources */,
+				2A63C2331F32C39300D4F4F8 /* TextMode.swift in Sources */,
 				2AE5BA061F2469EB00FAA343 /* AddressConversions.swift in Sources */,
 				2AE42E0A1F28521E00C4900E /* WriteOverride.swift in Sources */,
 				2A6DC7ED1F30492C0066FE0D /* ScreenDelegate.swift in Sources */,
 				2A5BC5191F29A28D008C03BE /* AppleIScreenView.swift in Sources */,
+				2A63C2371F32C55100D4F4F8 /* VideoHelpers.swift in Sources */,
+				2A63C23A1F32CCE900D4F4F8 /* DiskII.swift in Sources */,
 				2AD458E11F2064CB00F05121 /* MemoryInterface.swift in Sources */,
 				2AA8B5F81F2A8889002B350F /* AppleI.swift in Sources */,
 				2AD458DF1F205F4500F05121 /* CPU.swift in Sources */,
 				2A86FB991F32694A00AD0C68 /* VideoModes.swift in Sources */,
+				2A63C23C1F32CD4800D4F4F8 /* Peripheral.swift in Sources */,
 				2A6DC7E91F3045280066FE0D /* AppleIIViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

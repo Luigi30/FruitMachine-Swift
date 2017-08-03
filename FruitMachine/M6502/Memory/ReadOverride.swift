@@ -14,7 +14,7 @@ import Cocoa
 final class ReadOverride: MemoryOverride {
     let doRead: Bool //do we write anyway?
     
-    init(start: UInt16, end: UInt16, readAnyway: Bool, action: @escaping (AnyObject, UInt8?) -> UInt8?) {
+    init(start: UInt16, end: UInt16, readAnyway: Bool, action: @escaping (AnyObject, UInt16, UInt8?) -> UInt8?) {
         doRead = readAnyway
         super.init(start: start, end: end, action: action)
     }

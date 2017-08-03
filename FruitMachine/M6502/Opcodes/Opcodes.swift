@@ -142,9 +142,6 @@ fileprivate func hex2bcd(hex: UInt8) -> UInt8 {
 final class Opcodes: NSObject {
     
     static func _Add(state: CPU, operand: UInt8, isSubtract: Bool) {
-        if((state.accumulator == 0xFF) && operand == 0x01 && state.status_register.carry == false) {
-            _ = 1
-        }
         var t16: UInt16 = UInt16(state.accumulator) &+ UInt16(operand) + UInt16((state.status_register.carry ? UInt8(1) : UInt8(0)))
         let t8: UInt8 = UInt8(t16 & 0xFF)
         

@@ -12,9 +12,9 @@ class MemoryOverride: NSObject {
     let rangeStart: UInt16
     let rangeEnd: UInt16
     
-    let action: (CPU, UInt8?) -> UInt8?
+    let action: (CPU, UInt16, UInt8?) -> UInt8?
     
-    init(start: UInt16, end: UInt16, action: @escaping (AnyObject, UInt8?) -> UInt8?) {
+    init(start: UInt16, end: UInt16, action: @escaping (AnyObject, UInt16, UInt8?) -> UInt8?) {
         rangeStart = start
         rangeEnd = end
         
