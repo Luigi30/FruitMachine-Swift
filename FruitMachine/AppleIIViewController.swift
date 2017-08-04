@@ -10,6 +10,9 @@ import Cocoa
 
 class AppleIIViewController: NSViewController {
     
+    @IBOutlet weak var lbl_Drive1: NSTextField!
+    @IBOutlet weak var lbl_Drive2: NSTextField!
+    
     let computer = AppleII.sharedInstance
     var debuggerWindowController: DebuggerWindowController!
     var preferencesWindowController: PreferencesWindowController!
@@ -24,6 +27,8 @@ class AppleIIViewController: NSViewController {
         preferencesWindowController = PreferencesWindowController()
         
         self.view.addSubview(computer.emulatorView)
+        
+        setupDriveNotifications()
         
         self.frameTimer = Timer.scheduledTimer(timeInterval: 1.0/60.0,
                                                target: self,
@@ -79,6 +84,30 @@ class AppleIIViewController: NSViewController {
             return char
         }
         return nil
+    }
+    
+    func setupDriveNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.drive1MotorOn), name: DiskII.N_Drive1MotorOn, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.drive2MotorOn), name: DiskII.N_Drive2MotorOn, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.drive1MotorOff), name: DiskII.N_Drive1MotorOff, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.drive2MotorOff), name: DiskII.N_Drive2MotorOff, object: nil)
+    }
+    
+    /* drive lights */
+    @objc func drive1MotorOff(notification: NSNotification) {
+        lbl_Drive1.textColor = NSColor.textColor
+    }
+    
+    @objc func drive2MotorOff(notification: NSNotification) {
+        lbl_Drive2.textColor = NSColor.textColor
+    }
+    
+    @objc func drive1MotorOn(notification: NSNotification) {
+        lbl_Drive1.textColor = NSColor.red
+    }
+    
+    @objc func drive2MotorOn(notification: NSNotification) {
+        lbl_Drive2.textColor = NSColor.red
     }
     
 }

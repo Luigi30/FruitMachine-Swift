@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2A16ADBB1F33C341004A0333 /* DiskImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A16ADBA1F33C341004A0333 /* DiskImage.swift */; };
 		2A2126841F2A9FA300E43DC1 /* DebuggerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2126831F2A9FA300E43DC1 /* DebuggerWindowController.swift */; };
 		2A22EBFB1F21A7A700A36A61 /* IntegerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */; };
 		2A5BC5191F29A28D008C03BE /* AppleIScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5BC5181F29A28D008C03BE /* AppleIScreenView.swift */; };
@@ -55,6 +56,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2A16ADBA1F33C341004A0333 /* DiskImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskImage.swift; sourceTree = "<group>"; };
 		2A2126831F2A9FA300E43DC1 /* DebuggerWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerWindowController.swift; sourceTree = "<group>"; };
 		2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerExtensions.swift; sourceTree = "<group>"; };
 		2A5BC5181F29A28D008C03BE /* AppleIScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIScreenView.swift; sourceTree = "<group>"; };
@@ -117,6 +119,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2A16ADB91F33C2ED004A0333 /* DiskII */ = {
+			isa = PBXGroup;
+			children = (
+				2A63C2391F32CCE900D4F4F8 /* DiskII.swift */,
+				2A16ADBA1F33C341004A0333 /* DiskImage.swift */,
+			);
+			path = DiskII;
+			sourceTree = "<group>";
+		};
 		2A5BC51A1F29A2EB008C03BE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -138,7 +149,7 @@
 		2A63C2381F32CCDB00D4F4F8 /* Peripherals */ = {
 			isa = PBXGroup;
 			children = (
-				2A63C2391F32CCE900D4F4F8 /* DiskII.swift */,
+				2A16ADB91F33C2ED004A0333 /* DiskII */,
 				2A63C23B1F32CD4800D4F4F8 /* Peripheral.swift */,
 			);
 			path = Peripherals;
@@ -398,6 +409,7 @@
 				2AA8B5FC1F2A8EAD002B350F /* Terminal.swift in Sources */,
 				2A5BC51E1F29A4C3008C03BE /* AppleIBitmapDisplay.swift in Sources */,
 				2AD458CE1F205EB700F05121 /* AppDelegate.swift in Sources */,
+				2A16ADBB1F33C341004A0333 /* DiskImage.swift in Sources */,
 				2A91852A1F2EA84D00A9E5BE /* BitmapPixels.swift in Sources */,
 				2AE42E431F28665300C4900E /* A1CharacterGenerator.swift in Sources */,
 				2A6DC7F01F30495D0066FE0D /* ScreenView.swift in Sources */,

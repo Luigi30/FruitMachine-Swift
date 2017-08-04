@@ -26,7 +26,7 @@ final class AppleII: NSObject, EmulatedSystem {
     var CYCLES_PER_BATCH: Int
     
     let emulatorViewDelegate = AppleII.ScreenDelegate()
-    let emulatorView = AppleII.ScreenView(frame: NSMakeRect(0, 0, 560, 384))
+    let emulatorView = AppleII.ScreenView(frame: NSMakeRect(0, 16, 560, 384))
     let emuScreenLayer = CALayer()
     
     required init(cpuFrequency: Double, fps: Double) {
@@ -39,12 +39,12 @@ final class AppleII: NSObject, EmulatedSystem {
         for i in 1...7 {
             backplane[i] = nil
         }
+        backplane[6] = DiskII(slot: 6, romPath: "/Users/luigi/apple2/341-0027-a.p5")
         
         super.init()
         
         loadROMs()
         setupMemory(ramConfig: .sixteenK)
-        backplane[6] = DiskII(slot: 6, romPath: "/Users/luigi/apple2/341-0027-a.p5")
         
         emuScreenLayer.shouldRasterize = true
         emuScreenLayer.delegate = emulatorViewDelegate
@@ -199,7 +199,7 @@ final class AppleII: NSObject, EmulatedSystem {
             CPU.sharedInstance.memoryInterface.pages[page] = MemoryInterface.pageMode.null  //not connected
         }
         for page in 224 ..< 256 {
-            CPU.sharedInstance.memoryInterface.pages[page] = MemoryInterface.pageMode.ro  //not connected
+            CPU.sharedInstance.memoryInterface.pages[page] = MemoryInterface.pageMode.ro    //ROM
         }
     }
     

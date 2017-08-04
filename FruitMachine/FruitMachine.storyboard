@@ -157,10 +157,10 @@
                 <windowController id="0Wh-dg-gsU" sceneMemberID="viewController">
                     <window key="window" title="Fruit Machine" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="O0r-h6-7La">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
-                        <rect key="contentRect" x="293" y="264" width="560" height="360"/>
+                        <rect key="contentRect" x="293" y="264" width="560" height="400"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1916" height="936"/>
-                        <value key="minSize" type="size" width="560" height="360"/>
-                        <value key="maxSize" type="size" width="560" height="360"/>
+                        <value key="minSize" type="size" width="560" height="400"/>
+                        <value key="maxSize" type="size" width="560" height="400"/>
                         <connections>
                             <outlet property="delegate" destination="0Wh-dg-gsU" id="tmJ-Ae-YJP"/>
                         </connections>
@@ -178,9 +178,33 @@
             <objects>
                 <viewController id="gw1-M7-9Je" customClass="AppleIIViewController" customModule="FruitMachine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="DiY-xb-Usb">
-                        <rect key="frame" x="0.0" y="0.0" width="560" height="384"/>
+                        <rect key="frame" x="0.0" y="0.0" width="560" height="400"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jaO-yO-mV1">
+                                <rect key="frame" x="446" y="0.0" width="46" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Drive 1" id="Yaa-0g-KnI">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xl9-rO-Y9T">
+                                <rect key="frame" x="496" y="0.0" width="46" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Drive 2" id="Kaf-uu-AhW">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
                     </view>
+                    <connections>
+                        <outlet property="lbl_Drive1" destination="jaO-yO-mV1" id="IR7-NA-vZH"/>
+                        <outlet property="lbl_Drive2" destination="Xl9-rO-Y9T" id="E1A-nb-rM5"/>
+                    </connections>
                 </viewController>
                 <customObject id="o4k-Ip-qpX" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
