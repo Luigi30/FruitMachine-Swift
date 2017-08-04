@@ -22,6 +22,7 @@ class Dos33Image: DiskImageFormat {
     static let BYTES_PER_TRACK: Int = BYTES_PER_SECTOR * SECTORS_PER_TRACK
     
     //Sectors in a track are in this order.
+    //                        0  7  14  6  13  5  12  4  11  3  10  2  9  1  8  15
     static let sectorOrder = [0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15]
     
     struct VTOC {
@@ -50,7 +51,7 @@ class Dos33Image: DiskImageFormat {
         //Find the track in our disk.
         let trackOffset = trackNum * Dos33Image.BYTES_PER_TRACK
         //Find the sector in this track.
-        let sectorOffset = sectorNum * Dos33Image.BYTES_PER_SECTOR
+        let sectorOffset = sectorOrder[sectorNum] * Dos33Image.BYTES_PER_SECTOR
         let offset = trackOffset + sectorOffset
         
         return Array<UInt8>(imageData[offset ..< offset + Dos33Image.BYTES_PER_SECTOR])
@@ -91,7 +92,7 @@ class DiskImage: NSObject {
             encodedTracks.append(encodeDos33Track(imageData: rawData!, index: track, volumeNumber: Int(catalogSector[0x06])))
         }
         
-        let pointer = UnsafeBufferPointer(start:encodedTracks[0], count:encodedTracks[0].count)
+        let pointer = UnsafeBufferPointer(start:encodedTracks[2], count:encodedTracks[2].count)
         let data = Data(buffer:pointer)
         try! data.write(to: URL(fileURLWithPath: "/Users/luigi/apple2/master.dmp"))
     }
@@ -177,7 +178,6 @@ class DiskImage: NSObject {
         var nibblized: [UInt8] = [UInt8](repeating: 0x00, count: 342)
         
         for byte in 0x00...0x55 {
-            //nibblized[byte] = SixAndTwoTranslationTable[Int(sector[byte] >> 2)]
             nibblized[byte] = sector[byte] >> 2
             let b0 = (sector[byte] & 0b00000001)
             let b1 = (sector[byte] & 0b00000010)
@@ -187,7 +187,6 @@ class DiskImage: NSObject {
         }
         
         for byte in 0x56...0xAA {
-            //nibblized[byte] = SixAndTwoTranslationTable[Int(sector[byte] >> 2)]
             nibblized[byte] = sector[byte] >> 2
             let b0 = (sector[byte] & 0b00000001)
             let b1 = (sector[byte] & 0b00000010)
@@ -197,7 +196,6 @@ class DiskImage: NSObject {
         }
         
         for byte in 0xAB...0xFF {
-            //nibblized[byte] = SixAndTwoTranslationTable[Int(sector[byte] >> 2)]
             nibblized[byte] = sector[byte] >> 2
             let b0 = (sector[byte] & 0b00000001)
             let b1 = (sector[byte] & 0b00000010)
@@ -205,7 +203,6 @@ class DiskImage: NSObject {
             
             //Now we have a full six bits.
             let completeLow: UInt8 = nibblized[0x155 - (byte % 0x56)] | (low << 4)
-            //nibblized[0x155 - (byte % 0x56)] = SixAndTwoTranslationTable[Int(completeLow)]
             nibblized[0x155 - (byte % 0x56)] = completeLow
         }
         

@@ -51,6 +51,9 @@ class DiskII: NSObject, Peripheral {
     static let N_Drive1TrackChanged  = NSNotification.Name(rawValue: "Drive1TrackChanged")
     static let N_Drive2TrackChanged  = NSNotification.Name(rawValue: "Drive2TrackChanged")
     
+    var motor1OffTimer: Timer?
+    var motor2OffTimer: Timer?
+
     /* Softswitches */
     struct Softswitches {
         var Phase0 = false
@@ -160,20 +163,40 @@ class DiskII: NSObject, Peripheral {
             softswitches.MotorPowered = false
             if(softswitches.DriveSelect == false) {
                 NotificationCenter.default.post(name: DiskII.N_Drive1MotorOff, object: nil)
+                /*
+                motor1OffTimer = Timer.scheduledTimer(timeInterval: 1.0,
+                                                           target: self,
+                                                           selector: #selector(disableDrive2Motor),
+                                                           userInfo: nil,
+                                                           repeats: false)
+                 */
+                print("Drive 1 Motor will turn off in 1 second")
             } else {
                 NotificationCenter.default.post(name: DiskII.N_Drive2MotorOff, object: nil)
+                /*
+                motor2OffTimer = Timer.scheduledTimer(timeInterval: 1.0,
+                                     target: self,
+                                     selector: #selector(disableDrive2Motor),
+                                     userInfo: nil,
+                                     repeats: false)
+                 */
+                print("Drive 2 Motor will turn off in 1 second")
             }
         case 9:
             softswitches.MotorPowered = true
             if(softswitches.DriveSelect == false) {
                 NotificationCenter.default.post(name: DiskII.N_Drive1MotorOn, object: nil)
+                print("Drive 1 Motor is on")
             } else {
                 NotificationCenter.default.post(name: DiskII.N_Drive2MotorOn, object: nil)
+                print("Drive 2 Motor is on")
             }
         case 10:
             softswitches.DriveSelect = false
+            print("Drive 1 selected")
         case 11:
             softswitches.DriveSelect = true
+            print("Drive 2 selected")
         case 12:
             softswitches.Q6 = false
             if(softswitches.Q7 == false) {
@@ -232,5 +255,15 @@ class DiskII: NSObject, Peripheral {
         //Disk II just maps its ROM to the memory addressed by the slot.
         
         return romManager.ROM[Int(address)]
+    }
+    
+    @objc func disableDrive1Motor() {
+        softswitches.MotorPowered = false
+        print("Drive 1 motor is disabled")
+    }
+    
+    @objc func disableDrive2Motor() {
+        softswitches.MotorPowered = false
+        print("Drive 2 motor is disabled")
     }
 }

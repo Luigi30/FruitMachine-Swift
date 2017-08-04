@@ -150,7 +150,8 @@ final class AppleII: NSObject, EmulatedSystem {
         
         
         CVPixelBufferUnlockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
-        emulatorView.display()
+        //emulatorView.display()
+        emulatorView.setNeedsDisplay(emulatorView.frame)
     }
     
     func putLoresPixels(buffer: UnsafeMutablePointer<BitmapPixelsLE555.PixelData>, start: UInt16, end: UInt16) {
