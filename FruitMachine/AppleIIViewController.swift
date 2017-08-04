@@ -91,9 +91,21 @@ class AppleIIViewController: NSViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(self.drive2MotorOn), name: DiskII.N_Drive2MotorOn, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.drive1MotorOff), name: DiskII.N_Drive1MotorOff, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.drive2MotorOff), name: DiskII.N_Drive2MotorOff, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.drive1TrackChanged), name: DiskII.N_Drive1TrackChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.drive2TrackChanged), name: DiskII.N_Drive2TrackChanged, object: nil)
     }
     
     /* drive lights */
+    @objc func drive1TrackChanged(notification: NSNotification) {
+        let num = notification.object as? Int
+        lbl_Drive1.stringValue = "D1 \(num!)"
+    }
+    @objc func drive2TrackChanged(notification: NSNotification) {
+        let num = notification.object as? Int
+        lbl_Drive2.stringValue = "D2 \(num!)"
+    }
+    
     @objc func drive1MotorOff(notification: NSNotification) {
         lbl_Drive1.textColor = NSColor.textColor
     }

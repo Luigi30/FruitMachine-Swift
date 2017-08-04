@@ -48,6 +48,9 @@ class DiskII: NSObject, Peripheral {
     static let N_Drive1MotorOff = NSNotification.Name(rawValue: "Drive1MotorOff")
     static let N_Drive2MotorOff = NSNotification.Name(rawValue: "Drive2MotorOff")
     
+    static let N_Drive1TrackChanged  = NSNotification.Name(rawValue: "Drive1TrackChanged")
+    static let N_Drive2TrackChanged  = NSNotification.Name(rawValue: "Drive2TrackChanged")
+    
     /* Softswitches */
     struct Softswitches {
         var Phase0 = false
@@ -68,9 +71,11 @@ class DiskII: NSObject, Peripheral {
     var softswitches = Softswitches()
     
     var currentTrack: Int = 0
+    var mediaPosition: Int = 0
     var motorPhase: MotorPhase = .Phase0
     
     var diskImage = DiskImage(diskPath: "/Users/luigi/apple2/master.dsk")
+    
     
     init(slot: Int, romPath: String) {
         slotNumber = slot
@@ -108,14 +113,17 @@ class DiskII: NSObject, Peripheral {
             softswitches.Phase0 = true
             if(motorPhase == .Phase1) {
                 motorPhase = .Phase0
-                if(currentTrack % 2 == 0) {
-                    if(currentTrack >= 0) { currentTrack -= 1 }
+                if(currentTrack % 2 == 0 && currentTrack > 0)
+                {
+                    currentTrack -= 1
                 }
+                updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
             } else if(motorPhase == .Phase3) {
                 motorPhase = .Phase0
-                if(currentTrack % 2 == 1) {
-                    if(currentTrack <= 34) { currentTrack += 1 }
+                if(currentTrack % 2 == 1 && currentTrack < 34) {
+                    currentTrack += 1
                 }
+                updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
             }
         case 2:
             softswitches.Phase1 = false
@@ -130,14 +138,16 @@ class DiskII: NSObject, Peripheral {
             softswitches.Phase2 = true
             if(motorPhase == .Phase3) {
                 motorPhase = .Phase2
-                if(currentTrack % 2 == 0) {
-                    if(currentTrack >= 0) { currentTrack -= 1 }
+                if(currentTrack % 2 == 0 && currentTrack > 0) {
+                    currentTrack -= 1
                 }
+                updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
             } else if(motorPhase == .Phase1) {
                 motorPhase = .Phase2
-                if(currentTrack % 2 == 0) {
-                    if(currentTrack <= 34) { currentTrack += 1 }
+                if(currentTrack % 2 == 0 && currentTrack < 34) {
+                    currentTrack += 1;
                 }
+                updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
             }
         case 6:
             softswitches.Phase3 = false
@@ -166,12 +176,16 @@ class DiskII: NSObject, Peripheral {
             softswitches.DriveSelect = true
         case 12:
             softswitches.Q6 = false
-            if(byte == nil) { //read
-                //write to Q6L -> read byte
+            if(softswitches.Q7 == false) {
+                //in read mode and a read was requested. get the next byte
+                print("Reading byte \(mediaPosition) of track \(currentTrack)")
+                return readByteOfTrack(track: currentTrack, advance: softswitches.MotorPowered ? 1 : 0)
             }
         case 13:
+            //WRITE PROTECT SENSE MODE
             softswitches.Q6 = true
         case 14:
+            //READ MODE
             softswitches.Q7 = false
         case 15:
             softswitches.Q7 = true
@@ -180,6 +194,25 @@ class DiskII: NSObject, Peripheral {
         }
         
         return 0x00
+    }
+    
+    func readByteOfTrack(track: Int, advance: Int) -> UInt8 {
+        let trackData = diskImage.encodedTracks[currentTrack]
+        
+        let result = trackData[mediaPosition]
+        //Advance the drive to the next byte.
+        mediaPosition = (mediaPosition + advance) % trackData.count
+        
+        return result
+    }
+    
+    func updateCurrentTrackDisplay(drive: Bool) {
+        if(drive == false) {
+            NotificationCenter.default.post(name: DiskII.N_Drive1TrackChanged, object: currentTrack)
+        }
+        else {
+            NotificationCenter.default.post(name: DiskII.N_Drive2TrackChanged, object: currentTrack)
+        }
     }
     
     func installOverrides() {

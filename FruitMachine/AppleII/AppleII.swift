@@ -44,7 +44,7 @@ final class AppleII: NSObject, EmulatedSystem {
         super.init()
         
         loadROMs()
-        setupMemory(ramConfig: .sixteenK)
+        setupMemory(ramConfig: .fortyeightK)
         
         emuScreenLayer.shouldRasterize = true
         emuScreenLayer.delegate = emulatorViewDelegate

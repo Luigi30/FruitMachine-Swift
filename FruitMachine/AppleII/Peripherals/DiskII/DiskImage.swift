@@ -50,7 +50,7 @@ class Dos33Image: DiskImageFormat {
         //Find the track in our disk.
         let trackOffset = trackNum * Dos33Image.BYTES_PER_TRACK
         //Find the sector in this track.
-        let sectorOffset = sectorOrder.index(of: sectorNum)! * Dos33Image.BYTES_PER_SECTOR
+        let sectorOffset = sectorNum * Dos33Image.BYTES_PER_SECTOR
         let offset = trackOffset + sectorOffset
         
         return Array<UInt8>(imageData[offset ..< offset + Dos33Image.BYTES_PER_SECTOR])
@@ -64,7 +64,7 @@ class DiskImage: NSObject {
         case Raw
     }
     	
-    var encodedTracks = [UInt8]()
+    var encodedTracks = [[UInt8]]()
     var fileSize: UInt64 = 0
     var image: DiskImageFormat?
     
@@ -87,10 +87,16 @@ class DiskImage: NSObject {
         //Is this a DOS 3.3 format image? Read one sector from track $11.
         let catalogSector: [UInt8] = Dos33Image.readTrackAndSector(imageData: rawData!, trackNum: 0x11, sectorNum: 0)
         
-        encodeDos33Track(imageData: rawData!, index: 0, volumeNumber: Int(catalogSector[0x06]))
+        for track in 0..<Dos33Image.TRACKS_PER_DISK {
+            encodedTracks.append(encodeDos33Track(imageData: rawData!, index: track, volumeNumber: Int(catalogSector[0x06])))
+        }
+        
+        let pointer = UnsafeBufferPointer(start:encodedTracks[0], count:encodedTracks[0].count)
+        let data = Data(buffer:pointer)
+        try! data.write(to: URL(fileURLWithPath: "/Users/luigi/apple2/master.dmp"))
     }
     
-    func loadImageBytes(path: String, size: Int) -> [UInt8]? {
+    private func loadImageBytes(path: String, size: Int) -> [UInt8]? {
         do {
             var data = [UInt8](repeating: 0xCC, count: Int(fileSize))
             
@@ -105,12 +111,12 @@ class DiskImage: NSObject {
         return nil
     }
     
-    func encodeDos33Track(imageData: [UInt8], index: Int, volumeNumber: Int) {
+    private func encodeDos33Track(imageData: [UInt8], index: Int, volumeNumber: Int) -> [UInt8] {
         var encodedData = [UInt8]()
         let dataOffset = index * Dos33Image.BYTES_PER_TRACK
         
         //Prologue: add 48 self-syncing bytes
-        for _ in 0..<0x30 { encodedData.append(selfSync) }
+        for _ in 1..<0x30 { encodedData.append(selfSync) }
         
         for sectorNum in 0 ..< Dos33Image.SECTORS_PER_TRACK {
             //Address Field
@@ -123,7 +129,7 @@ class DiskImage: NSObject {
             encodedData.append(contentsOf: addressEpilogue)
             
             //Gap2 - 5 bytes
-            for _ in 0..<5 { encodedData.append(selfSync) }
+            for _ in 0..<6 { encodedData.append(selfSync) }
             
             //Data Field
             encodedData.append(contentsOf: dataPrologue)
@@ -131,12 +137,13 @@ class DiskImage: NSObject {
             encodedData.append(contentsOf: dataEpilogue)
             
             //Gap2
-            for _ in 0..<5 { encodedData.append(selfSync) }
+            for _ in 0..<20 { encodedData.append(selfSync) }
         }
         
+        return encodedData
     }
     
-    func UInt16toUInt8Array(word: UInt16) -> [UInt8] {
+    private func UInt16toUInt8Array(word: UInt16) -> [UInt8] {
         var r = [UInt8]()
         r.append(UInt8((word & 0xFF00) >> 8))
         r.append(UInt8(word & 0x00FF))
@@ -144,7 +151,7 @@ class DiskImage: NSObject {
         return r
     }
     
-    func EncodeSectorSixAndTwo(sector: [UInt8]) -> [UInt8] {
+    private func EncodeSectorSixAndTwo(sector: [UInt8]) -> [UInt8] {
         let encodedBuffer = SixAndTwoPrenibblize(sector: sector)
         var writtenData = [UInt8](repeating: 0x00, count: 343)
         
@@ -165,7 +172,7 @@ class DiskImage: NSObject {
         return writtenData
     }
     
-    func SixAndTwoPrenibblize(sector: [UInt8]) -> [UInt8] {
+    private func SixAndTwoPrenibblize(sector: [UInt8]) -> [UInt8] {
         //Create a 342-byte buffer from a 256-byte sector.
         var nibblized: [UInt8] = [UInt8](repeating: 0x00, count: 342)
         
@@ -206,7 +213,7 @@ class DiskImage: NSObject {
     }
     
     //Convert bytes to the different encoding schemes.
-    func FourAndFourEncode(byte: UInt8) -> UInt16 {
+    private func FourAndFourEncode(byte: UInt8) -> UInt16 {
     /*
          4 and 4 encoded bytes require two bytes (by splitting actual bits
          evenly between two bytes) and have the following format:
@@ -229,15 +236,15 @@ class DiskImage: NSObject {
     
     //A group of self-syncing bytes. This pattern can be repeated as long as required.
     //let selfSyncFive: [UInt8] = [0b11111111, 0b00111111, 0b11001111, 0b11110011, 0b11111100]
-    let selfSync: UInt8 = 0xFF
+    private let selfSync: UInt8 = 0xFF
     
-    let addressPrologue: [UInt8] = [0xD5, 0xAA, 0x96]
-    let addressEpilogue: [UInt8] = [0xDE, 0xAA, 0xEB]
+    private let addressPrologue: [UInt8] = [0xD5, 0xAA, 0x96]
+    private let addressEpilogue: [UInt8] = [0xDE, 0xAA, 0xEB]
     
-    let dataPrologue: [UInt8] = [0xD5, 0xAA, 0xAD]
-    let dataEpilogue: [UInt8] = [0xDE, 0xAA, 0xEB]
+    private let dataPrologue: [UInt8] = [0xD5, 0xAA, 0xAD]
+    private let dataEpilogue: [UInt8] = [0xDE, 0xAA, 0xEB]
     
-    let SixAndTwoTranslationTable: [UInt8] = [0x96, 0x97, 0x9A, 0x9B, 0x9D, 0x9E, 0x9F, 0xA6,
+    private let SixAndTwoTranslationTable: [UInt8] = [0x96, 0x97, 0x9A, 0x9B, 0x9D, 0x9E, 0x9F, 0xA6,
                                               0xA7, 0xab, 0xac, 0xad, 0xae, 0xaf, 0xb2, 0xb3,
                                               0xb4, 0xb5, 0xb6, 0xb7, 0xb9, 0xba, 0xbb, 0xbc,
                                               0xbd, 0xbe, 0xbf, 0xcb, 0xcd, 0xce, 0xcf, 0xd3,
