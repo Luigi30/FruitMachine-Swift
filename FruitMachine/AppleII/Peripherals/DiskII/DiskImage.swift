@@ -137,7 +137,7 @@ class DiskImage: NSObject {
             encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: Dos33Image.readTrackAndSector(imageData: imageData, trackNum: index, sectorNum: sectorNum)))
             encodedData.append(contentsOf: dataEpilogue)
             
-            //Gap2
+            //Gap2 - 20 bytes
             for _ in 0..<20 { encodedData.append(selfSync) }
         }
         
