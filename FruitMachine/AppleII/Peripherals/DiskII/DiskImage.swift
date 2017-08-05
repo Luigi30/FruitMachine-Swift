@@ -92,7 +92,7 @@ class DiskImage: NSObject {
             encodedTracks.append(encodeDos33Track(imageData: rawData!, index: track, volumeNumber: Int(catalogSector[0x06])))
         }
         
-        let pointer = UnsafeBufferPointer(start:encodedTracks[2], count:encodedTracks[2].count)
+        let pointer = UnsafeBufferPointer(start:encodedTracks[0], count:encodedTracks[0].count)
         let data = Data(buffer:pointer)
         try! data.write(to: URL(fileURLWithPath: "/Users/luigi/apple2/master.dmp"))
     }
@@ -117,7 +117,7 @@ class DiskImage: NSObject {
         let dataOffset = index * Dos33Image.BYTES_PER_TRACK
         
         //Prologue: add 48 self-syncing bytes
-        for _ in 1..<0x30 { encodedData.append(selfSync) }
+        for _ in 1..<0x31 { encodedData.append(selfSync) }
         
         for sectorNum in 0 ..< Dos33Image.SECTORS_PER_TRACK {
             //Address Field
@@ -134,11 +134,12 @@ class DiskImage: NSObject {
             
             //Data Field
             encodedData.append(contentsOf: dataPrologue)
+            //343 bytes: 342-byte sector + 1-byte checksum
             encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: Dos33Image.readTrackAndSector(imageData: imageData, trackNum: index, sectorNum: sectorNum)))
             encodedData.append(contentsOf: dataEpilogue)
             
             //Gap2 - 20 bytes
-            for _ in 0..<20 { encodedData.append(selfSync) }
+            for _ in 0..<27 { encodedData.append(selfSync) }
         }
         
         return encodedData
@@ -158,12 +159,12 @@ class DiskImage: NSObject {
         
         //We have a prepared buffer.
         writtenData[0] = SixAndTwoTranslationTable[Int(0 ^ encodedBuffer[0x155])]
-        writtenData[86] = SixAndTwoTranslationTable[Int(encodedBuffer[0x100] ^ encodedBuffer[0x00])]
+        writtenData[0x56] = SixAndTwoTranslationTable[Int(encodedBuffer[0x100] ^ encodedBuffer[0x000])]
         
         for index in 0x00 ... 0xFE {
-            writtenData[87 + index] = SixAndTwoTranslationTable[Int(encodedBuffer[index] ^ encodedBuffer[index + 1])]
+            writtenData[0x57 + index] = SixAndTwoTranslationTable[Int(encodedBuffer[index] ^ encodedBuffer[index + 1])]
         }
-        
+
         for (i, index) in (0x100 ... 0x154).enumerated() {
             writtenData[85-i] = SixAndTwoTranslationTable[Int(encodedBuffer[index] ^ encodedBuffer[index + 1])]
         }
@@ -175,35 +176,38 @@ class DiskImage: NSObject {
     
     private func SixAndTwoPrenibblize(sector: [UInt8]) -> [UInt8] {
         //Create a 342-byte buffer from a 256-byte sector.
-        var nibblized: [UInt8] = [UInt8](repeating: 0x00, count: 342)
         
-        for byte in 0x00...0x55 {
+        //TODO: Where does the checksum byte fit? I broke the low bit encoding trying to figure that out, need to fix that.
+        var nibblized: [UInt8] = [UInt8](repeating: 0x00, count: 343)
+        
+        for byte in 0x00..<0x55 {
             nibblized[byte] = sector[byte] >> 2
             let b0 = (sector[byte] & 0b00000001)
             let b1 = (sector[byte] & 0b00000010)
             let low = 0x00 | (b0 << 1 | b1 >> 1)
             
-            nibblized[0x155 - byte] |= low
+            nibblized[0x156 - byte] |= low
         }
         
-        for byte in 0x56...0xAA {
+        for (i, byte) in (0x55..<0xAA).enumerated() {
             nibblized[byte] = sector[byte] >> 2
             let b0 = (sector[byte] & 0b00000001)
             let b1 = (sector[byte] & 0b00000010)
-            let low = (b0 << 1 | b1 >> 1)
+            let low = 0x00 | (b0 << 1 | b1 >> 1)
             
-            nibblized[0x155 - (byte % 0x56)] |= (low << 2)
+            nibblized[0x156 - i] |= (low << 2)
         }
         
-        for byte in 0xAB...0xFF {
+        for (i, byte) in (0xAA..<0x100).enumerated() {
             nibblized[byte] = sector[byte] >> 2
             let b0 = (sector[byte] & 0b00000001)
             let b1 = (sector[byte] & 0b00000010)
-            let low = (b0 << 1 | b1 >> 1)
+            let low = 0x00 | (b0 << 1 | b1 >> 1)
             
             //Now we have a full six bits.
-            let completeLow: UInt8 = nibblized[0x155 - (byte % 0x56)] | (low << 4)
-            nibblized[0x155 - (byte % 0x56)] = completeLow
+            let completeLow: UInt8 = nibblized[0x156 - i] | (low << 4)
+            nibblized[0x156 - i] |= completeLow
+            
         }
         
         return nibblized
@@ -242,11 +246,11 @@ class DiskImage: NSObject {
     private let dataEpilogue: [UInt8] = [0xDE, 0xAA, 0xEB]
     
     private let SixAndTwoTranslationTable: [UInt8] = [0x96, 0x97, 0x9A, 0x9B, 0x9D, 0x9E, 0x9F, 0xA6,
-                                              0xA7, 0xab, 0xac, 0xad, 0xae, 0xaf, 0xb2, 0xb3,
-                                              0xb4, 0xb5, 0xb6, 0xb7, 0xb9, 0xba, 0xbb, 0xbc,
-                                              0xbd, 0xbe, 0xbf, 0xcb, 0xcd, 0xce, 0xcf, 0xd3,
-                                              0xd6, 0xd7, 0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde,
-                                              0xdf, 0xe5, 0xe6, 0xe7, 0xe9, 0xea, 0xeb, 0xec,
-                                              0xed, 0xee, 0xef, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6,
-                                              0xf7, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff]
+                                                      0xA7, 0xab, 0xac, 0xad, 0xae, 0xaf, 0xb2, 0xb3,
+                                                      0xb4, 0xb5, 0xb6, 0xb7, 0xb9, 0xba, 0xbb, 0xbc,
+                                                      0xbd, 0xbe, 0xbf, 0xcb, 0xcd, 0xce, 0xcf, 0xd3,
+                                                      0xd6, 0xd7, 0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde,
+                                                      0xdf, 0xe5, 0xe6, 0xe7, 0xe9, 0xea, 0xeb, 0xec,
+                                                      0xed, 0xee, 0xef, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6,
+                                                      0xf7, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff]
 }

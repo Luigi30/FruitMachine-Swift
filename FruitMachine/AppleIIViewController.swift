@@ -30,6 +30,8 @@ class AppleIIViewController: NSViewController {
         
         setupDriveNotifications()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(self.debuggerBreak), name: DebuggerNotifications.Break, object: nil)
+        
         self.frameTimer = Timer.scheduledTimer(timeInterval: 1.0/60.0,
                                                target: self,
                                                selector: #selector(runEmulation),
@@ -42,6 +44,11 @@ class AppleIIViewController: NSViewController {
         if(!CPU.sharedInstance.isRunning) {
             self.frameTimer?.invalidate()
         }
+    }
+    
+    @objc func debuggerBreak() {
+        frameTimer?.invalidate()
+        CPU.sharedInstance.isRunning = false
     }
     
     @IBAction func showDebugger(_ sender: Any) {        
@@ -94,6 +101,7 @@ class AppleIIViewController: NSViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.drive1TrackChanged), name: DiskII.N_Drive1TrackChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.drive2TrackChanged), name: DiskII.N_Drive2TrackChanged, object: nil)
+        
     }
     
     /* drive lights */

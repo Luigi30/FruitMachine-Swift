@@ -8,6 +8,10 @@
 
 import Cocoa
 
+class DebuggerNotifications {
+    static let Break = NSNotification.Name(rawValue: "DebuggerBreak")
+}
+
 class DebuggerViewController: NSViewController {
     @IBOutlet weak var text_CPU_A: NSTextField!
     @IBOutlet weak var text_CPU_X: NSTextField!

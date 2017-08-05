@@ -54,7 +54,7 @@ final class AppleII: NSObject, EmulatedSystem {
         
         emuScreenLayer.setNeedsDisplay()
         emulatorView.layer?.addSublayer(emuScreenLayer)
-        
+
         installOverrides()
 
         doReset()
@@ -150,7 +150,6 @@ final class AppleII: NSObject, EmulatedSystem {
         
         
         CVPixelBufferUnlockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
-        //emulatorView.display()
         emulatorView.setNeedsDisplay(emulatorView.frame)
     }
     
@@ -202,6 +201,10 @@ final class AppleII: NSObject, EmulatedSystem {
         for page in 224 ..< 256 {
             CPU.sharedInstance.memoryInterface.pages[page] = MemoryInterface.pageMode.ro    //ROM
         }
+    }
+    
+    @objc func debuggerBreak() {
+       
     }
     
 }

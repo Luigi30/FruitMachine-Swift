@@ -169,7 +169,7 @@ class DiskII: NSObject, Peripheral {
                 NotificationCenter.default.post(name: DiskII.N_Drive1MotorOff, object: nil)
                 motor1OffTimer = Timer.scheduledTimer(timeInterval: 1.0,
                                                            target: self,
-                                                           selector: #selector(disableDrive2Motor),
+                                                           selector: #selector(disableDrive1Motor),
                                                            userInfo: nil,
                                                            repeats: false)
                 print("Drive 1 Motor will turn off in 1 second")
@@ -201,11 +201,30 @@ class DiskII: NSObject, Peripheral {
             print("Drive 2 selected")
         case 12:
             softswitches.Q6 = false
-            if(softswitches.Q7 == false) {
+            if(softswitches.Q7 == false && byte == nil) {
                 //in read mode and a read was requested. get the next byte
                 let trk = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7EC, bypassOverrides: true)
                 let sec = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7ED, bypassOverrides: true)
-                print("Reading byte \(mediaPosition) of track \(currentTrack). Controller is accessing T\(trk) S\(sec)")
+                let mode = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7F4, bypassOverrides: true)
+                if(trk == 2 && sec == 4 && mode == 1)
+                {
+                    _ = 1
+                }
+                let modeString: String
+                switch (mode) {
+                case 0:
+                    modeString = "seeking"
+                case 1:
+                    modeString = "reading"
+                case 2:
+                    modeString = "writing"
+                case 4:
+                    modeString = "formatting"
+                default:
+                    modeString = "???"
+                }
+                
+                print("Reading byte \(mediaPosition) of track \(currentTrack). DOS is \(modeString) T\(trk) S\(sec).")
                 return readByteOfTrack(track: currentTrack, advance: softswitches.MotorPowered ? 1 : 0)
             }
         case 13:
@@ -224,7 +243,7 @@ class DiskII: NSObject, Peripheral {
     }
     
     func readByteOfTrack(track: Int, advance: Int) -> UInt8 {
-        let trackData = diskImage.encodedTracks[currentTrack]
+        let trackData = diskImage.encodedTracks[track]
         
         let result = trackData[mediaPosition]
         //Advance the drive to the next byte
@@ -263,11 +282,11 @@ class DiskII: NSObject, Peripheral {
     
     @objc func disableDrive1Motor() {
         softswitches.MotorPowered = false
-        print("Drive 1 motor is disabled")
+        print("Drive 1 Motor is now off")
     }
     
     @objc func disableDrive2Motor() {
         softswitches.MotorPowered = false
-        print("Drive 2 motor is disabled")
+        print("Drive 2 Motor is now off")
     }
 }
