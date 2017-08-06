@@ -77,8 +77,7 @@ class DiskII: NSObject, Peripheral {
     var mediaPosition: Int = 0
     var motorPhase: MotorPhase = .Phase0
     
-    var diskImage = DiskImage(diskPath: "/Users/luigi/apple2/clean332sysmas.do")
-    
+    var diskImage: DiskImage?
     
     init(slot: Int, romPath: String) {
         slotNumber = slot
@@ -100,6 +99,10 @@ class DiskII: NSObject, Peripheral {
                                         end: UInt16(0xC08F + (0x10 * slotNumber)),
                                         writeAnyway: false,
                                         action: actionDispatchOperation)
+    }
+    
+    func attachDiskImage(imagePath: String) {
+        diskImage = DiskImage(diskPath: imagePath)
     }
     
     //http://ftp.twaren.net/NetBSD/misc/wrstuden/Apple_PDFs/Software%20control%20of%20IWM.pdf
@@ -224,7 +227,7 @@ class DiskII: NSObject, Peripheral {
                     modeString = "???"
                 }
                 
-                print("Reading byte \(mediaPosition) of track \(currentTrack). DOS is \(modeString) T\(trk) S\(sec).")
+                print("Head is at nibble \(mediaPosition) of track \(currentTrack). DOS is \(modeString) T\(trk) S\(sec).")
                 return readByteOfTrack(track: currentTrack, advance: softswitches.MotorPowered ? 1 : 0)
             }
         case 13:
@@ -243,11 +246,14 @@ class DiskII: NSObject, Peripheral {
     }
     
     func readByteOfTrack(track: Int, advance: Int) -> UInt8 {
-        let trackData = diskImage.encodedTracks[track]
+        if(diskImage == nil) { return 0x00 } //No disk inserted, fail.
         
-        let result = trackData[mediaPosition]
+        let trackData = diskImage?.encodedTracks[track]
+        if(trackData == nil) { return 0x00 } //No disk inserted, fail.
+        
+        let result = trackData![mediaPosition]
         //Advance the drive to the next byte
-        mediaPosition = (mediaPosition + advance) % trackData.count
+        mediaPosition = (mediaPosition + advance) % trackData!.count
         
         return result
     }

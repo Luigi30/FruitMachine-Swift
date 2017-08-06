@@ -25,12 +25,13 @@ class AppleIIViewController: NSViewController {
         // Do view setup here.
         
         preferencesWindowController = PreferencesWindowController()
-        
         self.view.addSubview(computer.emulatorView)
         
         setupDriveNotifications()
-        
         NotificationCenter.default.addObserver(self, selector: #selector(self.debuggerBreak), name: DebuggerNotifications.Break, object: nil)
+        
+        let drive = computer.backplane[6]! as! DiskII
+        drive.attachDiskImage(imagePath: "/Users/luigi/apple2/clean332sysmas.do")
         
         self.frameTimer = Timer.scheduledTimer(timeInterval: 1.0/60.0,
                                                target: self,

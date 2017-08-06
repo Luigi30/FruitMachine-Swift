@@ -64,6 +64,12 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="File" id="bib-Uj-vzu">
                                     <items>
+                                        <menuItem title="Insert Disk into Drive 0..." id="IYa-pn-S38">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
+                                        <menuItem title="Insert Disk into Drive 1..." id="Gdi-Dy-E1U">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
                                         <menuItem title="Reset" keyEquivalent="r" id="aTl-1u-JFS">
                                             <connections>
                                                 <action selector="doReset:" target="Ady-hI-5gd" id="7dg-B5-6Ok"/>
