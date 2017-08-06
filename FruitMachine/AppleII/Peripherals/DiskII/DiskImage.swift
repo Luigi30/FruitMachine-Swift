@@ -8,6 +8,21 @@
 
 import Cocoa
 
+/* while I figure out this C code port */
+prefix operator ++
+postfix operator ++
+
+// Increment
+prefix func ++(x: inout Int) -> Int {
+    x += 1
+    return x
+}
+
+postfix func ++(x: inout Int) -> Int {
+    x += 1
+    return (x - 1)
+}
+
 protocol DiskImageFormat {
     static var BYTES_PER_SECTOR: Int { get }
     static var SECTORS_PER_TRACK: Int { get }
@@ -174,42 +189,26 @@ class DiskImage: NSObject {
         return writtenData
     }
     
+    private func GetSwappedLowBits(byte: UInt8) -> UInt8 {
+        let b0 = byte & 0b00000001
+        let b1 = byte & 0b00000010
+        return UInt8((b0 << 1) | (b1 >> 1))
+    }
+    
     private func SixAndTwoPrenibblize(sector: [UInt8]) -> [UInt8] {
-        //Create a 342-byte buffer from a 256-byte sector.
-        
-        //TODO: Where does the checksum byte fit? I broke the low bit encoding trying to figure that out, need to fix that.
-        var nibblized: [UInt8] = [UInt8](repeating: 0x00, count: 343)
-        
-        for byte in 0x00..<0x55 {
+        //Create a nibblized 342-byte buffer from a 256-byte sector.
+        var nibblized: [UInt8] = [UInt8](repeating: 0x00, count: 342)
+        var secondaryShift = 0
+        for (i, byte) in (0x00 ..< 0x100).enumerated() {
             nibblized[byte] = sector[byte] >> 2
-            let b0 = (sector[byte] & 0b00000001)
-            let b1 = (sector[byte] & 0b00000010)
-            let low = 0x00 | (b0 << 1 | b1 >> 1)
             
-            nibblized[0x156 - byte] |= low
+            let secondaryOffset = 0x100 + (0x55 - (i % 0x56))
+            nibblized[secondaryOffset] |= GetSwappedLowBits(byte: sector[byte]) << secondaryShift
+            
+            if(secondaryOffset == 0x100) {
+                secondaryShift += 2
+            }
         }
-        
-        for (i, byte) in (0x55..<0xAA).enumerated() {
-            nibblized[byte] = sector[byte] >> 2
-            let b0 = (sector[byte] & 0b00000001)
-            let b1 = (sector[byte] & 0b00000010)
-            let low = 0x00 | (b0 << 1 | b1 >> 1)
-            
-            nibblized[0x156 - i] |= (low << 2)
-        }
-        
-        for (i, byte) in (0xAA..<0x100).enumerated() {
-            nibblized[byte] = sector[byte] >> 2
-            let b0 = (sector[byte] & 0b00000001)
-            let b1 = (sector[byte] & 0b00000010)
-            let low = 0x00 | (b0 << 1 | b1 >> 1)
-            
-            //Now we have a full six bits.
-            let completeLow: UInt8 = nibblized[0x156 - i] | (low << 4)
-            nibblized[0x156 - i] |= completeLow
-            
-        }
-        
         return nibblized
     }
     

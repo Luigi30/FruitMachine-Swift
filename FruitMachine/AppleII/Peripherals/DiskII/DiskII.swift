@@ -77,7 +77,7 @@ class DiskII: NSObject, Peripheral {
     var mediaPosition: Int = 0
     var motorPhase: MotorPhase = .Phase0
     
-    var diskImage = DiskImage(diskPath: "/Users/luigi/apple2/master.dsk")
+    var diskImage = DiskImage(diskPath: "/Users/luigi/apple2/clean332sysmas.do")
     
     
     init(slot: Int, romPath: String) {
