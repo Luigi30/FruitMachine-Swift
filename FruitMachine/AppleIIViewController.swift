@@ -21,7 +21,7 @@ class AppleIIViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
-        EmulatedSystemInstance = AppleII.sharedInstance
+        EmulatedSystemInstance = AppleIIPlus.sharedInstance
         
         preferencesWindowController = PreferencesWindowController()
         self.view.addSubview(EmulatedSystemInstance!.emulatorView)
