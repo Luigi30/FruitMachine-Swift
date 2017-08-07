@@ -8,7 +8,7 @@
 
 import Cocoa
 
-extension AppleII {
+extension AppleIIBase {
     
     typealias Softswitch = Bool
     

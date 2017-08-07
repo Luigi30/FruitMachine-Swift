@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class AppleI: NSObject, EmulatedSystem {
+class AppleI: NSObject {
     var CPU_FREQUENCY: Double
     var FRAMES_PER_SECOND: Double
     var CYCLES_PER_BATCH: Int

@@ -8,12 +8,10 @@
 
 import Cocoa
 
-class AppleIIViewController: NSViewController {
-    
+class AppleIIViewController: NSViewController {    
     @IBOutlet weak var lbl_Drive1: NSTextField!
     @IBOutlet weak var lbl_Drive2: NSTextField!
     
-    let computer = AppleII.sharedInstance
     var debuggerWindowController: DebuggerWindowController!
     var preferencesWindowController: PreferencesWindowController!
     
@@ -23,9 +21,10 @@ class AppleIIViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
+        EmulatedSystemInstance = AppleII.sharedInstance
         
         preferencesWindowController = PreferencesWindowController()
-        self.view.addSubview(computer.emulatorView)
+        self.view.addSubview(EmulatedSystemInstance!.emulatorView)
         
         preferencesWindowController.setupDefaultsIfRequired()
         setupDriveNotifications()
@@ -39,7 +38,7 @@ class AppleIIViewController: NSViewController {
     }
     
     @objc func runEmulation() {
-        computer.runFrame()
+        EmulatedSystemInstance!.runFrame()
         if(!CPU.sharedInstance.isRunning) {
             self.frameTimer?.invalidate()
         }
@@ -62,7 +61,7 @@ class AppleIIViewController: NSViewController {
     }
     
     @IBAction func doReset(_ sender: Any) {
-        computer.doReset()
+        EmulatedSystemInstance!.doReset()
     }
     
     override func keyDown(with event: NSEvent) {
@@ -72,9 +71,9 @@ class AppleIIViewController: NSViewController {
         let c = returnChar(theEvent: event)
         
         if(event.keyCode == leftArrowKeyCode) {
-            computer.keyboardController.KEYBOARD = UInt8((0x08 | 0x80) & 0x000000FF)
+            EmulatedSystemInstance!.keyboardController.KEYBOARD = UInt8((0x08 | 0x80) & 0x000000FF)
         } else if(event.keyCode == rightArrowKeyCode) {
-            computer.keyboardController.KEYBOARD = UInt8((0x15 | 0x80) & 0x000000FF)
+            EmulatedSystemInstance!.keyboardController.KEYBOARD = UInt8((0x15 | 0x80) & 0x000000FF)
         }
         
         guard let ascii32 = c?.asciiValue else {
@@ -82,7 +81,7 @@ class AppleIIViewController: NSViewController {
         }
         
         //Set the keyboard input register accordingly. Set b7 so the OS knows there's a keypress waiting
-        computer.keyboardController.KEYBOARD = UInt8((ascii32 | 0x80) & 0x000000FF)
+        EmulatedSystemInstance!.keyboardController.KEYBOARD = UInt8((ascii32 | 0x80) & 0x000000FF)
     }
     
     private func returnChar(theEvent: NSEvent) -> Character?{

@@ -7,11 +7,10 @@
 //
 
 import Cocoa
+//The Apple II character generator is an AY-5-3600.
 
-extension AppleII {
-    
-    //The Apple II character generator is a clone of the Signetics 2513 from the Apple I.
-    
+extension AppleIIBase {
+
     class A2CharacterGenerator: NSObject, HasROM {
         static let CHAR_WIDTH = 5
         static let CHAR_HEIGHT = 8

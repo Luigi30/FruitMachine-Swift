@@ -8,7 +8,7 @@
 
 import Cocoa
 
-extension AppleII {
+extension AppleIIBase {
     class VideoHelpers: NSObject {
         static func getPixelOffset(charCellX: Int, charCellY: Int) -> CGPoint {
             return CGPoint(x: charCellX * 7, y: charCellY * 8)

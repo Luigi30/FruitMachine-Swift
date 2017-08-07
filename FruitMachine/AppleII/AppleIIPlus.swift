@@ -1,15 +1,15 @@
 //
-//  AppleII.swift
+//  AppleIIPlus.swift
 //  FruitMachine
 //
-//  Created by Christopher Rohl on 8/1/17.
+//  Created by Christopher Rohl on 8/7/17.
 //  Copyright © 2017 Christopher Rohl. All rights reserved.
 //
 
 import Cocoa
 
-class AppleII: AppleIIBase {
-    static let sharedInstance = AppleII(cpuFrequency: 1000000, fps: 60.0)
+class AppleIIPlus: AppleIIBase {
+    static let sharedInstance = AppleIIPlus(cpuFrequency: 1000000, fps: 60.0)
     
     required init(cpuFrequency: Double, fps: Double) {
         super.init(cpuFrequency: cpuFrequency,
@@ -26,14 +26,15 @@ class AppleII: AppleIIBase {
     }
     
     override func loadROMs() {
+        //Applesoft BASIC
+        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2p/341-0011.d0", offset: 0xD000, length: 0x800)
+        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2p/341-0012.d8", offset: 0xD800, length: 0x800)
+        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2p/341-0013.e0", offset: 0xE000, length: 0x800)
+        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2p/341-0014.e8", offset: 0xE800, length: 0x800)
+        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2p/341-0015.f0", offset: 0xF000, length: 0x800)
         
-        /* Integer BASIC */
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0001-00.e0", offset: 0xE000, length: 0x800)
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0002-00.e8", offset: 0xE800, length: 0x800)
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0003-00.f0", offset: 0xF000, length: 0x800)
-        
-        /* Monitor */
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0004-00.f8", offset: 0xF800, length: 0x800)
+        //Monitor
+        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2p/341-0020-00.f8", offset: 0xF800, length: 0x800)
     }
     
     override func installOverrides() {
@@ -65,9 +66,4 @@ class AppleII: AppleIIBase {
         CPU.sharedInstance.memoryInterface.write_overrides.append(SoftswitchOverrides.switchC056W)
         CPU.sharedInstance.memoryInterface.write_overrides.append(SoftswitchOverrides.switchC057W)
     }
-    
-    @objc func debuggerBreak() {
-       
-    }
-    
 }

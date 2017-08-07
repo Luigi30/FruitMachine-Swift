@@ -8,7 +8,7 @@
 
 import Cocoa
 
-extension AppleII {
+extension AppleIIBase {
 
     class LoresMode: NSObject {
         static func putLoresPixel(buffer: UnsafeMutablePointer<BitmapPixelsLE555.PixelData>?, pixel: UInt8, address: UInt16) {
@@ -25,7 +25,7 @@ extension AppleII {
             let colorLo = LoresColors.getColor(index: pixelNybbleLo)
             
             //One lores pixel is 7px wide and 4px tall for a resolution of 40x48.
-            let baseOffset = AppleII.sharedInstance.emulatorViewDelegate.scanlineOffsets[Int(pixelPosition.y)] + Int(pixelPosition.x)
+            let baseOffset = EmulatedSystemInstance!.emulatorViewDelegate.scanlineOffsets[Int(pixelPosition.y)] + Int(pixelPosition.x)
             
             for charY in 0..<5 {
                 let offsetHi = baseOffset + (AppleII.ScreenDelegate.PIXEL_WIDTH * charY)

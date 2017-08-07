@@ -8,7 +8,7 @@
 
 import Cocoa
 
-extension AppleII {
+extension AppleIIBase {
 
     class TextMode: NSObject {
         static func putGlyph(buffer: UnsafeMutablePointer<BitmapPixelsLE555.PixelData>?, glyph: Glyph, attributes: UInt8, pixelPosition: CGPoint) {
@@ -25,7 +25,7 @@ extension AppleII {
             }
             
             //Calculate the offset to reach the desired position.
-            let baseOffset = AppleII.sharedInstance.emulatorViewDelegate.scanlineOffsets[Int(pixelPosition.y)] + Int(pixelPosition.x)
+            let baseOffset = EmulatedSystemInstance!.emulatorViewDelegate.scanlineOffsets[Int(pixelPosition.y)] + Int(pixelPosition.x)
             
             for charY in 0..<AppleII.A2CharacterGenerator.CHAR_HEIGHT {
                 let offset = baseOffset + (AppleII.ScreenDelegate.PIXEL_WIDTH * charY)
@@ -38,7 +38,7 @@ extension AppleII {
                     case .inverse:
                         buffer![offset + 6 - charX] = BitmapPixelsLE555.PixelData(data: ~glyph.pixels[glyphOffsetY + charX].data)
                     case .flashing:
-                        if(!AppleII.sharedInstance.emulatorViewDelegate.flashIsInverse) {
+                        if(!EmulatedSystemInstance!.emulatorViewDelegate.flashIsInverse) {
                             buffer![offset + 6 - charX] = glyph.pixels[glyphOffsetY + charX]
                         } else {
                             buffer![offset + 6 - charX] = BitmapPixelsLE555.PixelData(data: ~glyph.pixels[glyphOffsetY + charX].data)
