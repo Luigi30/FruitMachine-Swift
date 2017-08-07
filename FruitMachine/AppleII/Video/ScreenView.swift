@@ -26,10 +26,8 @@ extension AppleII {
         
         override func draw(_ dirtyRect: NSRect) {
             super.draw(dirtyRect)
-            // Drawing code here.
-            
+
             layer?.sublayers![0].setNeedsDisplay()
-            layer?.sublayers![0].display()
         }
         
     }

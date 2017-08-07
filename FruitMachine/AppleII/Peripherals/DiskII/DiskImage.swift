@@ -83,6 +83,7 @@ class DiskImage: NSObject {
     var encodedTracks = [[UInt8]]()
     var fileSize: UInt64 = 0
     var image: DiskImageFormat?
+    var writeProtect = false
     
     init(diskPath: String) {
         do {

@@ -27,12 +27,10 @@ class AppleIIViewController: NSViewController {
         preferencesWindowController = PreferencesWindowController()
         self.view.addSubview(computer.emulatorView)
         
+        preferencesWindowController.setupDefaultsIfRequired()
         setupDriveNotifications()
         NotificationCenter.default.addObserver(self, selector: #selector(self.debuggerBreak), name: DebuggerNotifications.Break, object: nil)
-        
-        let drive = computer.backplane[6]! as! DiskII
-        drive.attachDiskImage(imagePath: "/Users/luigi/apple2/clean332sysmas.do")
-        
+ 
         self.frameTimer = Timer.scheduledTimer(timeInterval: 1.0/60.0,
                                                target: self,
                                                selector: #selector(runEmulation),
@@ -60,6 +58,7 @@ class AppleIIViewController: NSViewController {
     
     @IBAction func showPreferences(_ sender: Any) {
         preferencesWindowController.loadWindow()
+        preferencesWindowController.showWindow(self)
     }
     
     @IBAction func doReset(_ sender: Any) {
@@ -107,12 +106,12 @@ class AppleIIViewController: NSViewController {
     
     /* drive lights */
     @objc func drive1TrackChanged(notification: NSNotification) {
-        let num = notification.object as? Int
-        lbl_Drive1.stringValue = "D1 \(num!)"
+        let num = notification.object as? (Int, Int)
+        lbl_Drive1.stringValue = "D1 T\(num!.0) S\(num!.1)"
     }
     @objc func drive2TrackChanged(notification: NSNotification) {
-        let num = notification.object as? Int
-        lbl_Drive2.stringValue = "D2 \(num!)"
+        let num = notification.object as? (Int, Int)
+        lbl_Drive2.stringValue = "D1 T\(num!.0) S\(num!.1)"
     }
     
     @objc func drive1MotorOff(notification: NSNotification) {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2A044E2C1F37D65A000E8085 /* LanguageCard16K.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A044E2B1F37D65A000E8085 /* LanguageCard16K.swift */; };
 		2A16ADBB1F33C341004A0333 /* DiskImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A16ADBA1F33C341004A0333 /* DiskImage.swift */; };
 		2A2126841F2A9FA300E43DC1 /* DebuggerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2126831F2A9FA300E43DC1 /* DebuggerWindowController.swift */; };
 		2A22EBFB1F21A7A700A36A61 /* IntegerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */; };
@@ -56,6 +57,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2A044E2B1F37D65A000E8085 /* LanguageCard16K.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageCard16K.swift; sourceTree = "<group>"; };
 		2A16ADBA1F33C341004A0333 /* DiskImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskImage.swift; sourceTree = "<group>"; };
 		2A2126831F2A9FA300E43DC1 /* DebuggerWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerWindowController.swift; sourceTree = "<group>"; };
 		2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerExtensions.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				2A16ADB91F33C2ED004A0333 /* DiskII */,
+				2A044E2B1F37D65A000E8085 /* LanguageCard16K.swift */,
 				2A63C23B1F32CD4800D4F4F8 /* Peripheral.swift */,
 			);
 			path = Peripherals;
@@ -430,6 +433,7 @@
 				2AE5BA061F2469EB00FAA343 /* AddressConversions.swift in Sources */,
 				2AE42E0A1F28521E00C4900E /* WriteOverride.swift in Sources */,
 				2A6DC7ED1F30492C0066FE0D /* ScreenDelegate.swift in Sources */,
+				2A044E2C1F37D65A000E8085 /* LanguageCard16K.swift in Sources */,
 				2A5BC5191F29A28D008C03BE /* AppleIScreenView.swift in Sources */,
 				2A63C2371F32C55100D4F4F8 /* VideoHelpers.swift in Sources */,
 				2A63C23A1F32CCE900D4F4F8 /* DiskII.swift in Sources */,
@@ -510,6 +514,7 @@
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -559,6 +564,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

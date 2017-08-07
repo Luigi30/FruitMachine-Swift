@@ -34,7 +34,9 @@ import Cocoa
  H  H   WRITE LOAD
  */
 
-class DiskII: NSObject, Peripheral {
+class DiskII: NSObject, Peripheral, HasROM {
+    let debug = false
+    
     enum MotorPhase {
         case Phase0
         case Phase1
@@ -77,6 +79,8 @@ class DiskII: NSObject, Peripheral {
     var mediaPosition: Int = 0
     var motorPhase: MotorPhase = .Phase0
     
+    var preloadedByte: UInt8 = 0x00
+    
     var diskImage: DiskImage?
     
     init(slot: Int, romPath: String) {
@@ -106,10 +110,11 @@ class DiskII: NSObject, Peripheral {
     }
     
     //http://ftp.twaren.net/NetBSD/misc/wrstuden/Apple_PDFs/Software%20control%20of%20IWM.pdf
-    private func actionDispatchOperation(something: AnyObject, address: UInt16, byte: UInt8?) -> UInt8? {
+    private func actionDispatchOperation(something: AnyObject, address: UInt16, byte: UInt8?) -> UInt8?
+    {
         let operationNumber = UInt8(address & 0xFF) - UInt8(0x80 & 0xFF) - UInt8(0x10 * slotNumber)
         
-        print("Disk II command: \(operationNumber)")
+        if(debug) { print("Disk II command: \(operationNumber)") }
         
         //Update the softswitches.
         switch(operationNumber) {
@@ -123,15 +128,15 @@ class DiskII: NSObject, Peripheral {
                 {
                     currentTrack -= 1
                 }
-                print("Drive now on track \(currentTrack)")
-                updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
+                if(debug) { print("Drive now on track \(currentTrack)") }
+                //updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
             } else if(motorPhase == .Phase3) {
                 motorPhase = .Phase0
                 if(currentTrack % 2 == 1 && currentTrack < 34) {
                     currentTrack += 1
                 }
-                print("Drive now on track \(currentTrack)")
-                updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
+                if(debug) { print("Drive now on track \(currentTrack)") }
+                //updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
             }
         case 2:
             softswitches.Phase1 = false
@@ -149,15 +154,15 @@ class DiskII: NSObject, Peripheral {
                 if(currentTrack % 2 == 1 && currentTrack > 0) {
                     currentTrack -= 1
                 }
-                print("Drive now on track \(currentTrack)")
-                updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
+                if(debug) { print("Drive now on track \(currentTrack)") }
+                //updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
             } else if(motorPhase == .Phase1) {
                 motorPhase = .Phase2
                 if(currentTrack % 2 == 0 && currentTrack < 34) {
                     currentTrack += 1;
                 }
-                print("Drive now on track \(currentTrack)")
-                updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
+                if(debug) { print("Drive now on track \(currentTrack)") }
+                //updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
             }
         case 6:
             softswitches.Phase3 = false
@@ -175,7 +180,7 @@ class DiskII: NSObject, Peripheral {
                                                            selector: #selector(disableDrive1Motor),
                                                            userInfo: nil,
                                                            repeats: false)
-                print("Drive 1 Motor will turn off in 1 second")
+                if(debug) { print("Drive 1 Motor will turn off in 1 second") }
             } else {
                 NotificationCenter.default.post(name: DiskII.N_Drive2MotorOff, object: nil)
                 motor2OffTimer = Timer.scheduledTimer(timeInterval: 1.0,
@@ -183,63 +188,80 @@ class DiskII: NSObject, Peripheral {
                                      selector: #selector(disableDrive2Motor),
                                      userInfo: nil,
                                      repeats: false)
-                print("Drive 2 Motor will turn off in 1 second")
+                if(debug) { print("Drive 2 Motor will turn off in 1 second") }
             }
         case 9:
             softswitches.MotorPowered = true
             if(softswitches.DriveSelect == false) {
                 NotificationCenter.default.post(name: DiskII.N_Drive1MotorOn, object: nil)
                 motor1OffTimer?.invalidate()
-                print("Drive 1 Motor is on")
+                if(debug) { print("Drive 1 Motor is on") }
             } else {
                 NotificationCenter.default.post(name: DiskII.N_Drive2MotorOn, object: nil)
                 motor1OffTimer?.invalidate()
-                print("Drive 2 Motor is on")
+                if(debug) { print("Drive 2 Motor is on") }
             }
         case 10:
             softswitches.DriveSelect = false
-            print("Drive 1 selected")
+            if(debug) { print("Drive 1 selected") }
         case 11:
             softswitches.DriveSelect = true
-            print("Drive 2 selected")
+            if(debug) { print("Drive 2 selected") }
         case 12:
             softswitches.Q6 = false
+            let trk = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7EC, bypassOverrides: true)
+            let sec = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7ED, bypassOverrides: true)
+            let mode = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7F4, bypassOverrides: true)
+            if(trk == 2 && sec == 4 && mode == 1)
+            {
+                _ = 1
+            }
+            let modeString: String
+            switch (mode) {
+            case 0:
+                modeString = "seeking"
+            case 1:
+                modeString = "reading"
+            case 2:
+                modeString = "writing"
+            case 4:
+                modeString = "formatting"
+            default:
+                modeString = "???"
+            }
+            if(debug) { print("Head is at nibble \(mediaPosition) of track \(currentTrack). DOS is \(modeString) T\(trk) S\(sec).") }
+            updateCurrentTrackSectorDisplay(drive: softswitches.DriveSelect, track: currentTrack, sector: Int(sec))
+            
             if(softswitches.Q7 == false && byte == nil) {
-                //in read mode and a read was requested. get the next byte
-                let trk = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7EC, bypassOverrides: true)
-                let sec = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7ED, bypassOverrides: true)
-                let mode = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7F4, bypassOverrides: true)
-                if(trk == 2 && sec == 4 && mode == 1)
-                {
-                    _ = 1
-                }
-                let modeString: String
-                switch (mode) {
-                case 0:
-                    modeString = "seeking"
-                case 1:
-                    modeString = "reading"
-                case 2:
-                    modeString = "writing"
-                case 4:
-                    modeString = "formatting"
-                default:
-                    modeString = "???"
-                }
-                
-                print("Head is at nibble \(mediaPosition) of track \(currentTrack). DOS is \(modeString) T\(trk) S\(sec).")
+                //in read mode and a read was requested. get the next nibble
                 return readByteOfTrack(track: currentTrack, advance: softswitches.MotorPowered ? 1 : 0)
             }
+            if(softswitches.Q7 == true && byte == nil) {
+                //in write mode
+                writeNibbleOfTrack(track: currentTrack, advance: softswitches.MotorPowered ? 1 : 0, nibble: preloadedByte)
+                return 0x00
+            }
+            
+            if(debug) { print("Disk II: Operation failed!") }
+            
         case 13:
             //WRITE PROTECT SENSE MODE
             softswitches.Q6 = true
         case 14:
-            //READ MODE
+            if(debug) { print("Disk II: READ STATUS REGISTER") }
             softswitches.Q7 = false
+            return 0x00 | (diskImage!.writeProtect ? 0x80 : 0x00) | (softswitches.MotorPowered ? 0x20 : 0x00)
         case 15:
             softswitches.Q7 = true
+            
+            //STA $C
+            if(softswitches.Q6 == true && byte != nil) {
+                preloadedByte = byte!
+                if(debug) { print("WRITE LOAD: shift register contains \(preloadedByte.asHexString())") }
+            }
+            
         default:
-            print("Unknown command? This can't happen.")
+            if(debug) { print("Unknown command? This can't happen.") }
         }
         
         return 0x00
@@ -258,12 +280,25 @@ class DiskII: NSObject, Peripheral {
         return result
     }
     
-    func updateCurrentTrackDisplay(drive: Bool) {
+    func writeNibbleOfTrack(track: Int, advance: Int, nibble: UInt8) {
+        if(diskImage == nil) { return} //No disk inserted, fail.
+        
+        let trackData = diskImage?.encodedTracks[track]
+        if(trackData == nil) { return } //No disk inserted, fail.
+        
+        if(debug) { print("wrote \(nibble.asHexString()) to disk") }
+        
+        diskImage!.encodedTracks[track][mediaPosition] = nibble
+        mediaPosition = (mediaPosition + advance) % trackData!.count
+    }
+    
+    
+    func updateCurrentTrackSectorDisplay(drive: Bool, track: Int, sector: Int) {
         if(drive == false) {
-            NotificationCenter.default.post(name: DiskII.N_Drive1TrackChanged, object: currentTrack)
+            NotificationCenter.default.post(name: DiskII.N_Drive1TrackChanged, object: (currentTrack, sector))
         }
         else {
-            NotificationCenter.default.post(name: DiskII.N_Drive2TrackChanged, object: currentTrack)
+            NotificationCenter.default.post(name: DiskII.N_Drive2TrackChanged, object: (currentTrack, sector))
         }
     }
     
@@ -288,11 +323,11 @@ class DiskII: NSObject, Peripheral {
     
     @objc func disableDrive1Motor() {
         softswitches.MotorPowered = false
-        print("Drive 1 Motor is now off")
+        if(debug) { print("Drive 1 Motor is now off") }
     }
     
     @objc func disableDrive2Motor() {
         softswitches.MotorPowered = false
-        print("Drive 2 Motor is now off")
+        if(debug) { print("Drive 2 Motor is now off") }
     }
 }

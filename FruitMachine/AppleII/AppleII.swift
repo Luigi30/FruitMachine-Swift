@@ -36,15 +36,15 @@ final class AppleII: NSObject, EmulatedSystem {
         
         videoMode = .Text
         
-        for i in 1...7 {
+        for i in 0...7 {
             backplane[i] = nil
         }
-        backplane[6] = DiskII(slot: 6, romPath: "/Users/luigi/apple2/341-0027-a.p5")
         
         super.init()
         
-        loadROMs()
         setupMemory(ramConfig: .fortyeightK)
+        setupPeripherals()
+        loadROMs()
         
         emuScreenLayer.shouldRasterize = true
         emuScreenLayer.delegate = emulatorViewDelegate
@@ -52,7 +52,7 @@ final class AppleII: NSObject, EmulatedSystem {
         
         emulatorView.wantsLayer = true
         
-        emuScreenLayer.setNeedsDisplay()
+        //emuScreenLayer.setNeedsDisplay()
         emulatorView.layer?.addSublayer(emuScreenLayer)
 
         installOverrides()
@@ -70,11 +70,19 @@ final class AppleII: NSObject, EmulatedSystem {
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0001-00.e0", offset: 0xE000, length: 0x800)
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0002-00.e8", offset: 0xE800, length: 0x800)
         CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0003-00.f0", offset: 0xF000, length: 0x800)
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0004-00.f8", offset: 0xF800, length: 0x800)
+        
+        //Hardware handles this, really.
+        if(backplane[0] is LanguageCard16K) {
+            //Language Card ROM
+            CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0020-00.f8", offset: 0xF800, length: 0x800)
+        } else {
+            //Integer BASIC ROM
+            CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/341-0004-00.f8", offset: 0xF800, length: 0x800)
+        }
     }
     
     func installOverrides() {
-        for (slotNum, peripheral) in backplane {
+        for (_, peripheral) in backplane {
             if(peripheral != nil) {
                 peripheral!.installOverrides()
             }
@@ -200,6 +208,24 @@ final class AppleII: NSObject, EmulatedSystem {
         }
         for page in 224 ..< 256 {
             CPU.sharedInstance.memoryInterface.pages[page] = MemoryInterface.pageMode.ro    //ROM
+        }
+    }
+    
+    func setupPeripherals() {
+        let defaults = UserDefaults.standard
+        
+        let slot0 = defaults.string(forKey: "a2_Peripherals_Slot0")
+        if(slot0 == "Language Card (16K)") {
+            backplane[0] = LanguageCard16K(slot: 0, romPath: "/Users/luigi/apple2/341-0020-00.f8")
+        }
+        
+        let slot6 = defaults.string(forKey: "a2_Peripherals_Slot6")
+        if(slot6 == "Disk II") {
+            backplane[6] = DiskII(slot: 6, romPath: "/Users/luigi/apple2/341-0027-a.p5")
+            
+            let drive = backplane[6]! as! DiskII
+            drive.attachDiskImage(imagePath: "/Users/luigi/apple2/Apex II - Apple II Diagnostic (v4.7-1986).DSK")
+            //drive.attachDiskImage(imagePath: "/Users/luigi/apple2/clean332sysmas.do")
         }
     }
     
