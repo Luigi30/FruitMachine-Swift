@@ -110,9 +110,12 @@ class AppleIIBase: NSObject, EmulatedSystem {
             backplane[6] = DiskII(slot: 6, romPath: "/Users/luigi/apple2/341-0027-a.p5")
             
             let drive = backplane[6]! as! DiskII
-            //drive.attachDiskImage(imagePath: "/Users/luigi/apple2/Apex II - Apple II Diagnostic (v4.7-1986).DSK")
-            drive.attachDiskImage(imagePath: "/Users/luigi/apple2/clean332sysmas.do")
         }
+    }
+    
+    func doColdReset() {
+        CPU.sharedInstance.coldReset()
+        doReset()
     }
     
     func doReset() {

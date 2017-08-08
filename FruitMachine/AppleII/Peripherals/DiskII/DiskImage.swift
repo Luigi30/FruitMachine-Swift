@@ -8,26 +8,21 @@
 
 import Cocoa
 
-/* while I figure out this C code port */
-prefix operator ++
-postfix operator ++
-
-// Increment
-prefix func ++(x: inout Int) -> Int {
-    x += 1
-    return x
-}
-
-postfix func ++(x: inout Int) -> Int {
-    x += 1
-    return (x - 1)
-}
-
 protocol DiskImageFormat {
     static var BYTES_PER_SECTOR: Int { get }
     static var SECTORS_PER_TRACK: Int { get }
     static var TRACKS_PER_DISK: Int { get }
     static var BYTES_PER_TRACK: Int { get }
+    
+    static var SECTOR_ORDER: [Int] { get }
+    
+    static func readTrackAndSector(imageData: [UInt8], trackNum: Int, sectorNum: Int) -> [UInt8]
+}
+
+enum DiskFormat {
+    case Dos33
+    case Prodos
+    case Raw
 }
 
 class Dos33Image: DiskImageFormat {
@@ -37,53 +32,47 @@ class Dos33Image: DiskImageFormat {
     static let BYTES_PER_TRACK: Int = BYTES_PER_SECTOR * SECTORS_PER_TRACK
     
     //Sectors in a track are in this order.
-    //                        0  7  14  6  13  5  12  4  11  3  10  2  9  1  8  15
-    static let sectorOrder = [0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15]
-    
-    struct VTOC {
-        //http://fileformats.archiveteam.org/wiki/Apple_DOS_file_system
-        
-                                    //$00 unused
-        let catalogTrackNumber = 0  //$01
-        let catalogSectorNumber = 0 //$02
-        let dosInitVersion = 0      //$03
-                                    //$04-05 unused
-        let volumeNumber = 0        //$06
-                                    //$07-$26 unused
-        let maxTrackSectorPairs = 0 //$27, should be 122
-                                    //$28-$2F unused
-        let lastFormattedTrack = 0  //$30
-        let trackDirection = 0      //$31
-                                    //$32-$33 unused
-        let tracksPerDisk = 0       //$34
-        let sectorsPerTrack = 0     //$35
-        let bytesPerSector = 0      //$36-$37
-    }
-    
-    let tableOfContents = VTOC()
+    static let SECTOR_ORDER = [0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15]
     
     static func readTrackAndSector(imageData: [UInt8], trackNum: Int, sectorNum: Int) -> [UInt8] {
         //Find the track in our disk.
         let trackOffset = trackNum * Dos33Image.BYTES_PER_TRACK
         //Find the sector in this track.
-        let sectorOffset = sectorOrder[sectorNum] * Dos33Image.BYTES_PER_SECTOR
+        let sectorOffset = SECTOR_ORDER[sectorNum] * Dos33Image.BYTES_PER_SECTOR
         let offset = trackOffset + sectorOffset
         
         return Array<UInt8>(imageData[offset ..< offset + Dos33Image.BYTES_PER_SECTOR])
     }
 }
 
-class DiskImage: NSObject {
-    enum DiskFormat {
-        case Dos33
-        case Prodos
-        case Raw
+class ProdosImage: DiskImageFormat {
+    static let BYTES_PER_SECTOR: Int = 256
+    static let SECTORS_PER_TRACK: Int = 16
+    static let TRACKS_PER_DISK: Int = 35
+    static let BYTES_PER_TRACK: Int = BYTES_PER_SECTOR * SECTORS_PER_TRACK
+    
+    //Sectors in a track are in this order.
+    static let SECTOR_ORDER = [0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15]
+    
+    static func readTrackAndSector(imageData: [UInt8], trackNum: Int, sectorNum: Int) -> [UInt8] {
+        //Find the track in our disk.
+        let trackOffset = trackNum * BYTES_PER_TRACK
+        //Find the sector in this track.
+        let sectorOffset = SECTOR_ORDER[sectorNum] * BYTES_PER_SECTOR
+        let offset = trackOffset + sectorOffset
+        
+        return Array<UInt8>(imageData[offset ..< offset + BYTES_PER_SECTOR])
     }
+}
+
+class DiskImage: NSObject {
     	
     var encodedTracks = [[UInt8]]()
     var fileSize: UInt64 = 0
     var image: DiskImageFormat?
     var writeProtect = false
+    
+    var filename: String
     
     init(diskPath: String) {
         do {
@@ -93,6 +82,8 @@ class DiskImage: NSObject {
             print("Error in DiskImage: \(error)")
         }
         
+        filename = diskPath
+        
         super.init()
         var rawData: [UInt8]?
         
@@ -101,16 +92,39 @@ class DiskImage: NSObject {
             print("Couldn't load disk image")
             return
         }
-        //Is this a DOS 3.3 format image? Read one sector from track $11.
-        let catalogSector: [UInt8] = Dos33Image.readTrackAndSector(imageData: rawData!, trackNum: 0x11, sectorNum: 0)
+        if(filename.contains(".do")) {
+            //Is this a DOS 3.3 format image? Read one sector from track $11.
+            image = Dos33Image()
+            let catalogSector: [UInt8] = Dos33Image.readTrackAndSector(imageData: rawData!, trackNum: 0x11, sectorNum: 0)
+            for track in 0..<Dos33Image.TRACKS_PER_DISK {
+                encodedTracks.append(encodeTrack(imageData: rawData!, index: track, volumeNumber: Int(catalogSector[0x06])))
+            }
+
+        } else if(filename.contains(".po")) {
+            /* ProDOS-order image. */
+            image = ProdosImage()
+            
+            for track in 0..<ProdosImage.TRACKS_PER_DISK {
+                encodedTracks.append(encodeTrack(imageData: rawData!, index: track, volumeNumber: 0x01))
+            }
+            
+        } else {
+            /* TODO: Hook up logic to figure out the disk format. */
+            image = Dos33Image()
+        }
+
+    }
+    
+    func saveDiskImage() {
+        var diskBytes = [UInt8]()
         
-        for track in 0..<Dos33Image.TRACKS_PER_DISK {
-            encodedTracks.append(encodeDos33Track(imageData: rawData!, index: track, volumeNumber: Int(catalogSector[0x06])))
+        for track in 0 ..< Dos33Image.TRACKS_PER_DISK {
+            diskBytes.append(contentsOf: decodeTrack(index: track))
         }
         
-        let pointer = UnsafeBufferPointer(start:encodedTracks[0], count:encodedTracks[0].count)
-        let data = Data(buffer:pointer)
-        try! data.write(to: URL(fileURLWithPath: "/Users/luigi/apple2/master.dmp"))
+        let ptr = UnsafeBufferPointer(start: diskBytes, count: diskBytes.count)
+        let data = Data(buffer: ptr)
+        try! data.write(to: URL(fileURLWithPath: filename + ".modified"))
     }
     
     private func loadImageBytes(path: String, size: Int) -> [UInt8]? {
@@ -128,9 +142,36 @@ class DiskImage: NSObject {
         return nil
     }
     
-    private func encodeDos33Track(imageData: [UInt8], index: Int, volumeNumber: Int) -> [UInt8] {
+    private func decodeTrack(index: Int) -> [UInt8] {
+        /* Find the first sector. Each sector starts with $D5 $AA $AD */
+        let track = encodedTracks[index]
+        var trackBytes = [UInt8]()
+        
+        if(image is Dos33Image) {
+            for i in 0 ..< Dos33Image.SECTORS_PER_TRACK {
+                let sectorOffset: Int = 0x47 + (0x18C * Dos33Image.SECTOR_ORDER.index(of: i)!)
+                let nibbles: [UInt8] = [UInt8](track[sectorOffset ... sectorOffset + 343])
+                trackBytes.append(contentsOf: DecodeSectorSixAndTwo(nibbles: nibbles))
+            }
+        } else if(image is ProdosImage) {
+            for i in 0 ..< ProdosImage.SECTORS_PER_TRACK {
+                let sectorOffset: Int = 0x47 + (0x18C * ProdosImage.SECTOR_ORDER.index(of: i)!)
+                let nibbles: [UInt8] = [UInt8](track[sectorOffset ... sectorOffset + 343])
+                trackBytes.append(contentsOf: DecodeSectorSixAndTwo(nibbles: nibbles))
+            }
+        } else if(image != nil) {
+            for i in 0 ..< Dos33Image.SECTORS_PER_TRACK {
+                let sectorOffset: Int = 0x47 + (0x18C * i) /* If we don't recognize the format, just use a sequential sector order. */
+                let nibbles: [UInt8] = [UInt8](track[sectorOffset ... sectorOffset + 343])
+                trackBytes.append(contentsOf: DecodeSectorSixAndTwo(nibbles: nibbles))
+            }
+        }
+        
+        return trackBytes
+    }
+    
+    private func encodeTrack(imageData: [UInt8], index: Int, volumeNumber: Int) -> [UInt8] {
         var encodedData = [UInt8]()
-        let dataOffset = index * Dos33Image.BYTES_PER_TRACK
         
         //Prologue: add 48 self-syncing bytes
         for _ in 1..<0x31 { encodedData.append(selfSync) }
@@ -190,6 +231,37 @@ class DiskImage: NSObject {
         return writtenData
     }
     
+    private func DecodeSectorSixAndTwo(nibbles: [UInt8]) -> [UInt8] {
+        var sector = [UInt8](repeating: 0x00, count: 256)
+        var readBuffer = [UInt8](repeating: 0x00, count: 343)
+        
+        readBuffer[0x155] = SixAndTwoDecode(byte: nibbles[0]) ^ 0
+        
+        for i in 1 ... 85 {
+            readBuffer[0x155 - i] = SixAndTwoDecode(byte: nibbles[i]) ^ readBuffer[0x156 - i]
+        }
+        
+        readBuffer[0x000] = SixAndTwoDecode(byte: nibbles[86]) ^ readBuffer[0x100]
+            
+        for i in 87 ... 341 {
+            readBuffer[i - 86] = SixAndTwoDecode(byte: nibbles[i]) ^ readBuffer[i - 87]
+        }
+        
+        var secondaryShift = 0
+        for i in 0 ... 255 {
+            let secondaryOffset = 0x100 + (0x55 - (i % 0x56))
+            
+            sector[i] |= readBuffer[i] << 2
+            sector[i] |= GetSwappedLowBits(byte: readBuffer[secondaryOffset] >> secondaryShift)
+            
+            if(secondaryOffset == 0x100) {
+                secondaryShift += 2
+            }
+        }
+        
+        return sector
+    }
+    
     private func GetSwappedLowBits(byte: UInt8) -> UInt8 {
         let b0 = byte & 0b00000001
         let b1 = byte & 0b00000010
@@ -233,6 +305,10 @@ class DiskImage: NSObject {
     
     func SixAndTwoEncode(byte: UInt8) -> UInt8 {
         return SixAndTwoTranslationTable[Int(byte)]
+    }
+    
+    func SixAndTwoDecode(byte: UInt8) -> UInt8 {
+        return UInt8(SixAndTwoTranslationTable.index(of: byte)!)
     }
     
     //A group of self-syncing bytes. This pattern can be repeated as long as required.

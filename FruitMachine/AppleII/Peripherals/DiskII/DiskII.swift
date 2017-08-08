@@ -35,7 +35,7 @@ import Cocoa
  */
 
 class DiskII: NSObject, Peripheral, HasROM {
-    let debug = false
+    let debug = true
     
     enum MotorPhase {
         case Phase0
@@ -219,17 +219,17 @@ class DiskII: NSObject, Peripheral, HasROM {
             let modeString: String
             switch (mode) {
             case 0:
-                modeString = "seeking"
+                modeString = "seek"
             case 1:
-                modeString = "reading"
+                modeString = "read"
             case 2:
-                modeString = "writing"
+                modeString = "write"
             case 4:
-                modeString = "formatting"
+                modeString = "format"
             default:
                 modeString = "???"
             }
-            if(debug) { print("Head is at nibble \(mediaPosition) of track \(currentTrack). DOS is \(modeString) T\(trk) S\(sec).") }
+            if(debug) { print("Head is at nibble \(mediaPosition) of track \(currentTrack). DOS is trying to \(modeString) T\(trk) S\(sec).") }
             updateCurrentTrackSectorDisplay(drive: softswitches.DriveSelect, track: currentTrack, sector: Int(sec))
             
             if(softswitches.Q7 == false && byte == nil) {
@@ -247,10 +247,20 @@ class DiskII: NSObject, Peripheral, HasROM {
         case 13:
             //WRITE PROTECT SENSE MODE
             softswitches.Q6 = true
+            if(byte != nil) {
+                preloadedByte = byte!
+                if(debug) { print("WRITE LOAD: shift register contains \(preloadedByte.asHexString())") }
+            }
+            
         case 14:
             if(debug) { print("Disk II: READ STATUS REGISTER") }
             softswitches.Q7 = false
-            return 0x00 | (diskImage!.writeProtect ? 0x80 : 0x00) | (softswitches.MotorPowered ? 0x20 : 0x00)
+            if(diskImage != nil) {
+                return 0x00 | (diskImage!.writeProtect ? 0x80 : 0x00) | (softswitches.MotorPowered ? 0x20 : 0x00)
+            } else {
+                return 0x00 | (softswitches.MotorPowered ? 0x20 : 0x00)
+            }
+            
         case 15:
             softswitches.Q7 = true
             
@@ -323,11 +333,14 @@ class DiskII: NSObject, Peripheral, HasROM {
     
     @objc func disableDrive1Motor() {
         softswitches.MotorPowered = false
-        if(debug) { print("Drive 1 Motor is now off") }
+        if(debug) { print("Drive 1 Motor is now off, saving updated image") }
+        diskImage?.saveDiskImage()
+        
     }
     
     @objc func disableDrive2Motor() {
         softswitches.MotorPowered = false
-        if(debug) { print("Drive 2 Motor is now off") }
+        if(debug) { print("Drive 2 Motor is now off, saving updated image") }
+        diskImage?.saveDiskImage()
     }
 }

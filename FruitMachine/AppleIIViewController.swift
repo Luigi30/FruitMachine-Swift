@@ -64,6 +64,25 @@ class AppleIIViewController: NSViewController {
         EmulatedSystemInstance!.doReset()
     }
     
+    @IBAction func doColdReset(_ sender: Any) {
+        EmulatedSystemInstance!.doColdReset()
+    }
+    
+    @IBAction func insertDiskIntoDrive1(_ sender: Any) {
+        let picker = NSOpenPanel()
+        
+        picker.title = "Select a 5.25\" disk image"
+        picker.showsHiddenFiles = false
+        picker.canChooseFiles = true
+        picker.canChooseDirectories = false
+        picker.allowsMultipleSelection = false
+        picker.allowedFileTypes = ["do", "po"]
+        
+        if(picker.runModal() == .OK) {
+            (EmulatedSystemInstance!.backplane[6] as! DiskII).attachDiskImage(imagePath: picker.url!.path)
+        }
+    }
+    
     override func keyDown(with event: NSEvent) {
         let leftArrowKeyCode = 123
         let rightArrowKeyCode = 124

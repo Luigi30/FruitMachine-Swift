@@ -64,13 +64,20 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="File" id="bib-Uj-vzu">
                                     <items>
-                                        <menuItem title="Insert Disk into Drive 0..." id="IYa-pn-S38">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="Insert Disk into Drive 1..." keyEquivalent="1" id="IYa-pn-S38">
+                                            <connections>
+                                                <action selector="insertDiskIntoDrive1:" target="Ady-hI-5gd" id="3Gf-TM-cb6"/>
+                                            </connections>
                                         </menuItem>
-                                        <menuItem title="Insert Disk into Drive 1..." id="Gdi-Dy-E1U">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="Insert Disk into Drive 2..." keyEquivalent="2" id="Gdi-Dy-E1U"/>
+                                        <menuItem isSeparatorItem="YES" id="YNZ-dh-D7s"/>
+                                        <menuItem title="Cold Reset" keyEquivalent="r" id="PoX-c5-5zb">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="doColdReset:" target="Ady-hI-5gd" id="mCR-M2-XLp"/>
+                                            </connections>
                                         </menuItem>
-                                        <menuItem title="Reset" keyEquivalent="r" id="aTl-1u-JFS">
+                                        <menuItem title="Warm Reset" keyEquivalent="r" id="aTl-1u-JFS">
                                             <connections>
                                                 <action selector="doReset:" target="Ady-hI-5gd" id="7dg-B5-6Ok"/>
                                             </connections>
@@ -214,7 +221,7 @@
                 </viewController>
                 <customObject id="o4k-Ip-qpX" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="105" y="-91"/>
+            <point key="canvasLocation" x="97" y="-88"/>
         </scene>
     </scenes>
 </document>

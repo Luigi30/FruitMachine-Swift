@@ -179,6 +179,28 @@ final class CPU: NSObject {
         breakpoints = [UInt16]()        
     }
     
+    func coldReset() {
+        instruction_register = 0
+        
+        accumulator = 0
+        index_x = 0
+        index_y = 0
+        stack_pointer = 0
+        program_counter = 0
+        status_register = StatusRegister(negative: false, overflow: false, brk: false, decimal: false, irq_disable: false, zero: false, carry: false)
+        
+        //Some instructions incur a 1-cycle penalty if crossing a page boundary.
+        page_boundary_crossed = false
+        //Branches incur a 1-cycle penalty if taken plus the page boundary penalty if necessary.
+        branch_was_taken = false
+        
+        performReset()
+        
+        for address in 0 ..< 0xC000 {
+            memoryInterface.writeByte(offset: UInt16(address), value: 0x00, bypassOverrides: true)
+        }
+    }
+    
     func getOperandByte() -> UInt8 {
         //Returns the operand byte after the current instruction byte.
         return memoryInterface.readByte(offset: program_counter + 1)
