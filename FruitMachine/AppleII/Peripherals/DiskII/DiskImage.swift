@@ -15,8 +15,6 @@ protocol DiskImageFormat {
     static var BYTES_PER_TRACK: Int { get }
     
     static var SECTOR_ORDER: [Int] { get }
-    
-    static func readTrackAndSector(imageData: [UInt8], trackNum: Int, sectorNum: Int) -> [UInt8]
 }
 
 enum DiskFormat {
@@ -53,16 +51,7 @@ class ProdosImage: DiskImageFormat {
     
     //Sectors in a track are in this order.
     static let SECTOR_ORDER = [0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15]
-    
-    static func readTrackAndSector(imageData: [UInt8], trackNum: Int, sectorNum: Int) -> [UInt8] {
-        //Find the track in our disk.
-        let trackOffset = trackNum * BYTES_PER_TRACK
-        //Find the sector in this track.
-        let sectorOffset = SECTOR_ORDER[sectorNum] * BYTES_PER_SECTOR
-        let offset = trackOffset + sectorOffset
-        
-        return Array<UInt8>(imageData[offset ..< offset + BYTES_PER_SECTOR])
-    }
+    //static let SECTOR_ORDER = [0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15]
     
     static func readBlock(imageData: [UInt8], blockNum: Int) -> [UInt8] {
         var blockData = [UInt8]()
@@ -105,10 +94,7 @@ class ProdosImage: DiskImageFormat {
             print("should never happen")
         }
         
-        /* First half of the interleaved block. */
-        blockData.append(contentsOf: readTrackAndSector(imageData: imageData, trackNum: track, sectorNum: sector1))
-        /* Second half of the interleaved block. */
-        blockData.append(contentsOf: readTrackAndSector(imageData: imageData, trackNum: track, sectorNum: sector2))
+        blockData.append(contentsOf: [UInt8](imageData[blockNum * 0x200 ... (blockNum * 0x200) + 0x1FF]))
         
         return blockData
     }
@@ -266,9 +252,69 @@ class DiskImage: NSObject {
             }
             else if(image is ProdosImage){
                 /* TODO: A .PO image is stored by 512-blocks which are not contiguous on the disk. Need to adapt this to handle blocks. */
-                /*
-                encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: ProdosImage.readTrackAndSector(imageData: imageData, trackNum: index, sectorNum: sectorNum)))
-                 */
+                
+                /* Find the 256 bytes corresponding to this sector. */
+                switch(sectorNum)
+                {
+                case 0x00:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 0)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x000...0x0FF])))
+                    /*
+                case 1:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 4)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x000...0x0FF])))
+                     */
+                case 0x0D:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 0)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x100...0x1FF])))
+                    /*
+                case 3:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 4)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x100...0x1FF])))
+                case 4:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 1)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x000...0x0FF])))
+                case 5:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 5)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x000...0x0FF])))
+                case 6:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 1)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x100...0x1FF])))
+                case 7:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 5)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x100...0x1FF])))
+                case 8:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 2)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x000...0x0FF])))
+                case 9:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 6)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x000...0x0FF])))
+                case 10:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 2)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x100...0x1FF])))
+                case 11:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 6)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x100...0x1FF])))
+                case 12:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 3)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x000...0x0FF])))
+                case 13:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 7)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x000...0x0FF])))
+                case 14:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 3)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x100...0x1FF])))
+                case 15:
+                    let block = ProdosImage.readBlock(imageData: imageData, blockNum: (8 * index) + 7)
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](block[0x100...0x1FF])))
+                default:
+                    print("should never happen")
+                }
+                     */
+                default:
+                    encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: [UInt8](repeating: 0xFF, count: 256)))
+                }
+                
             }
 
             encodedData.append(contentsOf: dataEpilogue)
