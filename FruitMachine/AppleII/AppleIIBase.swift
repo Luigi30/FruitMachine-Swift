@@ -108,9 +108,9 @@ class AppleIIBase: NSObject, EmulatedSystem {
         let slot6 = defaults.string(forKey: "a2_Peripherals_Slot6")
         if(slot6 == "Disk II") {
             backplane[6] = DiskII(slot: 6, romPath: "/Users/luigi/apple2/341-0027-a.p5")
-            
-            let drive = backplane[6]! as! DiskII
         }
+        
+        (backplane[6] as! DiskII).attachDiskImage(imagePath: "/Users/luigi/apple2/Prodos_2_4_1.po")
     }
     
     func doColdReset() {

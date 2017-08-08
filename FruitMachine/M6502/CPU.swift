@@ -283,7 +283,8 @@ final class CPU: NSObject {
         do {
             try executeNextInstruction()
         } catch CPUExceptions.invalidInstruction {
-            isRunning = false
+            print("Invalid instruction at \(program_counter.asHexString())")
+            coldReset()
         } catch {
             print(error)
         }

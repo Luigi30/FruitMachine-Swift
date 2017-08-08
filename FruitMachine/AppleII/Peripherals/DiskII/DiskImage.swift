@@ -38,10 +38,10 @@ class Dos33Image: DiskImageFormat {
         //Find the track in our disk.
         let trackOffset = trackNum * Dos33Image.BYTES_PER_TRACK
         //Find the sector in this track.
-        let sectorOffset = SECTOR_ORDER[sectorNum] * Dos33Image.BYTES_PER_SECTOR
+        let sectorOffset = SECTOR_ORDER[sectorNum] * BYTES_PER_SECTOR
         let offset = trackOffset + sectorOffset
         
-        return Array<UInt8>(imageData[offset ..< offset + Dos33Image.BYTES_PER_SECTOR])
+        return Array<UInt8>(imageData[offset ..< offset + BYTES_PER_SECTOR])
     }
 }
 
@@ -62,6 +62,55 @@ class ProdosImage: DiskImageFormat {
         let offset = trackOffset + sectorOffset
         
         return Array<UInt8>(imageData[offset ..< offset + BYTES_PER_SECTOR])
+    }
+    
+    static func readBlock(imageData: [UInt8], blockNum: Int) -> [UInt8] {
+        var blockData = [UInt8]()
+        
+        /* Find the track number. */
+        let track = blockNum / 8
+        
+        /* Find the sector numbers. */
+        let blockOffset8 = blockNum % 8
+        var sector1 = 0
+        var sector2 = 0
+        
+        switch blockOffset8 {
+        case 0:
+            sector1 = 0
+            sector2 = 2
+        case 1:
+            sector1 = 4
+            sector2 = 6
+        case 2:
+            sector1 = 8
+            sector2 = 0xA
+        case 3:
+            sector1 = 0xC
+            sector2 = 0xE
+            
+        case 4:
+            sector1 = 1
+            sector2 = 3
+        case 5:
+            sector1 = 5
+            sector2 = 7
+        case 6:
+            sector1 = 9
+            sector2 = 0xB
+        case 7:
+            sector1 = 0xD
+            sector2 = 0xF
+        default:
+            print("should never happen")
+        }
+        
+        /* First half of the interleaved block. */
+        blockData.append(contentsOf: readTrackAndSector(imageData: imageData, trackNum: track, sectorNum: sector1))
+        /* Second half of the interleaved block. */
+        blockData.append(contentsOf: readTrackAndSector(imageData: imageData, trackNum: track, sectorNum: sector2))
+        
+        return blockData
     }
 }
 
@@ -105,8 +154,28 @@ class DiskImage: NSObject {
             image = ProdosImage()
             
             for track in 0..<ProdosImage.TRACKS_PER_DISK {
-                encodedTracks.append(encodeTrack(imageData: rawData!, index: track, volumeNumber: 0x01))
+                encodedTracks.append(encodeTrack(imageData: rawData!, index: track, volumeNumber: 0xFE))
             }
+            
+            var blks = [UInt8]()
+            var nbls = [UInt8]()
+            
+            /*
+            for track in encodedTracks {
+                full.append(contentsOf: track)
+            }
+             */
+ 
+            blks.append(contentsOf: ProdosImage.readBlock(imageData: rawData!, blockNum: 0))
+            nbls.append(contentsOf: encodedTracks[0])
+        
+            var ptr = UnsafeBufferPointer(start: blks, count: blks.count)
+            var data = Data(buffer: ptr)
+            try! data.write(to: URL(fileURLWithPath: filename + ".blk"))
+            
+            ptr = UnsafeBufferPointer(start: nbls, count: nbls.count)
+            data = Data(buffer: ptr)
+            try! data.write(to: URL(fileURLWithPath: filename + ".nbl"))
             
         } else {
             /* TODO: Hook up logic to figure out the disk format. */
@@ -124,7 +193,7 @@ class DiskImage: NSObject {
         
         let ptr = UnsafeBufferPointer(start: diskBytes, count: diskBytes.count)
         let data = Data(buffer: ptr)
-        try! data.write(to: URL(fileURLWithPath: filename + ".modified"))
+        try! data.write(to: URL(fileURLWithPath: filename))
     }
     
     private func loadImageBytes(path: String, size: Int) -> [UInt8]? {
@@ -192,7 +261,16 @@ class DiskImage: NSObject {
             //Data Field
             encodedData.append(contentsOf: dataPrologue)
             //343 bytes: 342-byte sector + 1-byte checksum
-            encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: Dos33Image.readTrackAndSector(imageData: imageData, trackNum: index, sectorNum: sectorNum)))
+            if(image is Dos33Image) {
+                encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: Dos33Image.readTrackAndSector(imageData: imageData, trackNum: index, sectorNum: sectorNum)))
+            }
+            else if(image is ProdosImage){
+                /* TODO: A .PO image is stored by 512-blocks which are not contiguous on the disk. Need to adapt this to handle blocks. */
+                /*
+                encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: ProdosImage.readTrackAndSector(imageData: imageData, trackNum: index, sectorNum: sectorNum)))
+                 */
+            }
+
             encodedData.append(contentsOf: dataEpilogue)
             
             //Gap2 - 20 bytes
