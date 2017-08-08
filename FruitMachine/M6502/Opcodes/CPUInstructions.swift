@@ -221,4 +221,12 @@ let InstructionTable: [UInt8:CPUInstruction] = [
     0x00: CPUInstruction(mnemonic: "BRK", cycles: 7, bytes: 1, addressingMode: .implied,                action: Opcodes.BRK),
     
     0xEA: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 1, addressingMode: .implied,                action: Opcodes.NOP),
+
+    //Illegal opcodes
+    0x1A: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 1, addressingMode: .implied,                action: Opcodes.NOP),
+    0x3A: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 1, addressingMode: .implied,                action: Opcodes.NOP),
+    0x5A: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 1, addressingMode: .implied,                action: Opcodes.NOP),
+    0x7A: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 1, addressingMode: .implied,                action: Opcodes.NOP),
+    0xDA: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 1, addressingMode: .implied,                action: Opcodes.NOP),
+    0xFA: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 1, addressingMode: .implied,                action: Opcodes.NOP),
 ]

@@ -124,19 +124,19 @@ class DiskII: NSObject, Peripheral, HasROM {
             softswitches.Phase0 = true
             if(motorPhase == .Phase1) {
                 motorPhase = .Phase0
-                if(currentTrack % 2 == 0 && currentTrack > 0)
+                //if(currentTrack % 2 == 0 && currentTrack > 0)
+                if(currentTrack > 0)
                 {
                     currentTrack -= 1
                 }
                 if(debug) { print("Drive now on track \(currentTrack)") }
-                //updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
             } else if(motorPhase == .Phase3) {
                 motorPhase = .Phase0
-                if(currentTrack % 2 == 1 && currentTrack < 34) {
+                //if(currentTrack % 2 == 1 && currentTrack < 34) {
+                if(currentTrack < 34) {
                     currentTrack += 1
                 }
                 if(debug) { print("Drive now on track \(currentTrack)") }
-                //updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
             }
         case 2:
             softswitches.Phase1 = false
@@ -155,14 +155,12 @@ class DiskII: NSObject, Peripheral, HasROM {
                     currentTrack -= 1
                 }
                 if(debug) { print("Drive now on track \(currentTrack)") }
-                //updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
             } else if(motorPhase == .Phase1) {
                 motorPhase = .Phase2
                 if(currentTrack % 2 == 0 && currentTrack < 34) {
                     currentTrack += 1;
                 }
                 if(debug) { print("Drive now on track \(currentTrack)") }
-                //updateCurrentTrackDisplay(drive: softswitches.DriveSelect)
             }
         case 6:
             softswitches.Phase3 = false
@@ -209,9 +207,38 @@ class DiskII: NSObject, Peripheral, HasROM {
             if(debug) { print("Drive 2 selected") }
         case 12:
             softswitches.Q6 = false
-            let trk = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7EC, bypassOverrides: true)
-            let sec = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7ED, bypassOverrides: true)
-            let mode = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7F4, bypassOverrides: true)
+            
+            let trk: UInt8
+            let sec: UInt8
+            let mode: UInt8
+            
+            let blkLo: UInt8
+            let blkHi: UInt8
+            
+            if(diskImage!.image is Dos33Image) {
+                trk = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7EC, bypassOverrides: true)
+                sec = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7ED, bypassOverrides: true)
+                mode = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7F4, bypassOverrides: true)
+                
+                blkLo = 0
+                blkHi = 0
+            }
+            else if(diskImage!.image is ProdosImage) {
+                trk = CPU.sharedInstance.memoryInterface.readByte(offset: 0x41, bypassOverrides: true)
+                sec = CPU.sharedInstance.memoryInterface.readByte(offset: 0x3D, bypassOverrides: true)
+                mode = CPU.sharedInstance.memoryInterface.readByte(offset: 0x42, bypassOverrides: true)
+                
+                blkLo = CPU.sharedInstance.memoryInterface.readByte(offset: 0x46, bypassOverrides: true)
+                blkHi = CPU.sharedInstance.memoryInterface.readByte(offset: 0x47, bypassOverrides: true)
+            } else {
+                trk = 0
+                sec = 0
+                mode = 0
+                
+                blkLo = 0
+                blkHi = 0
+            }
+
             if(trk == 2 && sec == 4 && mode == 1)
             {
                 _ = 1
@@ -229,7 +256,22 @@ class DiskII: NSObject, Peripheral, HasROM {
             default:
                 modeString = "???"
             }
-            if(debug) { print("Head is at nibble \(mediaPosition) of track \(currentTrack). DOS is trying to \(modeString) T\(trk) S\(sec).") }
+            if(debug)
+            {
+                if(diskImage!.image is Dos33Image) {
+                    print("Head is at nibble \(mediaPosition) of track \(currentTrack). DOS is trying to \(modeString) T\(trk) S\(sec).")
+                } else if(diskImage!.image is ProdosImage) {
+                    print("Head is at nibble \(mediaPosition) of track \(currentTrack). ProDOS is trying to \(modeString) Block $\(blkHi.asHexString())\(blkLo.asHexString()) (T\(trk) S\(sec)).")
+                    
+                    if(mode == 1) {
+                        let bufLo = CPU.sharedInstance.memoryInterface.readByte(offset: 0x44, bypassOverrides: true)
+                        let bufHi = CPU.sharedInstance.memoryInterface.readByte(offset: 0x45, bypassOverrides: true)
+                        
+                        print("I/O buffer is located at $\(bufHi.asHexString())\(bufLo.asHexString())")
+                    }
+                }
+                
+            }
             updateCurrentTrackSectorDisplay(drive: softswitches.DriveSelect, track: currentTrack, sector: Int(sec))
             
             if(softswitches.Q7 == false && byte == nil) {
