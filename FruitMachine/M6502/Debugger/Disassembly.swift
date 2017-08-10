@@ -87,9 +87,9 @@ extension CPU {
                 }
                 
                 disassembly.append(Disassembly(instruction: operation, address: currentAddress, data: data))
-                currentAddress = currentAddress + UInt16(operation!.bytes)
+                currentAddress = currentAddress &+ UInt16(operation!.bytes)
             } else {
-                currentAddress = currentAddress + 1
+                currentAddress = currentAddress &+ 1
             }
         }
         

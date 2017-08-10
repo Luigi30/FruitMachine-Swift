@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2A044E2C1F37D65A000E8085 /* LanguageCard16K.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A044E2B1F37D65A000E8085 /* LanguageCard16K.swift */; };
 		2A044E2E1F382CA9000E8085 /* AppleIIPlus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A044E2D1F382CA9000E8085 /* AppleIIPlus.swift */; };
+		2A0D0C691F3C09990000913B /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A0D0C681F3C09990000913B /* Types.swift */; };
 		2A16ADBB1F33C341004A0333 /* DiskImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A16ADBA1F33C341004A0333 /* DiskImage.swift */; };
 		2A2126841F2A9FA300E43DC1 /* DebuggerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2126831F2A9FA300E43DC1 /* DebuggerWindowController.swift */; };
 		2A22EBFB1F21A7A700A36A61 /* IntegerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */; };
@@ -60,6 +61,7 @@
 /* Begin PBXFileReference section */
 		2A044E2B1F37D65A000E8085 /* LanguageCard16K.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageCard16K.swift; sourceTree = "<group>"; };
 		2A044E2D1F382CA9000E8085 /* AppleIIPlus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIIPlus.swift; sourceTree = "<group>"; };
+		2A0D0C681F3C09990000913B /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		2A16ADBA1F33C341004A0333 /* DiskImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskImage.swift; sourceTree = "<group>"; };
 		2A2126831F2A9FA300E43DC1 /* DebuggerWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerWindowController.swift; sourceTree = "<group>"; };
 		2A22EBFA1F21A7A700A36A61 /* IntegerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerExtensions.swift; sourceTree = "<group>"; };
@@ -278,6 +280,7 @@
 			isa = PBXGroup;
 			children = (
 				2AE3BB961F32CEB100C11060 /* ROMManager.swift */,
+				2A0D0C681F3C09990000913B /* Types.swift */,
 			);
 			path = Memory;
 			sourceTree = "<group>";
@@ -435,6 +438,7 @@
 				2AB6CACD1F3041A200DECAC0 /* AppleII.swift in Sources */,
 				2A63C2331F32C39300D4F4F8 /* TextMode.swift in Sources */,
 				2AE5BA061F2469EB00FAA343 /* AddressConversions.swift in Sources */,
+				2A0D0C691F3C09990000913B /* Types.swift in Sources */,
 				2AE42E0A1F28521E00C4900E /* WriteOverride.swift in Sources */,
 				2A6DC7ED1F30492C0066FE0D /* ScreenDelegate.swift in Sources */,
 				2A044E2C1F37D65A000E8085 /* LanguageCard16K.swift in Sources */,

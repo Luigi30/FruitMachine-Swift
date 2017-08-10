@@ -77,28 +77,28 @@ class ProdosImage: DiskImageFormat {
         switch blockOffset8 {
         case 0:
             sector1 = 0
-            sector2 = 0xE
+            sector2 = 0x1
         case 1:
-            sector1 = 0xD
-            sector2 = 0xC
+            sector1 = 0x2
+            sector2 = 0x3
         case 2:
-            sector1 = 0xB
-            sector2 = 0xA
+            sector1 = 0x4
+            sector2 = 0x5
         case 3:
-            sector1 = 0x9
-            sector2 = 0x8
+            sector1 = 0x6
+            sector2 = 0x7
             
         case 4:
-            sector1 = 0x7
-            sector2 = 0x6
+            sector1 = 0x8
+            sector2 = 0x9
         case 5:
-            sector1 = 0x5
-            sector2 = 0x4
+            sector1 = 0xA
+            sector2 = 0xB
         case 6:
-            sector1 = 0x3
-            sector2 = 0x2
+            sector1 = 0xC
+            sector2 = 0xD
         case 7:
-            sector1 = 0x1
+            sector1 = 0xE
             sector2 = 0xF
         default:
             print("should never happen")
@@ -161,7 +161,7 @@ class DiskImage: NSObject {
                 nbls.append(contentsOf: track)
             }
  
-            blks.append(contentsOf: ProdosImage.readBlock(imageData: rawData!, blockNum: 7))
+            blks.append(contentsOf: ProdosImage.readBlock(imageData: rawData!, blockNum: 0))
         
             var ptr = UnsafeBufferPointer(start: blks, count: blks.count)
             var data = Data(buffer: ptr)
@@ -259,8 +259,6 @@ class DiskImage: NSObject {
                 encodedData.append(contentsOf: EncodeSectorSixAndTwo(sector: Dos33Image.readTrackAndSector(imageData: imageData, trackNum: index, sectorNum: sectorNum)))
             }
             else if(image is ProdosImage){
-                /* TODO: A .PO image is stored by 512-blocks which are not contiguous on the disk. Need to adapt this to handle blocks. */
-                
                 /* Find the 256 bytes corresponding to this sector. */
                 switch(sectorNum)
                 {

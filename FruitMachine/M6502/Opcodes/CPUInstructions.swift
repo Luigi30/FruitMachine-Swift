@@ -229,4 +229,9 @@ let InstructionTable: [UInt8:CPUInstruction] = [
     0x7A: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 1, addressingMode: .implied,                action: Opcodes.NOP),
     0xDA: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 1, addressingMode: .implied,                action: Opcodes.NOP),
     0xFA: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 1, addressingMode: .implied,                action: Opcodes.NOP),
+    0x82: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 2, addressingMode: .implied,                action: Opcodes.NOP),
+    0xC2: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 2, addressingMode: .implied,                action: Opcodes.NOP),
+    0xE2: CPUInstruction(mnemonic: "NOP", cycles: 2, bytes: 2, addressingMode: .implied,                action: Opcodes.NOP),
+    
+    //0x07: CPUInstruction(mnemonic: "SLO", cycles: 5, bytes: 2, addressingMode: .zeropage,               action: Opcodes.SLO),
 ]

@@ -570,6 +570,21 @@ final class Opcodes: NSObject {
         }
     }
     
+    //Illegal
+    static func SLO(state: CPU, addressingMode: CPU.AddressingMode) -> Void {
+        let address = getOperandAddressForAddressingMode(state: state, mode: addressingMode)
+        var data = state.memoryInterface.readByte(offset: address)
+        let t = (data & 0x80) == 0x80 ? true : false
+        
+        data = data << 1
+        data = state.accumulator | data
+        state.memoryInterface.writeByte(offset: address, value: data)
+        
+        state.status_register.carry = t
+        state.updateZeroFlag(value: data)
+        state.updateNegativeFlag(value: data)
+    }
+    
     //Misc
     static func JMP(state: CPU, addressingMode: CPU.AddressingMode) -> Void {
         state.program_counter = getOperandAddressForAddressingMode(state: state, mode: addressingMode) &- 3
@@ -591,6 +606,8 @@ final class Opcodes: NSObject {
     }
     
     static func BRK(state: CPU, addressingMode: CPU.AddressingMode) -> Void {
+        print("*** BRK at \(state.program_counter.asHexString())! ***")
+        
         var sr = state.status_register
         sr.brk = true //BRK pushes B as true
         state.pushWord(data: state.program_counter + 2)

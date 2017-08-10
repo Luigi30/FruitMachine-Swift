@@ -34,12 +34,12 @@
                         <tabViewItems>
                             <tabViewItem label="General" identifier="1" id="nQU-pA-pvF">
                                 <view key="view" id="iK8-x4-ay0">
-                                    <rect key="frame" x="10" y="33" width="554" height="338"/>
+                                    <rect key="frame" x="10" y="33" width="259" height="0.0"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Paths" identifier="2" id="zXY-01-Th8">
-                                <view key="view" id="tiQ-eh-pdD">
+                                <view key="view" ambiguous="YES" id="tiQ-eh-pdD">
                                     <rect key="frame" x="10" y="33" width="554" height="338"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -140,7 +140,7 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Apple II" identifier="" id="aVa-m9-VEl">
-                                <view key="view" ambiguous="YES" id="mjS-Jn-KXO">
+                                <view key="view" id="mjS-Jn-KXO">
                                     <rect key="frame" x="10" y="33" width="554" height="338"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>

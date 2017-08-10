@@ -78,7 +78,7 @@ class DebuggerViewController: NSViewController {
         isRunning = true
         
         cpuInstance.cycles = 0
-        cpuInstance.cyclesInBatch = 1000000
+        cpuInstance.cyclesInBatch = 10000
         
         while(!cpuInstance.outOfCycles() && isRunning) {
             cpuInstance.cpuStep()
@@ -101,6 +101,7 @@ class DebuggerViewController: NSViewController {
     @IBAction func btn_CPUStep(_ sender: Any) {
         cpuInstance.cpuStep()
         updateCPUStatusFields()
+        EmulatedSystemInstance!.updateScreen()
     }
 
     @IBAction func btn_Break(_ sender: Any) {

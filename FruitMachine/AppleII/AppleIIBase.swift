@@ -91,19 +91,17 @@ class AppleIIBase: NSObject, EmulatedSystem {
             CPU.sharedInstance.memoryInterface.pages[page] = MemoryInterface.pageMode.null  //not connected
         }
         for page in 208 ..< 256 {
-            CPU.sharedInstance.memoryInterface.pages[page] = MemoryInterface.pageMode.ro    //ROM
+            CPU.sharedInstance.memoryInterface.pages[page] = MemoryInterface.pageMode.rw    //Bankswitching area
         }
     }
     
     func setupPeripherals() {
         let defaults = UserDefaults.standard
         
-        /*
         let slot0 = defaults.string(forKey: "a2_Peripherals_Slot0")
         if(slot0 == "Language Card (16K)") {
             backplane[0] = LanguageCard16K(slot: 0, romPath: "/Users/luigi/apple2/341-0020-00.f8")
         }
-         */
         
         let slot6 = defaults.string(forKey: "a2_Peripherals_Slot6")
         if(slot6 == "Disk II") {
@@ -133,8 +131,11 @@ class AppleIIBase: NSObject, EmulatedSystem {
         CPU.sharedInstance.cycles = 0
         CPU.sharedInstance.cyclesInBatch = CYCLES_PER_BATCH
         CPU.sharedInstance.runCyclesBatch()
-        
-        //update the video display
+
+        updateScreen()
+    }
+    
+    func updateScreen() {
         CVPixelBufferLockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
         let pixelBase = CVPixelBufferGetBaseAddress(emulatorViewDelegate.pixels!)
         let buf = pixelBase?.assumingMemoryBound(to: BitmapPixelsLE555.PixelData.self)
@@ -171,6 +172,7 @@ class AppleIIBase: NSObject, EmulatedSystem {
         
         CVPixelBufferUnlockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
         emulatorView.setNeedsDisplay(emulatorView.frame)
+        
     }
     
     /* Video */

@@ -35,7 +35,7 @@ import Cocoa
  */
 
 class DiskII: NSObject, Peripheral, HasROM {
-    let debug = true
+    let debug = false
     
     enum MotorPhase {
         case Phase0

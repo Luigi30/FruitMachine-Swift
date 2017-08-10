@@ -12,6 +12,11 @@ enum CPUExceptions : Error {
     case invalidInstruction
 }
 
+enum CPUModel {
+    case M6502
+    case M65C02
+}
+
 struct StatusRegister {
     var negative: Bool      //N - 0x80
     var overflow: Bool      //V - 0x40
@@ -132,7 +137,7 @@ final class CPU: NSObject {
     let RESET_VECTOR: UInt16    = 0xFFFC
     let IRQ_VECTOR: UInt16      = 0xFFFE
     
-    static let sharedInstance = CPU()
+    static let sharedInstance = CPU(cpuModel: .M6502)
     
     var isRunning: Bool
     
@@ -148,6 +153,9 @@ final class CPU: NSObject {
     var program_counter: UInt16
     var status_register: StatusRegister
     
+    //Debugging
+    var old_program_counter: UInt16
+    
     var page_boundary_crossed: Bool
     var branch_was_taken: Bool
     
@@ -155,8 +163,12 @@ final class CPU: NSObject {
     
     var breakpoints: [UInt16]
     
-    override init() {
+    var model: CPUModel
+    
+    init(cpuModel: CPUModel) {
         isRunning = false
+        
+        model = cpuModel
         
         cycles = 0
         cyclesInBatch = 0
@@ -168,6 +180,7 @@ final class CPU: NSObject {
         index_y = 0
         stack_pointer = 0
         program_counter = 0
+        old_program_counter = 0
         status_register = StatusRegister(negative: false, overflow: false, brk: false, decimal: false, irq_disable: false, zero: false, carry: false)
         memoryInterface = MemoryInterface()
         
@@ -176,7 +189,7 @@ final class CPU: NSObject {
         //Branches incur a 1-cycle penalty if taken plus the page boundary penalty if necessary.
         branch_was_taken = false
         
-        breakpoints = [UInt16]()        
+        breakpoints = [UInt16]()
     }
     
     func coldReset() {
@@ -201,15 +214,20 @@ final class CPU: NSObject {
         }
     }
     
+    func changeModel(cpuModel: CPUModel) {
+        model = cpuModel
+        coldReset()
+    }
+    
     func getOperandByte() -> UInt8 {
         //Returns the operand byte after the current instruction byte.
-        return memoryInterface.readByte(offset: program_counter + 1)
+        return memoryInterface.readByte(offset: program_counter &+ 1)
     }
     
     func getOperandWord() -> UInt16 {
         var word: UInt16
-        let low = memoryInterface.readByte(offset: program_counter + 1)
-        let high = memoryInterface.readByte(offset: program_counter + 2)
+        let low = memoryInterface.readByte(offset: program_counter &+ 1)
+        let high = memoryInterface.readByte(offset: program_counter &+ 2)
         
         word = UInt16(high)
         word = word << 8
@@ -241,6 +259,11 @@ final class CPU: NSObject {
             throw CPUExceptions.invalidInstruction
         }
         
+        if(program_counter == 0x102F) {
+            print("$102F")
+        }
+        
+        self.old_program_counter = self.program_counter
         operation!.action(CPU.sharedInstance, operation!.addressingMode)
         
         self.cycles += operation!.cycles
@@ -253,7 +276,8 @@ final class CPU: NSObject {
             self.branch_was_taken = false
         }
         
-        self.program_counter = UInt16(self.program_counter &+ UInt16(operation!.bytes))
+        
+        self.program_counter = Address(self.program_counter &+ UInt16(operation!.bytes))
     }
     
     func outOfCycles() -> Bool {
