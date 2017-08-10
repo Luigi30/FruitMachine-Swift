@@ -63,6 +63,11 @@ class LanguageCard16K: NSObject, Peripheral, HasROM {
                                       readAnyway: false,
                                       action: actionDispatchOperation)
         
+        writeIOOverride = WriteOverride(start: UInt16(0xC080 + (0x10 * slotNumber)),
+                                      end: UInt16(0xC08F + (0x10 * slotNumber)),
+                                      writeAnyway: false,
+                                      action: actionDispatchOperation)
+        
         readLanguageCardAddressingOverride = ReadOverride(start: UInt16(0xD000),
                                                           end: UInt16(0xFFFF),
                                                           readAnyway: false,
@@ -76,6 +81,7 @@ class LanguageCard16K: NSObject, Peripheral, HasROM {
         CPU.sharedInstance.memoryInterface.read_overrides.append(RDLCBNKOverride!)
         CPU.sharedInstance.memoryInterface.read_overrides.append(RDLCRAMOverride!)
         CPU.sharedInstance.memoryInterface.read_overrides.append(readIOOverride!)
+        CPU.sharedInstance.memoryInterface.write_overrides.append(writeIOOverride!)
         CPU.sharedInstance.memoryInterface.read_overrides.append(readLanguageCardAddressingOverride!)
         CPU.sharedInstance.memoryInterface.write_overrides.append(writeLanguageCardAddressingOverride!)
     }

@@ -259,10 +259,6 @@ final class CPU: NSObject {
             throw CPUExceptions.invalidInstruction
         }
         
-        if(program_counter == 0x102F) {
-            print("$102F")
-        }
-        
         self.old_program_counter = self.program_counter
         operation!.action(CPU.sharedInstance, operation!.addressingMode)
         
