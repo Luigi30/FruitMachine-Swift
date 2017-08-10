@@ -74,31 +74,33 @@ class ProdosImage: DiskImageFormat {
         var sector1 = 0
         var sector2 = 0
         
+        //static let SECTOR_ORDER = [0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15]
+        
         switch blockOffset8 {
         case 0:
             sector1 = 0
-            sector2 = 0x1
+            sector2 = 0xE
         case 1:
-            sector1 = 0x2
-            sector2 = 0x3
+            sector1 = 0xD
+            sector2 = 0xC
         case 2:
-            sector1 = 0x4
-            sector2 = 0x5
+            sector1 = 0xB
+            sector2 = 0xA
         case 3:
-            sector1 = 0x6
-            sector2 = 0x7
+            sector1 = 0x9
+            sector2 = 0x8
             
         case 4:
-            sector1 = 0x8
-            sector2 = 0x9
+            sector1 = 0x7
+            sector2 = 0x6
         case 5:
-            sector1 = 0xA
-            sector2 = 0xB
+            sector1 = 0x5
+            sector2 = 0x4
         case 6:
-            sector1 = 0xC
-            sector2 = 0xD
+            sector1 = 0x3
+            sector2 = 0x2
         case 7:
-            sector1 = 0xE
+            sector1 = 0x1
             sector2 = 0xF
         default:
             print("should never happen")
@@ -162,6 +164,13 @@ class DiskImage: NSObject {
             }
  
             blks.append(contentsOf: ProdosImage.readBlock(imageData: rawData!, blockNum: 0))
+            blks.append(contentsOf: ProdosImage.readBlock(imageData: rawData!, blockNum: 1))
+            blks.append(contentsOf: ProdosImage.readBlock(imageData: rawData!, blockNum: 2))
+            blks.append(contentsOf: ProdosImage.readBlock(imageData: rawData!, blockNum: 3))
+            blks.append(contentsOf: ProdosImage.readBlock(imageData: rawData!, blockNum: 4))
+            blks.append(contentsOf: ProdosImage.readBlock(imageData: rawData!, blockNum: 5))
+            blks.append(contentsOf: ProdosImage.readBlock(imageData: rawData!, blockNum: 6))
+            blks.append(contentsOf: ProdosImage.readBlock(imageData: rawData!, blockNum: 7))
         
             var ptr = UnsafeBufferPointer(start: blks, count: blks.count)
             var data = Data(buffer: ptr)
