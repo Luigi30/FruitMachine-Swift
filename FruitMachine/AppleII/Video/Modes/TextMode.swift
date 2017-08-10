@@ -25,7 +25,11 @@ extension AppleIIBase {
             }
             
             //Calculate the offset to reach the desired position.
-            let baseOffset = EmulatedSystemInstance!.emulatorViewDelegate.scanlineOffsets[Int(pixelPosition.y)] + Int(pixelPosition.x)
+            var baseOffset = EmulatedSystemInstance!.emulatorViewDelegate.scanlineOffsets[Int(pixelPosition.y) % 192] + Int(pixelPosition.x)
+            
+            if(EmulatedSystemInstance!.videoSoftswitches.PAGE_2) {
+                baseOffset += 0x400
+            }
             
             for charY in 0..<AppleII.A2CharacterGenerator.CHAR_HEIGHT {
                 let offset = baseOffset + (AppleII.ScreenDelegate.PIXEL_WIDTH * charY)

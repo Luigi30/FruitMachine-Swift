@@ -10,6 +10,9 @@ import Cocoa
 
 extension AppleIIBase {
     
+    static let PAGE1_BASE: Address = 0x400
+    static let PAGE2_BASE: Address = 0x800
+    
     typealias Softswitch = Bool
     
     struct VideoSoftswitches {

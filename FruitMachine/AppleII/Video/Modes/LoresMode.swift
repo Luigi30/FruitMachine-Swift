@@ -12,6 +12,7 @@ extension AppleIIBase {
 
     class LoresMode: NSObject {
         static func putLoresPixel(buffer: UnsafeMutablePointer<BitmapPixelsLE555.PixelData>?, pixel: UInt8, address: UInt16) {
+            
             let pageOffset = address - 0x400
             let pixelPosition = VideoHelpers.getPixelOffset(memoryOffset: Int(pageOffset))
             if(pixelPosition.x == -1 && pixelPosition.y == -1) {

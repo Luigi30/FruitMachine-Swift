@@ -142,30 +142,37 @@ class AppleIIBase: NSObject, EmulatedSystem {
         
         videoMode = getCurrentVideoMode(switches: videoSoftswitches)
         
+        let videoMemoryStart: Address
+        if(videoSoftswitches.PAGE_2) {
+            videoMemoryStart = 0x800
+        } else {
+            videoMemoryStart = 0x400
+        }
+        
         if(videoMode == .Text)
         {
             //Text mode: Get character codes from $0400-$07FF
-            putGlyphs(buffer: buf!, start: 0x400, end: 0x7F8)
+            putGlyphs(buffer: buf!, start: videoMemoryStart, end: videoMemoryStart + 0x3F8)
         }
         else if(videoMode == .Lores)
         {
-            putLoresPixels(buffer: buf!, start: 0x400, end: 0x7F8)
+            putLoresPixels(buffer: buf!, start: videoMemoryStart, end: videoMemoryStart + 0x3F8)
         }
         else if(videoMode == .MixedLores) {
             //Draw the lores pixel rows.
-            putLoresPixels(buffer: buf!, start: 0x400, end: 0x650)
-            putLoresPixels(buffer: buf!, start: 0x680, end: 0x6A8)
-            putLoresPixels(buffer: buf!, start: 0x700, end: 0x728)
-            putLoresPixels(buffer: buf!, start: 0x780, end: 0x7A8)
-            putLoresPixels(buffer: buf!, start: 0x6A8, end: 0x6D0)
-            putLoresPixels(buffer: buf!, start: 0x728, end: 0x750)
-            putLoresPixels(buffer: buf!, start: 0x7A8, end: 0x7D0)
+            putLoresPixels(buffer: buf!, start: videoMemoryStart, end: videoMemoryStart + 0x250)
+            putLoresPixels(buffer: buf!, start: videoMemoryStart + 0x280, end: videoMemoryStart + 0x2A8)
+            putLoresPixels(buffer: buf!, start: videoMemoryStart + 0x300, end: videoMemoryStart + 0x328)
+            putLoresPixels(buffer: buf!, start: videoMemoryStart + 0x380, end: videoMemoryStart + 0x3A8)
+            putLoresPixels(buffer: buf!, start: videoMemoryStart + 0x2A8, end: videoMemoryStart + 0x2D0)
+            putLoresPixels(buffer: buf!, start: videoMemoryStart + 0x328, end: videoMemoryStart + 0x350)
+            putLoresPixels(buffer: buf!, start: videoMemoryStart + 0x3A8, end: videoMemoryStart + 0x3D0)
             
             //Draw the bottom 4 text rows.
-            putGlyphs(buffer: buf!, start: 0x650, end: 0x678)
-            putGlyphs(buffer: buf!, start: 0x6D0, end: 0x6F8)
-            putGlyphs(buffer: buf!, start: 0x750, end: 0x778)
-            putGlyphs(buffer: buf!, start: 0x7D0, end: 0x7F8)
+            putGlyphs(buffer: buf!, start: videoMemoryStart + 0x250, end: videoMemoryStart + 0x278)
+            putGlyphs(buffer: buf!, start: videoMemoryStart + 0x2D0, end: videoMemoryStart + 0x2F8)
+            putGlyphs(buffer: buf!, start: videoMemoryStart + 0x350, end: videoMemoryStart + 0x378)
+            putGlyphs(buffer: buf!, start: videoMemoryStart + 0x3D0, end: videoMemoryStart + 0x3F8)
         } else {
             print("Unimplemented video mode!")
         }

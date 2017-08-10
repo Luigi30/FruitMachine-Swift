@@ -75,7 +75,7 @@ extension AppleIIBase {
         static let switchC055R = ReadOverride(start: 0xC055, end: 0xC055, readAnyway: false, action: SoftswitchOverrides.actionSwitchC055)
         static let switchC055W = WriteOverride(start: 0xC055, end: 0xC055, writeAnyway: false, action: SoftswitchOverrides.actionSwitchC055)
         static func actionSwitchC055(dummy: AnyObject, address: UInt16, byte: UInt8?) -> UInt8? {
-            EmulatedSystemInstance!.videoSoftswitches.MIX_MODE = true
+            EmulatedSystemInstance!.videoSoftswitches.PAGE_2 = true
             return 0x00
         }
         
