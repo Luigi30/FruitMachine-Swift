@@ -74,8 +74,6 @@ class ProdosImage: DiskImageFormat {
         var sector1 = 0
         var sector2 = 0
         
-        //static let SECTOR_ORDER = [0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15]
-        
         switch blockOffset8 {
         case 0:
             sector1 = 0
@@ -175,10 +173,6 @@ class DiskImage: NSObject {
             var ptr = UnsafeBufferPointer(start: blks, count: blks.count)
             var data = Data(buffer: ptr)
             try! data.write(to: URL(fileURLWithPath: filename + ".blk"))
-            
-            ptr = UnsafeBufferPointer(start: nbls, count: nbls.count)
-            data = Data(buffer: ptr)
-            try! data.write(to: URL(fileURLWithPath: filename + ".nbl"))
             
         } else {
             /* TODO: Hook up logic to figure out the disk format. */

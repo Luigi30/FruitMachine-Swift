@@ -8,48 +8,117 @@
 
 import Cocoa
 
-class HiresMode: NSObject {
-    static func putHiresPixel(buffer: UnsafeMutablePointer<BitmapPixelsLE555.PixelData>?, pixel: UInt8, address: UInt16) {
-        let pageBase: Address
+extension AppleIIBase {
+
+    class HiresMode: NSObject {
+        static func putHiresByte(buffer: UnsafeMutablePointer<BitmapPixelsLE555.PixelData>?, pixel: UInt8, address: UInt16) {
+            
+            let pageBase: Address
+            
+            if(EmulatedSystemInstance!.videoSoftswitches.PAGE_2) {
+                pageBase = 0x4000
+            } else {
+                pageBase = 0x2000
+            }
+            
+            //Convert the address into an (X,Y) pixel coordinate.
+            var offset = address - 0x2000
+            if(offset >= 0x2000) { //Page 2 address
+                offset -= 0x2000
+            }
+            
+            //Find the row number.
+            var rowNumber = 0
+            let lowByte = UInt8(offset & 0xFF)
+            var columnByte: UInt8 = 0x00
+            
+            if(0x28 ... 0x4F ~= lowByte || 0xA8 ... 0xCF ~= lowByte) {
+                //Middle third.
+                rowNumber += 64
+                columnByte = (lowByte & 0x7F) - 0x28
+            }
+            else if(0x50 ... 0x77 ~= lowByte || 0xD0 ... 0xF7 ~= lowByte) {
+                //Bottom third.
+                rowNumber += 128
+                columnByte = (lowByte & 0x7F) - 0x50
+            }
+            else if(0x78 ... 0x7F ~= lowByte || 0xF8 ... 0xFF ~= lowByte) {
+                //Discard.
+            }
+            else	 {
+                //Top third.
+                rowNumber += 0
+                columnByte = lowByte & 0x7F
+            }
         
-        if(EmulatedSystemInstance!.videoSoftswitches.PAGE_2) {
-            pageBase = 0x4000
-        } else {
-            pageBase = 0x2000
+            rowNumber += Int(offset / 0x400) /* One line per 0x400 */
+            
+            while offset > 0x400 {
+                offset -= 0x400
+            }
+            rowNumber += Int((offset / 0x80) * 8)
+            
+            //if(pixel & 0x80)
+            
+            let dot0 = (pixel & 0x01) == 0x01
+            let dot1 = (pixel & 0x02) == 0x02
+            let dot2 = (pixel & 0x04) == 0x04
+            let dot3 = (pixel & 0x08) == 0x08
+            let dot4 = (pixel & 0x10) == 0x10
+            let dot5 = (pixel & 0x20) == 0x20
+            let dot6 = (pixel & 0x40) == 0x40
+            //let dot7 = (pixel & 0x80) == 0x80
+            
+            let pixelRowOffset = Int(rowNumber * AppleII.ScreenDelegate.PIXEL_WIDTH)
+            let pixelColumnOffset = Int(UInt16(columnByte) * 7)
+            
+            if(pixelRowOffset + pixelColumnOffset == 17920) {
+                let x = 0
+            }
+            
+            if(dot0) {
+                buffer![pixelRowOffset + 0 + pixelColumnOffset] = AppleII.LoresColors.White
+            } else {
+                buffer![pixelRowOffset + 0 + pixelColumnOffset] = AppleII.LoresColors.Black
+            }
+            
+            if(dot1) {
+                buffer![pixelRowOffset + 1 + pixelColumnOffset] = AppleII.LoresColors.White
+            } else {
+                buffer![pixelRowOffset + 1 + pixelColumnOffset] = AppleII.LoresColors.Black
+            }
+            
+            if(dot2) {
+                buffer![pixelRowOffset + 2 + pixelColumnOffset] = AppleII.LoresColors.White
+            } else {
+                buffer![pixelRowOffset + 2 + pixelColumnOffset] = AppleII.LoresColors.Black
+            }
+            
+            if(dot3) {
+                buffer![pixelRowOffset + 3 + pixelColumnOffset] = AppleII.LoresColors.White
+            } else {
+                buffer![pixelRowOffset + 3 + pixelColumnOffset] = AppleII.LoresColors.Black
+            }
+            
+            if(dot4) {
+                buffer![pixelRowOffset + 4 + pixelColumnOffset] = AppleII.LoresColors.White
+            } else {
+                buffer![pixelRowOffset + 4 + pixelColumnOffset] = AppleII.LoresColors.Black
+            }
+            
+            if(dot5) {
+                buffer![pixelRowOffset + 5 + pixelColumnOffset] = AppleII.LoresColors.White
+            } else {
+                buffer![pixelRowOffset + 5 + pixelColumnOffset] = AppleII.LoresColors.Black
+            }
+            
+            if(dot6) {
+                buffer![pixelRowOffset + 6 + pixelColumnOffset] = AppleII.LoresColors.White
+            } else {
+                buffer![pixelRowOffset + 6 + pixelColumnOffset] = AppleII.LoresColors.Black
+            }
+
         }
-        
-        //Convert the address into an (X,Y) pixel coordinate.
-        var offset = address - 0x2000
-        if(offset >= 0x2000) { //Page 2 address
-            offset -= 0x2000
-        }
-        
-        //Find the row number.
-        var rowNumber = offset / 0x80
-        let lowByte = offset & 0x0FF
-        
-        if(0x28 ... 0x4F ~= lowByte || 0xA8 ... 0xCF ~= lowByte) {
-            //Middle third.
-            rowNumber += 64
-            //cellX = (lowByte & ~(0x80)) - 0x28
-        }
-        else if(0x50 ... 0x77 ~= lowByte || 0xD0 ... 0xF7 ~= lowByte) {
-            //Bottom third.
-            rowNumber += 64
-            //cellX = (lowByte & ~(0x80)) - 0x50
-        }
-        else if(0x78 ... 0x7F ~= lowByte || 0xF8 ... 0xFF ~= lowByte) {
-            //Discard.
-        }
-        else {
-            //Top third.
-            rowNumber += 0
-            //cellX = (lowByte & ~(0x80))
-        }
-        
-        rowNumber += offset / 0x400
-        
-        let columnByte = (offset & 0x0007)
-        
     }
+
 }

@@ -108,7 +108,8 @@ class AppleIIBase: NSObject, EmulatedSystem {
             backplane[6] = DiskII(slot: 6, romPath: "/Users/luigi/apple2/341-0027-a.p5")
         }
         
-        (backplane[6] as! DiskII).attachDiskImage(imagePath: "/Users/luigi/apple2/Prodos_2_4_1.po")
+        //(backplane[6] as! DiskII).attachDiskImage(imagePath: "/Users/luigi/apple2/Prodos_2_4_1.po")
+        (backplane[6] as! DiskII).attachDiskImage(imagePath: "/Users/luigi/apple2/clean332sysmas.do")
     }
     
     func doColdReset() {
@@ -173,8 +174,16 @@ class AppleIIBase: NSObject, EmulatedSystem {
             putGlyphs(buffer: buf!, start: videoMemoryStart + 0x2D0, end: videoMemoryStart + 0x2F8)
             putGlyphs(buffer: buf!, start: videoMemoryStart + 0x350, end: videoMemoryStart + 0x378)
             putGlyphs(buffer: buf!, start: videoMemoryStart + 0x3D0, end: videoMemoryStart + 0x3F8)
-        } else {
-            print("Unimplemented video mode!")
+        } else if(videoMode == .Hires) {
+
+        } else if(videoMode == .MixedHires) {
+            putHiresPixels(buffer: buf!, start: 0x2000, end: 0x3fff)
+            
+            //Draw the bottom 4 text rows.
+            putGlyphs(buffer: buf!, start: videoMemoryStart + 0x250, end: videoMemoryStart + 0x278)
+            putGlyphs(buffer: buf!, start: videoMemoryStart + 0x2D0, end: videoMemoryStart + 0x2F8)
+            putGlyphs(buffer: buf!, start: videoMemoryStart + 0x350, end: videoMemoryStart + 0x378)
+            putGlyphs(buffer: buf!, start: videoMemoryStart + 0x3D0, end: videoMemoryStart + 0x3F8)
         }
         
         CVPixelBufferUnlockBaseAddress(emulatorViewDelegate.pixels!, CVPixelBufferLockFlags(rawValue: 0))
@@ -183,6 +192,16 @@ class AppleIIBase: NSObject, EmulatedSystem {
     }
     
     /* Video */
+    func putHiresPixels(buffer: UnsafeMutablePointer<BitmapPixelsLE555.PixelData>, start: UInt16, end: UInt16) {
+        for address in start ..< end {
+            let pixelData = CPU.sharedInstance.memoryInterface.readByte(offset: UInt16(address), bypassOverrides: true)
+            
+            HiresMode.putHiresByte(buffer: buffer,
+                                    pixel: pixelData,
+                                    address: UInt16(address))
+        }
+    }
+    
     func putLoresPixels(buffer: UnsafeMutablePointer<BitmapPixelsLE555.PixelData>, start: UInt16, end: UInt16) {
         for address in start ..< end {
             let pixelData = CPU.sharedInstance.memoryInterface.readByte(offset: UInt16(address), bypassOverrides: true)
