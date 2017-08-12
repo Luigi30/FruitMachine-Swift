@@ -22,10 +22,13 @@ extension AppleIIBase {
             }
             
             //Convert the address into an (X,Y) pixel coordinate.
-            var offset = address - 0x2000
+            var offset = address - pageBase
+            
+            /*
             if(offset >= 0x2000) { //Page 2 address
                 offset -= 0x2000
             }
+             */
             
             //Find the row number.
             var rowNumber = 0
@@ -44,6 +47,7 @@ extension AppleIIBase {
             }
             else if(0x78 ... 0x7F ~= lowByte || 0xF8 ... 0xFF ~= lowByte) {
                 //Discard.
+                return
             }
             else	 {
                 //Top third.
@@ -67,12 +71,11 @@ extension AppleIIBase {
             let dot4 = (pixel & 0x10) == 0x10
             let dot5 = (pixel & 0x20) == 0x20
             let dot6 = (pixel & 0x40) == 0x40
-            //let dot7 = (pixel & 0x80) == 0x80
             
             let pixelRowOffset = Int(rowNumber * AppleII.ScreenDelegate.PIXEL_WIDTH)
             let pixelColumnOffset = Int(UInt16(columnByte) * 7)
             
-            if(pixelRowOffset + pixelColumnOffset == 17920) {
+            if(pixelRowOffset + pixelColumnOffset == (5 * AppleII.ScreenDelegate.PIXEL_WIDTH)) {
                 let x = 0
             }
             

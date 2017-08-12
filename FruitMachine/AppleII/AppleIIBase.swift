@@ -144,10 +144,13 @@ class AppleIIBase: NSObject, EmulatedSystem {
         videoMode = getCurrentVideoMode(switches: videoSoftswitches)
         
         let videoMemoryStart: Address
+        let hgrMemoryStart: Address
         if(videoSoftswitches.PAGE_2) {
             videoMemoryStart = 0x800
+            hgrMemoryStart = 0x4000
         } else {
             videoMemoryStart = 0x400
+            hgrMemoryStart = 0x2000
         }
         
         if(videoMode == .Text)
@@ -175,9 +178,9 @@ class AppleIIBase: NSObject, EmulatedSystem {
             putGlyphs(buffer: buf!, start: videoMemoryStart + 0x350, end: videoMemoryStart + 0x378)
             putGlyphs(buffer: buf!, start: videoMemoryStart + 0x3D0, end: videoMemoryStart + 0x3F8)
         } else if(videoMode == .Hires) {
-
+            putHiresPixels(buffer: buf!, start: hgrMemoryStart, end: hgrMemoryStart + 0x1fff)
         } else if(videoMode == .MixedHires) {
-            putHiresPixels(buffer: buf!, start: 0x2000, end: 0x3fff)
+            putHiresPixels(buffer: buf!, start: hgrMemoryStart, end: hgrMemoryStart + 0x1fff)
             
             //Draw the bottom 4 text rows.
             putGlyphs(buffer: buf!, start: videoMemoryStart + 0x250, end: videoMemoryStart + 0x278)
