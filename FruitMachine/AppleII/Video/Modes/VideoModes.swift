@@ -37,50 +37,6 @@ extension AppleIIBase {
         case MixedHires
     }
     
-    struct LoresColors {
-        static let Black        = BitmapPixelsLE555.RGB32toLE555(r: 0, g: 0, b: 0)
-        static let Magenta      = BitmapPixelsLE555.RGB32toLE555(r: 227, g: 30, b: 96)
-        static let DarkBlue     = BitmapPixelsLE555.RGB32toLE555(r: 96, g: 78, b: 189)
-        static let Purple       = BitmapPixelsLE555.RGB32toLE555(r: 255, g: 68, b: 253)
-        static let DarkGreen    = BitmapPixelsLE555.RGB32toLE555(r: 0, g: 163, b: 96)
-        static let Gray1        = BitmapPixelsLE555.RGB32toLE555(r: 156, g: 156, b: 156)
-        static let MediumBlue   = BitmapPixelsLE555.RGB32toLE555(r: 20, g: 207, b: 253)
-        static let LightBlue    = BitmapPixelsLE555.RGB32toLE555(r: 208, g: 195, b: 255)
-        static let Brown        = BitmapPixelsLE555.RGB32toLE555(r: 96, g: 114, b: 3)
-        static let Orange       = BitmapPixelsLE555.RGB32toLE555(r: 255, g: 106, b: 60)
-        static let Gray2        = BitmapPixelsLE555.RGB32toLE555(r: 156, g: 156, b: 156)
-        static let Pink         = BitmapPixelsLE555.RGB32toLE555(r: 255, g: 160, b: 208)
-        static let LightGreen   = BitmapPixelsLE555.RGB32toLE555(r: 20, g: 245, b: 60)
-        static let Yellow       = BitmapPixelsLE555.RGB32toLE555(r: 208, g: 221, b: 141)
-        static let Aquamarine   = BitmapPixelsLE555.RGB32toLE555(r: 114, g: 255, b: 208)
-        static let White        = BitmapPixelsLE555.RGB32toLE555(r: 255, g: 255, b: 255)
-        
-        static func getColor(index: UInt8) -> BitmapPixelsLE555.PixelData {
-            switch index {
-            case 0: return AppleII.LoresColors.Black
-            case 1: return AppleII.LoresColors.Magenta
-            case 2: return AppleII.LoresColors.DarkBlue
-            case 3: return AppleII.LoresColors.Purple
-            case 4: return AppleII.LoresColors.DarkGreen
-            case 5: return AppleII.LoresColors.Gray1
-            case 6: return AppleII.LoresColors.MediumBlue
-            case 7: return AppleII.LoresColors.LightBlue
-            case 8: return AppleII.LoresColors.Brown
-            case 9: return AppleII.LoresColors.Orange
-            case 10: return AppleII.LoresColors.Gray2
-            case 11: return AppleII.LoresColors.Pink
-            case 12: return AppleII.LoresColors.LightGreen
-            case 13: return AppleII.LoresColors.Yellow
-            case 14: return AppleII.LoresColors.Aquamarine
-            case 15: return AppleII.LoresColors.White
-            default:
-                print("tried to get color > 15")
-                return AppleII.LoresColors.Black
-            }
-
-        }
-    }
-    
     func getCurrentVideoMode(switches: VideoSoftswitches) -> VideoMode {
         if(switches.TEXT_MODE == true)
         {

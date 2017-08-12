@@ -114,6 +114,10 @@ class AppleIIBase: NSObject, EmulatedSystem {
     
     func doColdReset() {
         CPU.sharedInstance.coldReset()
+        
+        //Reinitialize peripherals in case they changed.
+        setupPeripherals()
+        
         doReset()
     }
     

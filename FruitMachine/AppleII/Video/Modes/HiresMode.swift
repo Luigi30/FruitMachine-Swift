@@ -62,8 +62,6 @@ extension AppleIIBase {
             }
             rowNumber += Int((offset / 0x80) * 8)
             
-            //if(pixel & 0x80)
-            
             let dot0 = (pixel & 0x01) == 0x01
             let dot1 = (pixel & 0x02) == 0x02
             let dot2 = (pixel & 0x04) == 0x04
@@ -80,48 +78,68 @@ extension AppleIIBase {
             }
             
             if(dot0) {
-                buffer![pixelRowOffset + 0 + pixelColumnOffset] = AppleII.LoresColors.White
+                buffer![pixelRowOffset + 0 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.White
             } else {
-                buffer![pixelRowOffset + 0 + pixelColumnOffset] = AppleII.LoresColors.Black
+                buffer![pixelRowOffset + 0 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.Black
             }
             
             if(dot1) {
-                buffer![pixelRowOffset + 1 + pixelColumnOffset] = AppleII.LoresColors.White
+                buffer![pixelRowOffset + 1 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.White
             } else {
-                buffer![pixelRowOffset + 1 + pixelColumnOffset] = AppleII.LoresColors.Black
+                buffer![pixelRowOffset + 1 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.Black
             }
             
             if(dot2) {
-                buffer![pixelRowOffset + 2 + pixelColumnOffset] = AppleII.LoresColors.White
+                buffer![pixelRowOffset + 2 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.White
             } else {
-                buffer![pixelRowOffset + 2 + pixelColumnOffset] = AppleII.LoresColors.Black
+                buffer![pixelRowOffset + 2 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.Black
             }
             
             if(dot3) {
-                buffer![pixelRowOffset + 3 + pixelColumnOffset] = AppleII.LoresColors.White
+                buffer![pixelRowOffset + 3 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.White
             } else {
-                buffer![pixelRowOffset + 3 + pixelColumnOffset] = AppleII.LoresColors.Black
+                buffer![pixelRowOffset + 3 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.Black
             }
             
             if(dot4) {
-                buffer![pixelRowOffset + 4 + pixelColumnOffset] = AppleII.LoresColors.White
+                buffer![pixelRowOffset + 4 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.White
             } else {
-                buffer![pixelRowOffset + 4 + pixelColumnOffset] = AppleII.LoresColors.Black
+                buffer![pixelRowOffset + 4 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.Black
             }
             
             if(dot5) {
-                buffer![pixelRowOffset + 5 + pixelColumnOffset] = AppleII.LoresColors.White
+                buffer![pixelRowOffset + 5 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.White
             } else {
-                buffer![pixelRowOffset + 5 + pixelColumnOffset] = AppleII.LoresColors.Black
+                buffer![pixelRowOffset + 5 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.Black
             }
             
             if(dot6) {
-                buffer![pixelRowOffset + 6 + pixelColumnOffset] = AppleII.LoresColors.White
+                buffer![pixelRowOffset + 6 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.White
             } else {
-                buffer![pixelRowOffset + 6 + pixelColumnOffset] = AppleII.LoresColors.Black
+                buffer![pixelRowOffset + 6 + pixelColumnOffset] = AppleIIBase.HiresMode.Colors.Black
             }
 
         }
+        
+        struct Colors {
+            static let Black        = BitmapPixelsLE555.RGB32toLE555(r: 0, g: 0, b: 0)
+            static let White        = BitmapPixelsLE555.RGB32toLE555(r: 255, g: 255, b: 255)
+            
+            static func getColor(index: UInt8) -> BitmapPixelsLE555.PixelData {
+                switch index {
+                case 0: return AppleIIBase.HiresMode.Colors.Black
+                case 1: return AppleIIBase.HiresMode.Colors.White
+                case 2: return AppleIIBase.HiresMode.Colors.White
+                case 3: return AppleIIBase.HiresMode.Colors.White
+                case 4: return AppleIIBase.HiresMode.Colors.White
+                case 5: return AppleIIBase.HiresMode.Colors.White
+                case 6: return AppleIIBase.HiresMode.Colors.White
+                case 7: return AppleIIBase.HiresMode.Colors.White
+                default:
+                    print("tried to get color > 15")
+                    return AppleIIBase.HiresMode.Colors.Black
+                }
+            }
+        }
     }
-
 }

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13168.3" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13178.6" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13168.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13178.6"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowController" customModule="FruitMachine" customModuleProvider="target">
             <connections>
+                <outlet property="a2_Model" destination="TU9-bs-2Ym" id="9ZX-6b-QuF"/>
                 <outlet property="a2_Peripherals_Slot0" destination="vWt-St-7kp" id="4VF-4b-kcd"/>
                 <outlet property="a2_Peripherals_Slot6" destination="1CB-yF-5GW" id="zcX-Ts-Jd4"/>
                 <outlet property="path_ROMBasic" destination="ilU-dc-qbI" id="HXt-ut-QQs"/>
@@ -39,7 +40,7 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Paths" identifier="2" id="zXY-01-Th8">
-                                <view key="view" ambiguous="YES" id="tiQ-eh-pdD">
+                                <view key="view" id="tiQ-eh-pdD">
                                     <rect key="frame" x="10" y="33" width="554" height="338"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -140,12 +141,12 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Apple II" identifier="" id="aVa-m9-VEl">
-                                <view key="view" id="mjS-Jn-KXO">
+                                <view key="view" ambiguous="YES" id="mjS-Jn-KXO">
                                     <rect key="frame" x="10" y="33" width="554" height="338"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vav-pa-mvK">
-                                            <rect key="frame" x="15" y="318" width="40" height="17"/>
+                                            <rect key="frame" x="15" y="260" width="40" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Slot 0" id="WlR-dZ-W72">
                                                 <font key="font" metaFont="system"/>
@@ -154,7 +155,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rlr-ba-8ra">
-                                            <rect key="frame" x="15" y="292" width="40" height="17"/>
+                                            <rect key="frame" x="15" y="234" width="40" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Slot 1" id="9CT-bF-2b1">
                                                 <font key="font" metaFont="system"/>
@@ -163,7 +164,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Lvh-92-Ob0">
-                                            <rect key="frame" x="59" y="286" width="200" height="26"/>
+                                            <rect key="frame" x="59" y="228" width="200" height="26"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <popUpButtonCell key="cell" type="push" title="Nothing" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="D6o-nP-s6d" id="RLd-bf-oyA">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -178,7 +179,7 @@
                                             </popUpButtonCell>
                                         </popUpButton>
                                         <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tQA-LM-0T1">
-                                            <rect key="frame" x="59" y="260" width="200" height="26"/>
+                                            <rect key="frame" x="59" y="202" width="200" height="26"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <popUpButtonCell key="cell" type="push" title="Nothing" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="RXL-80-c5U" id="M1v-yb-ebb">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -193,7 +194,7 @@
                                             </popUpButtonCell>
                                         </popUpButton>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oeY-9x-3x1">
-                                            <rect key="frame" x="15" y="239" width="40" height="17"/>
+                                            <rect key="frame" x="15" y="181" width="40" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Slot 3" id="qwP-Fk-pIB">
                                                 <font key="font" metaFont="system"/>
@@ -202,7 +203,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ron-Jc-5NS">
-                                            <rect key="frame" x="59" y="233" width="200" height="26"/>
+                                            <rect key="frame" x="59" y="175" width="200" height="26"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <popUpButtonCell key="cell" type="push" title="Nothing" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="khL-Nw-Yyb" id="5Uy-Yz-oHu">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -217,7 +218,7 @@
                                             </popUpButtonCell>
                                         </popUpButton>
                                         <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vWt-St-7kp">
-                                            <rect key="frame" x="59" y="313" width="200" height="26"/>
+                                            <rect key="frame" x="59" y="255" width="200" height="26"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <popUpButtonCell key="cell" type="push" title="Nothing" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="hE4-yk-CCz" id="SSf-AV-4XO">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -230,8 +231,22 @@
                                                 </menu>
                                             </popUpButtonCell>
                                         </popUpButton>
+                                        <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TU9-bs-2Ym">
+                                            <rect key="frame" x="59" y="311" width="200" height="26"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <popUpButtonCell key="cell" type="push" title="Apple ][ (Original)" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="4DB-sZ-RHB" id="tYw-7u-gRo">
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="menu"/>
+                                                <menu key="menu" id="H16-YD-aYe">
+                                                    <items>
+                                                        <menuItem title="Apple ][ (Original)" state="on" id="4DB-sZ-RHB"/>
+                                                        <menuItem title="Apple ][+" id="lk3-qa-sTr"/>
+                                                    </items>
+                                                </menu>
+                                            </popUpButtonCell>
+                                        </popUpButton>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wql-7f-Cmb">
-                                            <rect key="frame" x="15" y="212" width="40" height="17"/>
+                                            <rect key="frame" x="15" y="154" width="40" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Slot 4" id="uVy-Wv-hRJ">
                                                 <font key="font" metaFont="system"/>
@@ -240,7 +255,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZVS-Jk-MpZ">
-                                            <rect key="frame" x="15" y="186" width="40" height="17"/>
+                                            <rect key="frame" x="15" y="128" width="40" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Slot 5" id="ua9-zw-Mzd">
                                                 <font key="font" metaFont="system"/>
@@ -249,7 +264,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sjp-qD-NrB">
-                                            <rect key="frame" x="59" y="180" width="200" height="26"/>
+                                            <rect key="frame" x="59" y="122" width="200" height="26"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <popUpButtonCell key="cell" type="push" title="Nothing" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="LS7-45-B1l" id="6hp-fp-PHh">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -264,7 +279,7 @@
                                             </popUpButtonCell>
                                         </popUpButton>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nm9-Zu-F6e">
-                                            <rect key="frame" x="15" y="160" width="40" height="17"/>
+                                            <rect key="frame" x="15" y="102" width="40" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Slot 6" id="SWC-La-cqL">
                                                 <font key="font" metaFont="system"/>
@@ -273,7 +288,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1CB-yF-5GW">
-                                            <rect key="frame" x="59" y="154" width="200" height="26"/>
+                                            <rect key="frame" x="59" y="96" width="200" height="26"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <popUpButtonCell key="cell" type="push" title="Disk II" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="2jc-dw-NSC" id="bnz-0t-Peo">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -287,7 +302,7 @@
                                             </popUpButtonCell>
                                         </popUpButton>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rtE-66-3Uw">
-                                            <rect key="frame" x="15" y="133" width="40" height="17"/>
+                                            <rect key="frame" x="15" y="75" width="40" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Slot 7" id="9oV-LI-9Pq">
                                                 <font key="font" metaFont="system"/>
@@ -296,7 +311,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="al0-aZ-uIH">
-                                            <rect key="frame" x="59" y="127" width="200" height="26"/>
+                                            <rect key="frame" x="59" y="69" width="200" height="26"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <popUpButtonCell key="cell" type="push" title="Nothing" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Nxx-1S-5RB" id="eNb-sq-3kP">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -311,7 +326,7 @@
                                             </popUpButtonCell>
                                         </popUpButton>
                                         <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cyH-8e-Kfo">
-                                            <rect key="frame" x="59" y="207" width="200" height="26"/>
+                                            <rect key="frame" x="59" y="149" width="200" height="26"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <popUpButtonCell key="cell" type="push" title="Nothing" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="F24-4g-S0w" id="UNW-s2-DPf">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -326,9 +341,18 @@
                                             </popUpButtonCell>
                                         </popUpButton>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xvm-ee-hrf">
-                                            <rect key="frame" x="15" y="266" width="40" height="17"/>
+                                            <rect key="frame" x="15" y="208" width="40" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Slot 2" id="IDk-eE-egh">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bx6-PM-jSt">
+                                            <rect key="frame" x="15" y="317" width="40" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Model" id="wZ2-pR-lRr">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

@@ -360,6 +360,9 @@
                         </subviews>
                     </view>
                     <connections>
+                        <outlet property="btn_Break" destination="94S-pW-GeW" id="aal-zp-5kg"/>
+                        <outlet property="btn_Run" destination="oRf-MK-DEX" id="Dv1-Tg-Ht7"/>
+                        <outlet property="btn_Step" destination="HdY-Jc-lNK" id="uvQ-eY-ika"/>
                         <outlet property="debuggerTableView" destination="MuT-J3-VZ6" id="TMx-Do-29u"/>
                         <outlet property="text_CPU_A" destination="WjO-ue-iRg" id="kaI-Bh-Efs"/>
                         <outlet property="text_CPU_Flags" destination="ecN-Ge-1hE" id="dDw-IG-xNd"/>

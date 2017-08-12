@@ -15,6 +15,7 @@ class PreferencesWindowController: NSWindowController {
     @IBOutlet weak var path_ROMBasic: NSTextField!
     
     /* Apple II ROM paths */
+    @IBOutlet weak var a2_Model: NSPopUpButton!
     
     /* Apple II Peripherals */
     @IBOutlet weak var a2_Peripherals_Slot0: NSPopUpButton!
@@ -22,63 +23,59 @@ class PreferencesWindowController: NSWindowController {
     
     let defaults = UserDefaults.standard
     
-    override func windowDidLoad() {
+    override func windowDidLoad() {        
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(windowWillClose),
             name: NSWindow.willCloseNotification,
             object: nil)
         
-        setupPreferences()
         super.windowDidLoad()
     }
     
     func setupDefaultsIfRequired() {
-//        UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
-//        UserDefaults.standard.synchronize()
+        var model = defaults.string(forKey: "a2_Model")
+        if(model == nil) { model = "Apple ][+" }
+        defaults.set(model, forKey: "a2_Model")
         
         var slot0 = defaults.string(forKey: "a2_Peripherals_Slot0")
-        var slot6 = defaults.string(forKey: "a2_Peripherals_Slot6")
-        
         if(slot0 == nil) { slot0 = "Language Card (16K)" }
-        if(slot6 == nil) { slot6 = "Disk II" }
-        
         defaults.set(slot0, forKey: "a2_Peripherals_Slot0")
+        
+        var slot6 = defaults.string(forKey: "a2_Peripherals_Slot6")
+        if(slot6 == nil) { slot6 = "Disk II" }
         defaults.set(slot6, forKey: "a2_Peripherals_Slot6")
     }
     
     func setupPreferences() {
         setupA1RomPaths()
         setupA2Peripherals()
+        
+        setPreference(dropdown: a2_Model, key: "a2_Model")
     }
     
     func setupA1RomPaths() {
-        let monitorPath = defaults.string(forKey: "path_ROMMonitor")
-        let characterPath = defaults.string(forKey: "path_ROMCharacter")
-        let basicPath = defaults.string(forKey: "path_ROMBasic")
-        
-        if (monitorPath != nil) {
-            path_ROMMonitor.stringValue = monitorPath!
-        }
-        
-        if (characterPath != nil) {
-            path_ROMCharacter.stringValue = characterPath!
-        }
-        
-        if (basicPath != nil) {
-            path_ROMBasic.stringValue = basicPath!
-        }
+        setPreference(textfield: path_ROMMonitor, key: "path_ROMMonitor")
+        setPreference(textfield: path_ROMCharacter, key: "path_ROMCharacter")
+        setPreference(textfield: path_ROMBasic, key: "path_ROMBasic")
     }
     
     func setupA2Peripherals() {
-        let slot0 = defaults.string(forKey: "a2_Peripherals_Slot0")
-        if(slot0 != nil) {
-            a2_Peripherals_Slot6.selectItem(withTitle: slot0!)
+        setPreference(dropdown: a2_Peripherals_Slot0, key: "a2_Peripherals_Slot0")
+        setPreference(dropdown: a2_Peripherals_Slot6, key: "a2_Peripherals_Slot6")
+    }
+    
+    func setPreference(dropdown: NSPopUpButton, key: String) {
+        let pref = defaults.string(forKey: key)
+        if(pref != nil) {
+            dropdown.selectItem(withTitle: pref!)
         }
-        
-        let slot6 = defaults.string(forKey: "a2_Peripherals_Slot6")
-        if(slot6 != nil) {
-            a2_Peripherals_Slot6.selectItem(withTitle: slot6!)
+    }
+    
+    func setPreference(textfield: NSTextField, key: String) {
+        let pref = defaults.string(forKey: key)
+        if(pref != nil) {
+            textfield.stringValue = pref!
         }
     }
     
@@ -91,6 +88,8 @@ class PreferencesWindowController: NSWindowController {
         defaults.set(a2_Peripherals_Slot6.selectedItem?.title, forKey: "a2_Peripherals_Slot6")
         
         defaults.synchronize()
+        
+        NotificationCenter.default.post(name: EmulationNotifications.StartEmulation, object: nil)
     }
     
     override var windowNibName : NSNib.Name? {
@@ -115,7 +114,7 @@ class PreferencesWindowController: NSWindowController {
     @IBAction func btn_click_Character(_ sender: NSButton) {
         let picker = NSOpenPanel()
         
-        picker.title = "Select your Monitor ROM (apple1.vid)"
+        picker.title = "Select your Character ROM (apple1.vid)"
         picker.showsHiddenFiles = false
         picker.canChooseFiles = true
         picker.canChooseDirectories = false
@@ -130,7 +129,7 @@ class PreferencesWindowController: NSWindowController {
     @IBAction func btn_click_BASIC(_ sender: NSButton) {
         let picker = NSOpenPanel()
         
-        picker.title = "Select your Monitor ROM (basic.bin)"
+        picker.title = "Select your BASIC ROM (basic.bin)"
         picker.showsHiddenFiles = false
         picker.canChooseFiles = true
         picker.canChooseDirectories = false

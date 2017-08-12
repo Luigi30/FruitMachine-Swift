@@ -8,6 +8,11 @@
 
 import Cocoa
 
+class EmulationNotifications {
+    static let StartEmulation = Notification.Name("StartEmulation")
+    static let StopEmulation = Notification.Name("StopEmulation")
+}
+
 class AppleIIViewController: NSViewController {    
     @IBOutlet weak var lbl_Drive1: NSTextField!
     @IBOutlet weak var lbl_Drive2: NSTextField!
@@ -21,20 +26,34 @@ class AppleIIViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
-        EmulatedSystemInstance = AppleIIPlus.sharedInstance
-        
         preferencesWindowController = PreferencesWindowController()
+        setModel()
+        
         self.view.addSubview(EmulatedSystemInstance!.emulatorView)
         
         preferencesWindowController.setupDefaultsIfRequired()
         setupDriveNotifications()
-        NotificationCenter.default.addObserver(self, selector: #selector(self.debuggerBreak), name: DebuggerNotifications.Break, object: nil)
- 
-        self.frameTimer = Timer.scheduledTimer(timeInterval: 1.0/60.0,
-                                               target: self,
-                                               selector: #selector(runEmulation),
-                                               userInfo: nil,
-                                               repeats: true)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.stopFrameTimer), name: EmulationNotifications.StopEmulation, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.startFrameTimer), name: EmulationNotifications.StartEmulation, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.breakpointHit), name: CPUNotifications.BreakpointHit, object: nil)
+        startFrameTimer()
+    }
+    
+    func setModel() {
+        let model = UserDefaults.standard.string(forKey: "a2_Model")
+        if (model == "Apple ][ (Original") {
+            EmulatedSystemInstance = AppleII.sharedInstance
+        } else if(model == "Apple ][+") {
+            EmulatedSystemInstance = AppleIIPlus.sharedInstance
+        } else {
+            /* ??? */
+            EmulatedSystemInstance = AppleII.sharedInstance
+        }
+    }
+    
+    @objc func breakpointHit() {
+        stopFrameTimer()
+        showDebugger(self)
     }
     
     @objc func runEmulation() {
@@ -44,20 +63,30 @@ class AppleIIViewController: NSViewController {
         }
     }
     
-    @objc func debuggerBreak() {
-        frameTimer?.invalidate()
-        CPU.sharedInstance.isRunning = false
+    @objc func stopFrameTimer() {
+        self.frameTimer?.invalidate()
     }
     
-    @IBAction func showDebugger(_ sender: Any) {        
+    @objc func startFrameTimer() {
+        self.frameTimer = Timer.scheduledTimer(timeInterval: 1.0/60.0,
+                                               target: self,
+                                               selector: #selector(runEmulation),
+                                               userInfo: nil,
+                                               repeats: true)
+    }
+    
+    @IBAction func showDebugger(_ sender: Any) {
+        stopFrameTimer()
         let debuggerStoryboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Debugger"), bundle: nil)
         debuggerWindowController = debuggerStoryboard.instantiateInitialController() as! DebuggerWindowController
         debuggerWindowController.showWindow(self)
     }
     
     @IBAction func showPreferences(_ sender: Any) {
+        stopFrameTimer()
         preferencesWindowController.loadWindow()
         preferencesWindowController.showWindow(self)
+        preferencesWindowController.setupPreferences()
     }
     
     @IBAction func doReset(_ sender: Any) {
@@ -65,6 +94,7 @@ class AppleIIViewController: NSViewController {
     }
     
     @IBAction func doColdReset(_ sender: Any) {
+        setModel() //In case it changed
         EmulatedSystemInstance!.doColdReset()
     }
     

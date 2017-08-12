@@ -17,6 +17,10 @@ enum CPUModel {
     case M65C02
 }
 
+class CPUNotifications {
+    static let BreakpointHit = Notification.Name("BreakpointHit")
+}
+
 struct StatusRegister {
     var negative: Bool      //N - 0x80
     var overflow: Bool      //V - 0x40
@@ -253,6 +257,7 @@ final class CPU: NSObject {
     }
         
     final func executeNextInstruction() throws {
+        
         instruction_register = memoryInterface.readByte(offset: program_counter)
         let operation = InstructionTable[instruction_register]
         if(operation == nil) {
@@ -301,6 +306,11 @@ final class CPU: NSObject {
     /* Running */
     final func cpuStep() {
         do {
+            if(breakpoints.contains(program_counter)) {
+                isRunning = false
+                NotificationCenter.default.post(name: CPUNotifications.BreakpointHit, object: nil)
+                return
+            }
             try executeNextInstruction()
         } catch CPUExceptions.invalidInstruction {
             print("Invalid instruction at \(program_counter.asHexString())")
@@ -313,13 +323,8 @@ final class CPU: NSObject {
     func runCyclesBatch() {
         isRunning = true
         
-        while(!outOfCycles()) {
+        while(!outOfCycles() && isRunning) {
             cpuStep()
-            
-            if (breakpoints.contains(program_counter)) {
-                isRunning = false
-            }
-            
         }
     }
     

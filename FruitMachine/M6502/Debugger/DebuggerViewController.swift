@@ -25,6 +25,10 @@ class DebuggerViewController: NSViewController {
     
     @IBOutlet weak var debuggerTableView: NSTableView!
     
+    @IBOutlet weak var btn_Break: NSButton!
+    @IBOutlet weak var btn_Step: NSButton!
+    @IBOutlet weak var btn_Run: NSButton!
+    
     var cpuInstance = CPU.sharedInstance
     var isRunning = false
     
@@ -74,24 +78,6 @@ class DebuggerViewController: NSViewController {
         }
     }
     
-    func debugRun() {
-        isRunning = true
-        
-        cpuInstance.cycles = 0
-        cpuInstance.cyclesInBatch = 10000
-        
-        while(!cpuInstance.outOfCycles() && isRunning) {
-            cpuInstance.cpuStep()
-            
-            if (cpuInstance.breakpoints.contains(cpuInstance.program_counter)) {
-                isRunning = false
-                updateCPUStatusFields()
-                debugConsolePrint(str: "Breakpoint reached at $\(cpuInstance.program_counter.asHexString())", newline: true)
-            }
-        }
-        
-    }
-    
     func queueCPUStep(queue: DispatchQueue) {
         queue.async {
             self.cpuInstance.cpuStep()
@@ -105,17 +91,18 @@ class DebuggerViewController: NSViewController {
     }
 
     @IBAction func btn_Break(_ sender: Any) {
-        isRunning = false
-        _ = 0
+        NotificationCenter.default.post(name: EmulationNotifications.StopEmulation, object: nil)
+        btn_Step.isEnabled = true
     }
     
     @IBAction func btn_CPURun(_ sender: Any) {
-        debugRun()
+        NotificationCenter.default.post(name: EmulationNotifications.StartEmulation, object: nil)
+        btn_Step.isEnabled = false
     }
 
     @IBAction func btn_CPU_Restart(_ sender: Any) {
         cpuInstance.performReset()
-        cpuInstance.program_counter = 0x400
+        cpuInstance.program_counter = CPU.sharedInstance.memoryInterface.readWord(offset: 0xFFFC)
         debugConsolePrint(str: "CPU restarted from \(cpuInstance.program_counter)", newline: true)
     }
     
