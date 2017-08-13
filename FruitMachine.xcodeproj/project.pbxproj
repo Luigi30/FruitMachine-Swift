@@ -48,6 +48,7 @@
 		2AD458E31F20661300F05121 /* CPUInstructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458E21F20661300F05121 /* CPUInstructions.swift */; };
 		2AD458E51F2070DF00F05121 /* Opcodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD458E41F2070DF00F05121 /* Opcodes.swift */; };
 		2AD6D5841F26E6BF008F3CF5 /* DebuggerCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD6D5831F26E6BF008F3CF5 /* DebuggerCommands.swift */; };
+		2ADBE6BA1F400821005BF2B1 /* AppleIIe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ADBE6B91F400821005BF2B1 /* AppleIIe.swift */; };
 		2AE3BB971F32CEB100C11060 /* ROMManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE3BB961F32CEB100C11060 /* ROMManager.swift */; };
 		2AE42E081F2850F400C4900E /* ReadOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E071F2850F400C4900E /* ReadOverride.swift */; };
 		2AE42E0A1F28521E00C4900E /* WriteOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE42E091F28521E00C4900E /* WriteOverride.swift */; };
@@ -104,6 +105,7 @@
 		2AD458E21F20661300F05121 /* CPUInstructions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUInstructions.swift; sourceTree = "<group>"; };
 		2AD458E41F2070DF00F05121 /* Opcodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Opcodes.swift; sourceTree = "<group>"; };
 		2AD6D5831F26E6BF008F3CF5 /* DebuggerCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerCommands.swift; sourceTree = "<group>"; };
+		2ADBE6B91F400821005BF2B1 /* AppleIIe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIIe.swift; sourceTree = "<group>"; };
 		2AE3BB961F32CEB100C11060 /* ROMManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ROMManager.swift; sourceTree = "<group>"; };
 		2AE42E071F2850F400C4900E /* ReadOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOverride.swift; sourceTree = "<group>"; };
 		2AE42E091F28521E00C4900E /* WriteOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteOverride.swift; sourceTree = "<group>"; };
@@ -219,11 +221,10 @@
 		2AB6CAC71F30407200DECAC0 /* AppleII */ = {
 			isa = PBXGroup;
 			children = (
+				2ADBE6B81F4007E5005BF2B1 /* Models */,
 				2A63C2381F32CCDB00D4F4F8 /* Peripherals */,
 				2A6DC7EE1F30492E0066FE0D /* Video */,
 				2A6DC7EA1F3045C90066FE0D /* AppleIIBase.swift */,
-				2AB6CACC1F3041A200DECAC0 /* AppleII.swift */,
-				2A044E2D1F382CA9000E8085 /* AppleIIPlus.swift */,
 				2A86FB961F316CB500AD0C68 /* KeyboardController.swift */,
 				2A6C2D161F31216700B8DC60 /* SoftswitchOverrides.swift */,
 			);
@@ -277,6 +278,16 @@
 				2AD458DE1F205F4500F05121 /* CPU.swift */,
 			);
 			path = M6502;
+			sourceTree = "<group>";
+		};
+		2ADBE6B81F4007E5005BF2B1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				2AB6CACC1F3041A200DECAC0 /* AppleII.swift */,
+				2A044E2D1F382CA9000E8085 /* AppleIIPlus.swift */,
+				2ADBE6B91F400821005BF2B1 /* AppleIIe.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		2AE3BB981F32D24D00C11060 /* Memory */ = {
@@ -414,6 +425,7 @@
 				2A6C2D171F31216700B8DC60 /* SoftswitchOverrides.swift in Sources */,
 				2A5C5BBE1F304D4B00ED351D /* Glyph.swift in Sources */,
 				2A2126841F2A9FA300E43DC1 /* DebuggerWindowController.swift in Sources */,
+				2ADBE6BA1F400821005BF2B1 /* AppleIIe.swift in Sources */,
 				2AD458E31F20661300F05121 /* CPUInstructions.swift in Sources */,
 				2A5C5BBC1F304C3A00ED351D /* A2CharacterGenerator.swift in Sources */,
 				2AD458D01F205EB700F05121 /* DebuggerViewController.swift in Sources */,
@@ -509,7 +521,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -567,7 +579,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;

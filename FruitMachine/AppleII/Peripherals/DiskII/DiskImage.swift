@@ -49,9 +49,8 @@ class ProdosImage: DiskImageFormat {
     static let TRACKS_PER_DISK: Int = 35
     static let BYTES_PER_TRACK: Int = BYTES_PER_SECTOR * SECTORS_PER_TRACK
     
-    //Sectors in a track are in this order.
-    static let SECTOR_ORDER = [0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15]
-    //static let SECTOR_ORDER = [0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15]
+    //Sectors in a track are still in DOS order for our purposes.
+    static let SECTOR_ORDER = [0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15]
     
     static func readTrackAndSector(imageData: [UInt8], trackNum: Int, sectorNum: Int) -> [UInt8] {
         //Find the track in our disk.
@@ -222,7 +221,7 @@ class DiskImage: NSObject {
             }
         } else if(image is ProdosImage) {
             for i in 0 ..< ProdosImage.SECTORS_PER_TRACK {
-                let sectorOffset: Int = 0x47 + (0x18C * ProdosImage.SECTOR_ORDER.index(of: i)!)
+                let sectorOffset: Int = 0x47 + (0x18C * Dos33Image.SECTOR_ORDER.index(of: i)!)
                 let nibbles: [UInt8] = [UInt8](track[sectorOffset ... sectorOffset + 343])
                 trackBytes.append(contentsOf: DecodeSectorSixAndTwo(nibbles: nibbles))
             }

@@ -12,8 +12,10 @@ protocol EmulatedSystem {
     var CPU_FREQUENCY: Double { get }
     var FRAMES_PER_SECOND: Double { get }
     var CYCLES_PER_BATCH: Int { get }
+    var cg: AppleIIBase.A2CharacterGenerator { get }
     
-    init(cpuFrequency: Double, fps: Double, delegate: AppleIIBase.ScreenDelegate, view: AppleIIBase.ScreenView)
+    init(cpuFrequency: Double, fps: Double, delegate: AppleIIBase.ScreenDelegate, view: AppleIIBase.ScreenView, chargen: AppleIIBase.A2CharacterGenerator
+    )
     func installOverrides()
     func loadROMs()
 }
@@ -30,20 +32,24 @@ class AppleIIBase: NSObject, EmulatedSystem {
     var FRAMES_PER_SECOND: Double
     var CYCLES_PER_BATCH: Int
     
+    let cg: A2CharacterGenerator
+    
     var videoSoftswitches = VideoSoftswitches()
     var videoMode: VideoMode = .Text
     
-    let cg = A2CharacterGenerator(romPath: "/Users/luigi/apple2/a2.chr");
+    //let cg = A2CharacterGenerator(romPath: "/Users/luigi/apple2/apple2/a2.chr");
     let keyboardController = KeyboardController()
     
     var emulatorViewDelegate: ScreenDelegate
     var emulatorView: ScreenView
     var emuScreenLayer = CALayer()
     
-    required init(cpuFrequency: Double, fps: Double, delegate: ScreenDelegate, view: ScreenView) {
+    required init(cpuFrequency: Double, fps: Double, delegate: ScreenDelegate, view: ScreenView, chargen: A2CharacterGenerator) {
         CPU_FREQUENCY = cpuFrequency
         FRAMES_PER_SECOND = fps
         CYCLES_PER_BATCH = Int(CPU_FREQUENCY / FRAMES_PER_SECOND)
+        
+        cg = chargen
         
         emulatorViewDelegate = delegate
         emulatorView = view
@@ -101,13 +107,14 @@ class AppleIIBase: NSObject, EmulatedSystem {
         
         let slot0 = defaults.string(forKey: "a2_Peripherals_Slot0")
         if(slot0 == "Language Card (16K)") {
-            backplane[0] = LanguageCard16K(slot: 0, romPath: "/Users/luigi/apple2/341-0020-00.f8")
+            backplane[0] = LanguageCard16K(slot: 0, romPath: "/Users/luigi/apple2/peripherals/341-0020-00.f8")
         }
         
         let slot6 = defaults.string(forKey: "a2_Peripherals_Slot6")
         if(slot6 == "Disk II") {
-            backplane[6] = DiskII(slot: 6, romPath: "/Users/luigi/apple2/341-0027-a.p5")
-            //(backplane[6] as! DiskII).attachDiskImage(imagePath: "/Users/luigi/apple2/Prodos_2_4_1.po")
+            backplane[6] = DiskII(slot: 6, romPath: "/Users/luigi/apple2/peripherals/341-0027-a.p5")
+            (backplane[6] as! DiskII).attachDiskImage(imagePath: "/Users/luigi/apple2/Prodos_2_4_1.po")
+            //(backplane[6] as! DiskII).attachDiskImage(imagePath: "/Users/luigi/apple2/Apex II - Apple II Diagnostic (v4.7-1986).do")
         }
     }
     

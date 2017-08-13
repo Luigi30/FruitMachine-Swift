@@ -1,40 +1,36 @@
 //
-//  AppleIIPlus.swift
+//  AppleIIe.swift
 //  FruitMachine
 //
-//  Created by Christopher Rohl on 8/7/17.
+//  Created by Christopher Rohl on 8/13/17.
 //  Copyright © 2017 Christopher Rohl. All rights reserved.
 //
 
 import Cocoa
 
-class AppleIIPlus: AppleIIBase {
-    static let sharedInstance = AppleIIPlus(cpuFrequency: 1000000, fps: 60.0)
+class AppleIIe: AppleIIBase {
+
+    static let sharedInstance = AppleIIe(cpuFrequency: 1000000, fps: 60.0)
     
     required init(cpuFrequency: Double, fps: Double) {
         super.init(cpuFrequency: cpuFrequency,
                    fps: fps,
                    delegate: ScreenDelegate(),
-                   view: ScreenView(frame: NSMakeRect(0, 16, 560, 384)))
+                   view: ScreenView(frame: NSMakeRect(0, 16, 560, 384)),
+                   chargen: A2CharacterGenerator(romPath: "/Users/luigi/apple2/apple2e/342-0133-a.chr"))
         
         loadROMs()
         doReset()
     }
     
-    required init(cpuFrequency: Double, fps: Double, delegate: ScreenDelegate, view: ScreenView) {
-        fatalError("init(cpuFrequency:fps:delegate:view:) has not been implemented")
+    required init(cpuFrequency: Double, fps: Double, delegate: ScreenDelegate, view: ScreenView, chargen: A2CharacterGenerator) {
+        fatalError("init(cpuFrequency:fps:delegate:view:chargen:) has not been implemented")
     }
     
     override func loadROMs() {
         //Applesoft BASIC
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2p/341-0011.d0", offset: 0xD000, length: 0x800)
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2p/341-0012.d8", offset: 0xD800, length: 0x800)
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2p/341-0013.e0", offset: 0xE000, length: 0x800)
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2p/341-0014.e8", offset: 0xE800, length: 0x800)
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2p/341-0015.f0", offset: 0xF000, length: 0x800)
-        
-        //Monitor
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2p/341-0020-00.f8", offset: 0xF800, length: 0x800)
+        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/apple2e/342-0135-b.64", offset: 0xD000, length: 0x1000)
+        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/apple2e/342-0134-a.64", offset: 0xE000, length: 0x1000)
     }
     
     override func installOverrides() {

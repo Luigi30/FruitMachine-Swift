@@ -45,6 +45,8 @@ class AppleIIViewController: NSViewController {
             EmulatedSystemInstance = AppleII.sharedInstance
         } else if(model == "Apple ][+") {
             EmulatedSystemInstance = AppleIIPlus.sharedInstance
+        } else if(model == "Apple IIe") {
+            EmulatedSystemInstance = AppleIIe.sharedInstance
         } else {
             /* ??? */
             EmulatedSystemInstance = AppleII.sharedInstance
