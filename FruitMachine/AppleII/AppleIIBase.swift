@@ -22,7 +22,8 @@ var EmulatedSystemInstance: AppleIIBase?
 
 class AppleIIBase: NSObject, EmulatedSystem {
     //Peripherals
-    var backplane = [Int: Peripheral?]()
+    //var backplane = [Int: Peripheral]()
+    var backplane = [Peripheral?](repeating: nil, count: 8)
     var frameCounter: Int = 0
     
     var CPU_FREQUENCY: Double
@@ -106,18 +107,17 @@ class AppleIIBase: NSObject, EmulatedSystem {
         let slot6 = defaults.string(forKey: "a2_Peripherals_Slot6")
         if(slot6 == "Disk II") {
             backplane[6] = DiskII(slot: 6, romPath: "/Users/luigi/apple2/341-0027-a.p5")
+            //(backplane[6] as! DiskII).attachDiskImage(imagePath: "/Users/luigi/apple2/Prodos_2_4_1.po")
         }
-        
-        //(backplane[6] as! DiskII).attachDiskImage(imagePath: "/Users/luigi/apple2/Prodos_2_4_1.po")
-        (backplane[6] as! DiskII).attachDiskImage(imagePath: "/Users/luigi/apple2/clean332sysmas.do")
+    }
+    
+    func attachImageToDiskDrive(drive: Peripheral, image: String) {
+        print("drive is \(drive)")
+        (drive as! DiskII).attachDiskImage(imagePath: image)
     }
     
     func doColdReset() {
         CPU.sharedInstance.coldReset()
-        
-        //Reinitialize peripherals in case they changed.
-        setupPeripherals()
-        
         doReset()
     }
     

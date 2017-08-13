@@ -38,7 +38,7 @@ class AppleIIPlus: AppleIIBase {
     }
     
     override func installOverrides() {
-        for (_, peripheral) in backplane {
+        for peripheral in backplane {
             if(peripheral != nil) {
                 peripheral!.installOverrides()
             }

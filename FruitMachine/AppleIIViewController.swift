@@ -94,7 +94,8 @@ class AppleIIViewController: NSViewController {
     }
     
     @IBAction func doColdReset(_ sender: Any) {
-        setModel() //In case it changed
+        setModel()
+        EmulatedSystemInstance!.setupPeripherals()
         EmulatedSystemInstance!.doColdReset()
     }
     
@@ -109,7 +110,8 @@ class AppleIIViewController: NSViewController {
         picker.allowedFileTypes = ["do", "po"]
         
         if(picker.runModal() == .OK) {
-            (EmulatedSystemInstance!.backplane[6] as! DiskII).attachDiskImage(imagePath: picker.url!.path)
+            print("insertDiskIntoDrive1: \(EmulatedSystemInstance!.backplane[6]!)")
+            EmulatedSystemInstance!.attachImageToDiskDrive(drive: EmulatedSystemInstance!.backplane[6]!, image: picker.url!.path)
         }
     }
     

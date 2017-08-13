@@ -37,10 +37,11 @@ class AppleII: AppleIIBase {
     }
     
     override func installOverrides() {
-        for (_, peripheral) in backplane {
+        for peripheral in backplane {
             if(peripheral != nil) {
-                peripheral!.installOverrides()
+               peripheral!.installOverrides()
             }
+            
         }
         
         CPU.sharedInstance.memoryInterface.read_overrides.append(SoftswitchOverrides.readKeyboard)

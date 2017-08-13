@@ -35,7 +35,7 @@ import Cocoa
  */
 
 class DiskII: NSObject, Peripheral, HasROM {
-    let debug = false
+    let debug = true
     
     enum MotorPhase {
         case Phase0
@@ -86,6 +86,7 @@ class DiskII: NSObject, Peripheral, HasROM {
     init(slot: Int, romPath: String) {
         slotNumber = slot
         romManager = ROMManager(path: romPath, atAddress: 0x0, size: 256)
+        diskImage = nil
         
         super.init()
         
@@ -106,7 +107,9 @@ class DiskII: NSObject, Peripheral, HasROM {
     }
     
     func attachDiskImage(imagePath: String) {
-        diskImage = DiskImage(diskPath: imagePath)
+        let image = DiskImage(diskPath: imagePath)
+        self.diskImage = image
+        print("attached image to DiskII \(self)")
     }
     
     //http://ftp.twaren.net/NetBSD/misc/wrstuden/Apple_PDFs/Software%20control%20of%20IWM.pdf
@@ -215,7 +218,12 @@ class DiskII: NSObject, Peripheral, HasROM {
             let blkLo: UInt8
             let blkHi: UInt8
             
-            if(diskImage!.image is Dos33Image) {
+            if(diskImage == nil) {
+                print("No disk inserted, aborting. DiskII \(self)")
+                return 0x00
+            }
+            
+            if(diskImage?.image is Dos33Image) {
                 trk = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7EC, bypassOverrides: true)
                 sec = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7ED, bypassOverrides: true)
                 mode = CPU.sharedInstance.memoryInterface.readByte(offset: 0xB7F4, bypassOverrides: true)
@@ -223,7 +231,7 @@ class DiskII: NSObject, Peripheral, HasROM {
                 blkLo = 0
                 blkHi = 0
             }
-            else if(diskImage!.image is ProdosImage) {
+            else if(diskImage?.image is ProdosImage) {
                 trk = CPU.sharedInstance.memoryInterface.readByte(offset: 0x41, bypassOverrides: true)
                 sec = CPU.sharedInstance.memoryInterface.readByte(offset: 0x3D, bypassOverrides: true)
                 mode = CPU.sharedInstance.memoryInterface.readByte(offset: 0x42, bypassOverrides: true)
@@ -258,9 +266,9 @@ class DiskII: NSObject, Peripheral, HasROM {
             }
             if(debug)
             {
-                if(diskImage!.image is Dos33Image) {
+                if(diskImage?.image is Dos33Image) {
                     print("Head is at nibble \(mediaPosition) of track \(currentTrack). DOS is trying to \(modeString) T\(trk) S\(sec).")
-                } else if(diskImage!.image is ProdosImage) {
+                } else if(diskImage?.image is ProdosImage) {
                     print("Head is at nibble \(mediaPosition) of track \(currentTrack). ProDOS is trying to \(modeString) Block $\(blkHi.asHexString())\(blkLo.asHexString()) (T\(trk) S\(sec)).")
                     
                     if(mode == 1) {

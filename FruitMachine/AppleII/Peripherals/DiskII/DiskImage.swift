@@ -138,6 +138,7 @@ class DiskImage: NSObject {
             print("Couldn't load disk image")
             return
         }
+        
         if(filename.contains(".do")) {
             //Is this a DOS 3.3 format image? Read one sector from track $11.
             image = Dos33Image()
