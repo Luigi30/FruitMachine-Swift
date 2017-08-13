@@ -241,6 +241,9 @@
                                                     <items>
                                                         <menuItem title="Apple ][ (Original)" state="on" id="4DB-sZ-RHB"/>
                                                         <menuItem title="Apple ][+" id="lk3-qa-sTr"/>
+                                                        <menuItem title="Apple //e" id="lv7-TL-Unl">
+                                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                                        </menuItem>
                                                     </items>
                                                 </menu>
                                             </popUpButtonCell>

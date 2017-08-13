@@ -28,9 +28,8 @@ class AppleIIe: AppleIIBase {
     }
     
     override func loadROMs() {
-        //Applesoft BASIC
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/apple2e/342-0135-b.64", offset: 0xD000, length: 0x1000)
-        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/apple2e/342-0134-a.64", offset: 0xE000, length: 0x1000)
+        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/apple2e/342-0135-b.64", offset: 0xC000, length: 0x2000)
+        CPU.sharedInstance.memoryInterface.loadBinary(path: "/Users/luigi/apple2/apple2e/342-0134-a.64", offset: 0xE000, length: 0x2000)
     }
     
     override func installOverrides() {

@@ -35,7 +35,7 @@ class PreferencesWindowController: NSWindowController {
     
     func setupDefaultsIfRequired() {
         var model = defaults.string(forKey: "a2_Model")
-        if(model == nil) { model = "Apple ][+" }
+        if(model == nil) { model = "Apple //e" }
         defaults.set(model, forKey: "a2_Model")
         
         var slot0 = defaults.string(forKey: "a2_Peripherals_Slot0")
@@ -86,6 +86,8 @@ class PreferencesWindowController: NSWindowController {
         
         defaults.set(a2_Peripherals_Slot0.selectedItem?.title, forKey: "a2_Peripherals_Slot0")
         defaults.set(a2_Peripherals_Slot6.selectedItem?.title, forKey: "a2_Peripherals_Slot6")
+        
+        defaults.set(a2_Model.selectedItem?.title, forKey: "a2_Model")
         
         defaults.synchronize()
         

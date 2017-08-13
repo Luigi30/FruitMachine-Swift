@@ -49,11 +49,11 @@ class LanguageCard16K: NSObject, Peripheral, HasROM {
         super.init()
         
         RDLCBNKOverride = ReadOverride(start: UInt16(0xC011 + (0x10 * slotNumber)),
-                                        end: UInt16(0xC012 + (0x10 * slotNumber)),
+                                        end: UInt16(0xC011 + (0x10 * slotNumber)),
                                         readAnyway: false,
                                         action: actionRDLCBNK)
 
-        RDLCRAMOverride = ReadOverride(start: UInt16(0xC011 + (0x10 * slotNumber)),
+        RDLCRAMOverride = ReadOverride(start: UInt16(0xC012 + (0x10 * slotNumber)),
                                        end: UInt16(0xC012 + (0x10 * slotNumber)),
                                        readAnyway: false,
                                        action: actionRDLCRAM)

@@ -37,7 +37,6 @@ class AppleIIBase: NSObject, EmulatedSystem {
     var videoSoftswitches = VideoSoftswitches()
     var videoMode: VideoMode = .Text
     
-    //let cg = A2CharacterGenerator(romPath: "/Users/luigi/apple2/apple2/a2.chr");
     let keyboardController = KeyboardController()
     
     var emulatorViewDelegate: ScreenDelegate
@@ -97,7 +96,7 @@ class AppleIIBase: NSObject, EmulatedSystem {
         for page in ramPages ..< 192 {
             CPU.sharedInstance.memoryInterface.pages[page] = MemoryInterface.pageMode.null  //not connected
         }
-        for page in 208 ..< 256 {
+        for page in 192 ..< 256 {
             CPU.sharedInstance.memoryInterface.pages[page] = MemoryInterface.pageMode.rw    //Bankswitching area
         }
     }
